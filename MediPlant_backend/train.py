@@ -1,239 +1,430 @@
+
 import json
-import os
-from collections import Counter
-
 import numpy as np
+import pandas as pd
 import tensorflow as tf
-from sklearn.metrics import classification_report, confusion_matrix
+import matplotlib.pyplot as plt
+
+from pathlib import Path
 from sklearn.utils.class_weight import compute_class_weight
-from tensorflow.keras import layers, callbacks
+from sklearn.metrics import classification_report, confusion_matrix
 
-# 1. BASIC SETTINGS
-BATCH_SIZE = 32
-IMG_SIZE = (224, 224)
+# ============================================================
+# 1. CONFIGURATION
+# ============================================================
+
+DATASET_DIR = Path("Medicinal_dataset_split")
+TRAIN_DIR = DATASET_DIR / "train"
+VAL_DIR = DATASET_DIR / "val"
+TEST_DIR = DATASET_DIR / "test"
+
+IMAGE_SIZE = (224, 224)
+BATCH_SIZE = 16
 SEED = 42
-EXPECTED_NUM_CLASSES = 20
 
-TRAIN_DIR = "Medicinal_dataset/train"
-VAL_DIR = "Medicinal_dataset/val"
-TEST_DIR = "Medicinal_dataset/test"
+HEAD_EPOCHS = 15
+FINE_TUNE_EPOCHS = 15
+
+MODEL_BEST_PATH = "mediplant_10class_best.keras"
+MODEL_FINAL_PATH = "mediplant_10class.keras"
+LABELS_PATH = "mediplant_10class_labels.json"
+
+REPORT_PATH = "mediplant_10class_report.txt"
+MATRIX_CSV_PATH = "mediplant_10class_confusion_matrix.csv"
+MATRIX_PNG_PATH = "mediplant_10class_confusion_matrix.png"
+HISTORY_PNG_PATH = "mediplant_10class_training_history.png"
 
 tf.keras.utils.set_random_seed(SEED)
 
+# ============================================================
+# 2. CHECK DATASET
+# ============================================================
 
-# 2. LOAD TRAINING DATASET
+for folder in [TRAIN_DIR, VAL_DIR, TEST_DIR]:
+    if not folder.exists():
+        raise FileNotFoundError(
+            f"Folder not found: {folder.resolve()}"
+        )
+
 train_ds = tf.keras.utils.image_dataset_from_directory(
     TRAIN_DIR,
+    image_size=IMAGE_SIZE,
+    batch_size=BATCH_SIZE,
     label_mode="int",
     shuffle=True,
-    seed=SEED,
-    batch_size=BATCH_SIZE,
-    image_size=IMG_SIZE,
+    seed=SEED
 )
 
-# 3. LOAD VALIDATION DATASET
 val_ds = tf.keras.utils.image_dataset_from_directory(
     VAL_DIR,
-    label_mode="int",
-    shuffle=False,
+    image_size=IMAGE_SIZE,
     batch_size=BATCH_SIZE,
-    image_size=IMG_SIZE,
+    label_mode="int",
+    shuffle=False
 )
 
-# 4. GET CLASS NAMES AND SANITY-CHECK
+test_ds = tf.keras.utils.image_dataset_from_directory(
+    TEST_DIR,
+    image_size=IMAGE_SIZE,
+    batch_size=BATCH_SIZE,
+    label_mode="int",
+    shuffle=False
+)
+
 class_names = train_ds.class_names
-val_class_names = val_ds.class_names
-
-assert class_names == val_class_names, (
-    "Train/val class names or order do not match.\n"
-    f"train: {class_names}\n"
-    f"val:   {val_class_names}"
-)
-
 NUM_CLASSES = len(class_names)
 
-assert NUM_CLASSES == EXPECTED_NUM_CLASSES, (
-    f"Expected {EXPECTED_NUM_CLASSES} classes, got {NUM_CLASSES}: {class_names}"
+if NUM_CLASSES != 10:
+    raise ValueError(
+        f"Expected 10 classes, found {NUM_CLASSES}: {class_names}"
+    )
+
+if val_ds.class_names != class_names:
+    raise ValueError("Class order differs between train and val.")
+
+if test_ds.class_names != class_names:
+    raise ValueError("Class order differs between train and test.")
+
+print("\nClass order:")
+for i, name in enumerate(class_names):
+    print(f"{i}: {name}")
+
+with open(LABELS_PATH, "w", encoding="utf-8") as f:
+    json.dump(
+        {str(i): name for i, name in enumerate(class_names)},
+        f,
+        indent=4
+    )
+
+# ============================================================
+# 3. COUNT TRAINING IMAGES AND CLASS WEIGHTS
+# ============================================================
+
+class_counts = np.zeros(NUM_CLASSES, dtype=np.int64)
+
+count_ds = tf.keras.utils.image_dataset_from_directory(
+    TRAIN_DIR,
+    image_size=IMAGE_SIZE,
+    batch_size=BATCH_SIZE,
+    label_mode="int",
+    class_names=class_names,
+    shuffle=False
 )
 
-print("Classes:")
-for index, name in enumerate(class_names):
-    print(f"  {index} -> {name}")
-print("Number of classes:", NUM_CLASSES)
+for _, labels in count_ds:
+    class_counts += np.bincount(
+        labels.numpy(),
+        minlength=NUM_CLASSES
+    )
 
-with open("class_names.json", "w", encoding="utf-8") as f:
-    json.dump(class_names, f, indent=2, ensure_ascii=False)
-
-print("Saved class_names.json")
-
-# 5. OPTIMIZE DATA PIPELINE
-AUTOTUNE = tf.data.AUTOTUNE
-
-train_ds = train_ds.cache().prefetch(AUTOTUNE)
-val_ds = val_ds.cache().prefetch(AUTOTUNE)
-
-
-# 6. CLASS WEIGHTS (helps if some plants have fewer images)
-label_list = []
-for _, labels in train_ds:
-    label_list.extend(labels.numpy().tolist())
-
-label_array = np.array(label_list, dtype=np.int32)
-counts = Counter(label_array)
-print("Train images per class:", dict(sorted(counts.items())))
+if np.any(class_counts == 0):
+    raise ValueError("At least one class has no training images.")
 
 weights = compute_class_weight(
     class_weight="balanced",
     classes=np.arange(NUM_CLASSES),
-    y=label_array,
+    y=np.repeat(np.arange(NUM_CLASSES), class_counts)
 )
-class_weight = {i: float(w) for i, w in enumerate(weights)}
-print("Class weights:", class_weight)
 
-# 7. LOAD PRETRAINED MOBILENETV2
+class_weights = {
+    i: float(weights[i]) for i in range(NUM_CLASSES)
+}
+
+print("\nTraining images per class:")
+for i, name in enumerate(class_names):
+    print(f"{name}: {class_counts[i]}")
+
+print("\nClass weights:", class_weights)
+
+del count_ds
+
+# ============================================================
+# 4. DATA AUGMENTATION AND PREPROCESSING
+# ============================================================
+
+augmentation = tf.keras.Sequential([
+    tf.keras.layers.RandomFlip("horizontal"),
+    tf.keras.layers.RandomRotation(0.08),
+    tf.keras.layers.RandomZoom(0.10),
+    tf.keras.layers.RandomContrast(0.10),
+], name="data_augmentation")
+
+preprocess = tf.keras.layers.Rescaling(
+    scale=1.0 / 127.5,
+    offset=-1.0
+)
+
+AUTOTUNE = tf.data.AUTOTUNE
+
+def prepare_train(images, labels):
+    images = augmentation(images, training=True)
+    images = preprocess(images)
+    return images, labels
+
+def prepare_eval(images, labels):
+    images = preprocess(images)
+    return images, labels
+
+train_ds = train_ds.map(
+    prepare_train,
+    num_parallel_calls=AUTOTUNE
+).prefetch(AUTOTUNE)
+
+val_ds = val_ds.map(
+    prepare_eval,
+    num_parallel_calls=AUTOTUNE
+).prefetch(AUTOTUNE)
+
+test_ds = test_ds.map(
+    prepare_eval,
+    num_parallel_calls=AUTOTUNE
+).prefetch(AUTOTUNE)
+
+# ============================================================
+# 5. BUILD MOBILENETV2 MODEL
+# ============================================================
+
 base_model = tf.keras.applications.MobileNetV2(
-    input_shape=(224, 224, 3),
+    input_shape=(*IMAGE_SIZE, 3),
     include_top=False,
-    weights="imagenet",
+    weights="imagenet"
 )
 
 base_model.trainable = False
 
-# 8. DATA AUGMENTATION
-data_augmentation = tf.keras.Sequential([
-    layers.RandomFlip("horizontal"),
-    layers.RandomRotation(0.2),
-    layers.RandomZoom(0.1),
-    layers.RandomContrast(0.1),
-])
+inputs = tf.keras.Input(shape=(*IMAGE_SIZE, 3))
 
-# 9. BUILD MODEL
-inputs = tf.keras.Input(shape=(224, 224, 3))
-x = data_augmentation(inputs)
-x = layers.Rescaling(1.0 / 127.5, offset=-1.0)(x)
-x = base_model(x, training=False)
-x = layers.GlobalAveragePooling2D()(x)
-x = layers.Dropout(0.3)(x)
-outputs = layers.Dense(NUM_CLASSES, activation="softmax")(x)
+x = base_model(inputs, training=False)
+x = tf.keras.layers.GlobalAveragePooling2D()(x)
+x = tf.keras.layers.Dropout(0.30)(x)
+
+outputs = tf.keras.layers.Dense(
+    NUM_CLASSES,
+    activation="softmax"
+)(x)
 
 model = tf.keras.Model(inputs, outputs)
 
+model.compile(
+    optimizer=tf.keras.optimizers.Adam(learning_rate=1e-3),
+    loss="sparse_categorical_crossentropy",
+    metrics=["accuracy"]
+)
 
-def compile_model(learning_rate):
-    model.compile(
-        optimizer=tf.keras.optimizers.Adam(learning_rate=learning_rate),
-        loss="sparse_categorical_crossentropy",
-        metrics=[
-            "accuracy",
-            tf.keras.metrics.SparseTopKCategoricalAccuracy(k=3, name="top3"),
-        ],
+model.summary()
+
+# ============================================================
+# 6. CALLBACKS
+# ============================================================
+
+callbacks = [
+    tf.keras.callbacks.ModelCheckpoint(
+        MODEL_BEST_PATH,
+        monitor="val_loss",
+        save_best_only=True,
+        verbose=1
+    ),
+    tf.keras.callbacks.EarlyStopping(
+        monitor="val_loss",
+        patience=5,
+        restore_best_weights=True,
+        verbose=1
+    ),
+    tf.keras.callbacks.ReduceLROnPlateau(
+        monitor="val_loss",
+        factor=0.2,
+        patience=2,
+        min_lr=1e-7,
+        verbose=1
     )
+]
 
+# ============================================================
+# 7. STAGE 1: TRAIN CLASSIFICATION HEAD
+# ============================================================
 
-compile_model(1e-3)
+print("\n========== STAGE 1: TRAINING HEAD ==========\n")
 
-
-# 10. CALLBACKS
-ckpt = callbacks.ModelCheckpoint(
-    "medicinal_plant_best.keras",
-    monitor="val_accuracy",
-    mode="max",
-    save_best_only=True,
-)
-
-early = callbacks.EarlyStopping(
-    monitor="val_accuracy",
-    patience=3,
-    restore_best_weights=False,
-)
-
-# 11. FIRST TRAINING STAGE
-print("\nStarting initial training...\n")
-
-model.fit(
+history_head = model.fit(
     train_ds,
     validation_data=val_ds,
-    epochs=10,
-    class_weight=class_weight,
-    callbacks=[ckpt, early],
+    epochs=HEAD_EPOCHS,
+    class_weight=class_weights,
+    callbacks=callbacks
 )
 
-# 12. FINE-TUNING
-print("\nStarting fine-tuning...\n")
+# ============================================================
+# 8. STAGE 2: FINE-TUNE MOBILENETV2
+# ============================================================
+
+print("\n========== STAGE 2: FINE-TUNING ==========\n")
 
 base_model.trainable = True
 
-for layer in base_model.layers[:120]:
+for layer in base_model.layers[:-30]:
     layer.trainable = False
 
-compile_model(1e-5)
+for layer in base_model.layers:
+    if isinstance(layer, tf.keras.layers.BatchNormalization):
+        layer.trainable = False
 
-model.fit(
-    train_ds,
-    validation_data=val_ds,
-    epochs=15,
-    initial_epoch=10,
-    class_weight=class_weight,
-    callbacks=[ckpt, early],
+model.compile(
+    optimizer=tf.keras.optimizers.Adam(learning_rate=1e-5),
+    loss="sparse_categorical_crossentropy",
+    metrics=["accuracy"]
 )
 
-# 13. LOAD BEST CHECKPOINT AND SAVE FINAL MODEL
-model.load_weights("medicinal_plant_best.keras")
-model.save("medicinal_plant_model.keras")
+history_fine = model.fit(
+    train_ds,
+    validation_data=val_ds,
+    epochs=FINE_TUNE_EPOCHS,
+    class_weight=class_weights,
+    callbacks=callbacks
+)
 
-print("\nEvaluating best checkpoint on validation set...")
-val_results = model.evaluate(val_ds, return_dict=True)
-print(val_results)
+# ============================================================
+# 9. LOAD AND SAVE BEST MODEL
+# ============================================================
 
+print("\n========== SAVING BEST MODEL ==========\n")
 
-# 14. OPTIONAL TEST SET (use this number in the report)
-if os.path.isdir(TEST_DIR):
-    test_ds = tf.keras.utils.image_dataset_from_directory(
-        TEST_DIR,
-        label_mode="int",
-        shuffle=False,
-        batch_size=BATCH_SIZE,
-        image_size=IMG_SIZE,
-    )
-    assert test_ds.class_names == class_names, (
-        "Test class names or order do not match train.\n"
-        f"train: {class_names}\n"
-        f"test:  {test_ds.class_names}"
-    )
-    test_ds = test_ds.cache().prefetch(AUTOTUNE)
-    print("\nEvaluating on test set...")
-    print(model.evaluate(test_ds, return_dict=True))
-else:
-    test_ds = None
-    print(f"\nNo test folder at {TEST_DIR} — report test accuracy once you add one.")
+best_model = tf.keras.models.load_model(MODEL_BEST_PATH)
+best_model.save(MODEL_FINAL_PATH)
 
-# 15. CONFUSION MATRIX AND PER-CLASS REPORT (validation)
+print(f"Model saved: {MODEL_FINAL_PATH}")
+print(f"Labels saved: {LABELS_PATH}")
 
-def collect_labels_and_preds(dataset):
-    y_true, y_pred, y_conf = [], [], []
-    for images, labels in dataset:
-        probs = model.predict(images, verbose=0)
-        y_true.extend(labels.numpy())
-        y_pred.extend(np.argmax(probs, axis=1))
-        y_conf.extend(np.max(probs, axis=1))
-    return np.array(y_true), np.array(y_pred), np.array(y_conf)
+# ============================================================
+# 10. TEST EVALUATION
+# ============================================================
 
+print("\n========== TEST EVALUATION ==========\n")
 
-y_true, y_pred, y_conf = collect_labels_and_preds(val_ds)
+test_loss, test_accuracy = best_model.evaluate(
+    test_ds,
+    verbose=1
+)
 
-print("\nClassification report (validation):\n")
-print(classification_report(y_true, y_pred, target_names=class_names, digits=4))
+print(f"\nTest loss: {test_loss:.4f}")
+print(f"Test accuracy: {test_accuracy * 100:.2f}%")
 
-print("Confusion matrix (rows = true, columns = predicted):")
-print(confusion_matrix(y_true, y_pred))
+y_true = np.concatenate([
+    labels.numpy() for _, labels in test_ds
+])
 
-# Helps you pick an "unknown / call API" threshold later
-print("\nMean max-softmax on validation:", float(np.mean(y_conf)))
-print("Min max-softmax on validation:", float(np.min(y_conf)))
+y_prob = best_model.predict(test_ds, verbose=1)
+y_pred = np.argmax(y_prob, axis=1)
 
+# ============================================================
+# 11. CLASSIFICATION REPORT
+# ============================================================
 
-print("\nTraining complete.")
-print("Files written:")
-print("  medicinal_plant_best.keras")
-print("  medicinal_plant_model.keras")
-print("  class_names.json")
+report = classification_report(
+    y_true,
+    y_pred,
+    labels=np.arange(NUM_CLASSES),
+    target_names=class_names,
+    digits=4,
+    zero_division=0
+)
+
+print("\nClassification Report:\n")
+print(report)
+
+with open(REPORT_PATH, "w", encoding="utf-8") as f:
+    f.write(f"Test accuracy: {test_accuracy * 100:.2f}%\n\n")
+    f.write(report)
+
+# ============================================================
+# 12. CONFUSION MATRIX
+# ============================================================
+
+cm = confusion_matrix(
+    y_true,
+    y_pred,
+    labels=np.arange(NUM_CLASSES)
+)
+
+pd.DataFrame(
+    cm,
+    index=class_names,
+    columns=class_names
+).to_csv(MATRIX_CSV_PATH)
+
+plt.figure(figsize=(12, 10))
+plt.imshow(cm, interpolation="nearest", cmap="Blues")
+plt.title("MediPlant 10-Class Confusion Matrix")
+plt.colorbar()
+
+positions = np.arange(NUM_CLASSES)
+plt.xticks(positions, class_names, rotation=45, ha="right")
+plt.yticks(positions, class_names)
+
+threshold = cm.max() / 2 if cm.size else 0
+
+for i in range(NUM_CLASSES):
+    for j in range(NUM_CLASSES):
+        plt.text(
+            j, i, str(cm[i, j]),
+            ha="center",
+            va="center",
+            color="white" if cm[i, j] > threshold else "black"
+        )
+
+plt.ylabel("Actual Plant")
+plt.xlabel("Predicted Plant")
+plt.tight_layout()
+plt.savefig(MATRIX_PNG_PATH, dpi=200, bbox_inches="tight")
+plt.show()
+
+# ============================================================
+# 13. TRAINING HISTORY
+# ============================================================
+
+def history_values(history, key):
+    return history.history.get(key, [])
+
+train_acc = (
+    history_values(history_head, "accuracy")
+    + history_values(history_fine, "accuracy")
+)
+val_acc = (
+    history_values(history_head, "val_accuracy")
+    + history_values(history_fine, "val_accuracy")
+)
+train_loss = (
+    history_values(history_head, "loss")
+    + history_values(history_fine, "loss")
+)
+val_loss = (
+    history_values(history_head, "val_loss")
+    + history_values(history_fine, "val_loss")
+)
+
+plt.figure(figsize=(12, 5))
+
+plt.subplot(1, 2, 1)
+plt.plot(train_acc, label="Training accuracy")
+plt.plot(val_acc, label="Validation accuracy")
+plt.title("Accuracy")
+plt.xlabel("Epoch")
+plt.legend()
+
+plt.subplot(1, 2, 2)
+plt.plot(train_loss, label="Training loss")
+plt.plot(val_loss, label="Validation loss")
+plt.title("Loss")
+plt.xlabel("Epoch")
+plt.legend()
+
+plt.tight_layout()
+plt.savefig(HISTORY_PNG_PATH, dpi=200)
+plt.show()
+
+print("\n========== TRAINING COMPLETED ==========")
+print("Model:", MODEL_FINAL_PATH)
+print("Labels:", LABELS_PATH)
+print("Report:", REPORT_PATH)
+print("Confusion matrix:", MATRIX_PNG_PATH)
+print("Confusion matrix CSV:", MATRIX_CSV_PATH)
+print("Training plots:", HISTORY_PNG_PATH)

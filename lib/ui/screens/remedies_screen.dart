@@ -208,7 +208,7 @@ class _RemediesScreenState extends State<RemediesScreen> {
                   title: _showOnlyBookmarked ? 'No Saved Remedies' : 'No Remedies Found',
                   message: _showOnlyBookmarked
                       ? 'Tap the bookmark icon on any remedy card to save it here for quick access.'
-                      : 'Try searching for another condition or ingredient like "Ginger", "Tulsi", or "Honey".',
+                      : 'Try searching for another condition or ingredient like "Cinnamon", "Ashwagandha", or "Honey".',
                 ),
               ] else ...[
                 Row(

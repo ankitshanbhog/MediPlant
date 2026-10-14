@@ -3,15 +3,16 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'voice_service.dart';
 
-/// Real Text-to-Speech implementation backed by the device's native TTS engine.
-///
-/// Enhanced with sentence-by-sentence queueing and natural pauses (380ms)
-/// between sentences and clauses to prevent continuous run-on speech.
+/// Enhanced TTS voice service with slower, clearer, louder speech settings
+/// optimized for medicinal plant information delivery and accessibility.
 class FlutterTtsVoiceService implements VoiceTtsService {
   final FlutterTts _tts = FlutterTts();
 
   VoiceState _state = VoiceState.stopped;
-  double _speechRate = 0.44; // Calibrated for clear, natural conversational pacing
+
+  /// Slower speech rate for clear, easy-to-understand narration.
+  /// 0.38 maps to approximately 0.35 on the TTS engine (very clear & deliberate).
+  double _speechRate = 0.38;
 
   final _stateController = StreamController<VoiceState>.broadcast();
   final _wordController = StreamController<String>.broadcast();
@@ -33,24 +34,36 @@ class FlutterTtsVoiceService implements VoiceTtsService {
 
     try {
       await _tts.setLanguage('en-US');
+      // Slightly slower speech rate for maximum clarity and comprehension
       await _tts.setSpeechRate(_speechRate);
+      // Maximum volume for clearest audio output
       await _tts.setVolume(1.0);
-      await _tts.setPitch(1.0);
+      // Slightly lower pitch (0.9) for a warmer, more authoritative voice quality
+      await _tts.setPitch(0.9);
 
       if (defaultTargetPlatform == TargetPlatform.android) {
         final engines = await _tts.getEngines;
         debugPrint('[TTS] Available engines: $engines');
+
+        // Try to set a high-quality voice engine for better clarity
+        try {
+          // Prefer Google TTS engine for Android if available
+          if (engines is List && engines.contains('com.google.android.tts')) {
+            await _tts.setEngine('com.google.android.tts');
+            debugPrint('[TTS] Set Google TTS engine for high quality audio');
+          }
+        } catch (_) {}
       }
 
-      // Sentence completion callback with natural pause before next sentence
+      // Sentence completion callback: natural pause between sentences
       _tts.setCompletionHandler(() async {
         if (_state != VoiceState.playing) return;
 
         if (_currentSentenceIndex + 1 < _sentences.length) {
           _currentSentenceIndex++;
 
-          // Natural breathing pause between distinct thoughts and sentences
-          await Future.delayed(const Duration(milliseconds: 380));
+          // Slightly longer natural breathing pause for better comprehension
+          await Future.delayed(const Duration(milliseconds: 480));
 
           if (_state == VoiceState.playing) {
             final nextSentence = _sentences[_currentSentenceIndex];
@@ -70,7 +83,7 @@ class FlutterTtsVoiceService implements VoiceTtsService {
         _setState(VoiceState.stopped);
       });
 
-      // Word boundary / progress
+      // Word boundary / progress highlighting
       _tts.setProgressHandler((text, start, end, word) {
         _wordController.add(word);
       });
@@ -84,7 +97,7 @@ class FlutterTtsVoiceService implements VoiceTtsService {
       _tts.setPauseHandler(() => _setState(VoiceState.paused));
       _tts.setContinueHandler(() => _setState(VoiceState.playing));
 
-      debugPrint('[TTS] FlutterTtsVoiceService initialized with natural sentence pauses');
+      debugPrint('[TTS] FlutterTtsVoiceService initialized — slow, clear, loud mode');
     } catch (e) {
       debugPrint('[TTS] Initialization error: $e');
     }
@@ -113,9 +126,9 @@ class FlutterTtsVoiceService implements VoiceTtsService {
     _stateController.add(s);
   }
 
-  // ──────────────────────────────────────────────────────────
+  // ──────────────────────────────────────────────────────────────────────────
   // VoiceTtsService interface
-  // ──────────────────────────────────────────────────────────
+  // ──────────────────────────────────────────────────────────────────────────
 
   @override
   VoiceState get state => _state;
@@ -138,7 +151,8 @@ class FlutterTtsVoiceService implements VoiceTtsService {
     await _tts.stop();
     _wordController.add('');
 
-    // Segment text into discrete sentences or punctuated clauses for natural pauses
+    // Segment text into discrete sentences or punctuated clauses for natural pauses.
+    // Splitting on sentence boundaries creates a more comfortable listening pace.
     _sentences = text
         .split(RegExp(r'(?<=[.!?;\n])\s+'))
         .map((s) => s.trim())
@@ -154,6 +168,11 @@ class FlutterTtsVoiceService implements VoiceTtsService {
     _currentSentenceIndex = 0;
     _setState(VoiceState.playing);
     _startWaveform();
+
+    // Ensure volume and rate are freshly set before each speak session
+    await _tts.setVolume(1.0);
+    await _tts.setSpeechRate(_speechRate);
+    await _tts.setPitch(0.9);
 
     final result = await _tts.speak(_sentences[0]);
     if (result == 0) {
@@ -177,6 +196,8 @@ class FlutterTtsVoiceService implements VoiceTtsService {
     if (_state == VoiceState.paused && _currentSentenceIndex < _sentences.length) {
       _setState(VoiceState.playing);
       _startWaveform();
+      await _tts.setVolume(1.0);
+      await _tts.setSpeechRate(_speechRate);
       await _tts.speak(_sentences[_currentSentenceIndex]);
     }
   }
@@ -194,7 +215,10 @@ class FlutterTtsVoiceService implements VoiceTtsService {
   @override
   Future<void> setSpeechRate(double rate) async {
     _speechRate = rate;
-    final mapped = (rate * 0.44).clamp(0.1, 1.0);
+    // Map the slider rate (0.0-1.0 user input) to engine range (0.1-0.55)
+    // This deliberately caps at 0.55 to prevent the voice from becoming too fast
+    // and losing clarity for medical/botanical information.
+    final mapped = (rate * 0.55).clamp(0.1, 0.55);
     await _tts.setSpeechRate(mapped);
   }
 

@@ -1,11 +1,11 @@
-// Data model for Medicinal Plants in MediPlant
+
 
 class Plant {
   final String id;
   final String commonName;
   final String scientificName;
   final String family;
-  final Map<String, String> vernacularNames; // e.g. {'Hindi': 'Tulsi', 'Sanskrit': 'Surasa'}
+  final Map<String, String> vernacularNames; 
   final String description;
   final String imageUrl;
   final List<String> medicinalUses;
@@ -21,7 +21,7 @@ class Plant {
   final String habitat;
   final String appearance;
   final String plantType;
-  final bool isSupportedInModel2; // True if supported in internal ML Model 2
+  final bool isSupportedInModel2; 
 
   const Plant({
     required this.id,

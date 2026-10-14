@@ -2,7 +2,7 @@ import '../database_helper.dart';
 import '../mock/mock_diseases_data.dart';
 import '../models/disease_model.dart';
 
-/// Repository interface and implementations for Diseases and Health Conditions
+
 abstract class DiseaseRepository {
   Future<List<Disease>> getAllDiseases();
   Future<Disease?> getDiseaseById(String id);
@@ -11,7 +11,7 @@ abstract class DiseaseRepository {
   Future<List<Disease>> getDiseasesByCategory(String category);
 }
 
-/// SQLite persistent Disease Repository
+
 class SqliteDiseaseRepository implements DiseaseRepository {
   final DatabaseHelper _db = DatabaseHelper.instance;
 

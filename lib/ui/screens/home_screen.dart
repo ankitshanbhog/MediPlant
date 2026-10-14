@@ -202,7 +202,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   Icon(Icons.auto_awesome, color: Color(0xFF6EE7B7), size: 14),
                                   SizedBox(width: 6),
                                   Text(
-                                    '20 Medicinal Species Supported',
+                                    '10 Medicinal Species Supported',
                                     style: TextStyle(
                                       color: Colors.white,
                                       fontSize: 11,
@@ -310,7 +310,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       const SizedBox(height: 12),
                       const Text('Plant Encyclopedia', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w900)),
                       const SizedBox(height: 6),
-                      Text('Explore information for the 20 supported plants and any plants added to the database later.', style: TextStyle(fontSize: 13, height: 1.4, color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight)),
+                      Text('Explore information for the 10 supported plants and any plants added to the database later.', style: TextStyle(fontSize: 13, height: 1.4, color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight)),
                       const SizedBox(height: 16),
                       ElevatedButton.icon(
                         onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const PlantEncyclopediaScreen())),
@@ -335,7 +335,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         context,
                         MaterialPageRoute(builder: (_) => const PlantEncyclopediaScreen()),
                       ),
-                      child: const Text('See All (20)', style: TextStyle(fontWeight: FontWeight.w700)),
+                      child: const Text('See All (10)', style: TextStyle(fontWeight: FontWeight.w700)),
                     ),
                   ],
                 ),

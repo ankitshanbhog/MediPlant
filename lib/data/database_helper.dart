@@ -27,7 +27,7 @@ class DatabaseHelper {
 
     return await openDatabase(
       path,
-      version: 6,
+      version: 7,
       onCreate: _createDB,
       onUpgrade: _onUpgrade,
     );
@@ -41,7 +41,7 @@ class DatabaseHelper {
       } catch (_) {}
     }
     if (oldVersion < 3) {
-      // Re-seed all 11 modern medicinal plants with conflictAlgorithm: replace
+      
       final batch = db.batch();
       for (final p in mockPlants) {
         batch.insert(
@@ -83,7 +83,7 @@ class DatabaseHelper {
       ''');
     }
     if (oldVersion < 5) {
-      // Re-seed all 20 plants, expanded diseases, and remedies
+      
       final batch = db.batch();
       for (final p in mockPlants) {
         batch.insert(
@@ -156,9 +156,75 @@ class DatabaseHelper {
       await batch.commit(noResult: true);
     }
     if (oldVersion < 6) {
-      // Clean up legacy plants that are not part of the 20 verified botanical species
+      // Clean up legacy plants not part of the verified botanical species
       final validIds = mockPlants.map((p) => "'${p.id}'").join(',');
       await db.execute('DELETE FROM plants WHERE id NOT IN ($validIds)');
+    }
+    if (oldVersion < 7) {
+      // Full reseed for the new MediPlant 10-class model.
+      // Remove all existing plants, diseases, and remedies, then re-insert
+      // the 10 supported classes with accurate, updated information.
+      await db.execute('DELETE FROM plants');
+      await db.execute('DELETE FROM diseases');
+      await db.execute('DELETE FROM remedies');
+      final batch = db.batch();
+      for (final p in mockPlants) {
+        batch.insert('plants', {
+          'id': p.id,
+          'commonName': p.commonName,
+          'scientificName': p.scientificName,
+          'family': p.family,
+          'vernacularNames': jsonEncode(p.vernacularNames),
+          'description': p.description,
+          'imageUrl': p.imageUrl,
+          'medicinalUses': jsonEncode(p.medicinalUses),
+          'healthBenefits': jsonEncode(p.healthBenefits),
+          'traditionalUses': jsonEncode(p.traditionalUses),
+          'activeConstituents': jsonEncode(p.activeConstituents),
+          'partsUsed': jsonEncode(p.partsUsed),
+          'sideEffects': jsonEncode(p.sideEffects),
+          'precautions': jsonEncode(p.precautions),
+          'contraindications': jsonEncode(p.contraindications),
+          'preparationMethods': p.preparationMethods,
+          'dosageGuidelines': p.dosageGuidelines,
+          'habitat': p.habitat,
+          'appearance': p.appearance,
+          'plantType': p.plantType,
+          'isSupportedInModel2': p.isSupportedInModel2 ? 1 : 0,
+        }, conflictAlgorithm: ConflictAlgorithm.replace);
+      }
+      for (final d in mockDiseases) {
+        batch.insert('diseases', {
+          'id': d.id,
+          'name': d.name,
+          'category': d.category,
+          'description': d.description,
+          'symptoms': jsonEncode(d.symptoms),
+          'iconName': d.iconName,
+          'relatedPlantIds': jsonEncode(d.relatedPlantIds),
+          'homeRemedyIds': jsonEncode(d.homeRemedyIds),
+          'medicalDisclaimer': d.medicalDisclaimer,
+        }, conflictAlgorithm: ConflictAlgorithm.replace);
+      }
+      for (final r in mockRemedies) {
+        batch.insert('remedies', {
+          'id': r.id,
+          'condition': r.condition,
+          'title': r.title,
+          'primaryPlantName': r.primaryPlantName,
+          'primaryPlantScientific': r.primaryPlantScientific,
+          'plantId': r.plantId,
+          'ingredients': jsonEncode(r.ingredients),
+          'preparationSteps': jsonEncode(r.preparationSteps),
+          'howToUse': r.howToUse,
+          'dosage': r.dosage,
+          'precautions': jsonEncode(r.precautions),
+          'category': r.category,
+          'timeToPrepare': r.timeToPrepare,
+          'isEducationalOnly': r.isEducationalOnly ? 1 : 0,
+        }, conflictAlgorithm: ConflictAlgorithm.replace);
+      }
+      await batch.commit(noResult: true);
     }
   }
 
@@ -344,12 +410,12 @@ class DatabaseHelper {
       return _rowToPlant(direct.first);
     }
 
-    // 2. Alias variations (e.g., aloevera_plant <-> aloe_vera_plant)
+    // 2. Alias variations (e.g., malabar_nut <-> malabar_nut_plant, insulin_plant <-> insulin)
     final aliases = <String>[
-      normalized.replaceAll('aloe_vera', 'aloevera'),
-      normalized.replaceAll('aloevera', 'aloe_vera'),
       normalized.replaceAll('_plant', ''),
       '${normalized.replaceAll('_plant', '')}_plant',
+      if (normalized.contains('malabar_nut')) 'vasaka',
+      if (normalized.contains('vasaka')) 'malabar_nut',
     ];
 
     for (final alias in aliases) {

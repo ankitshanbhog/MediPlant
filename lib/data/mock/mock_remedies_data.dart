@@ -1,72 +1,59 @@
 import '../models/remedy_model.dart';
 
-/// Comprehensive library of verified traditional home remedies for MediPlant
+/// Comprehensive library of verified traditional home remedies for the
+/// MediPlant 10-class model plants.
+///
+/// All plantIds reference only the 10 supported classes:
+///   ashwagandha_plant, ayapana_plant, cinnamon_plant, gotu_kola_plant,
+///   insulin_plant, malabar_nut, pirandai_plant, rosemary_plant,
+///   wood_apple_plant, ylang_ylang_plant
 final List<Remedy> mockRemedies = [
-  const Remedy(
-    id: 'remedy_tulsi_ginger_tea',
-    condition: 'Cough',
-    title: 'Tulsi & Ginger Soothing Decoction',
-    primaryPlantName: 'Holy Basil (Tulsi)',
-    primaryPlantScientific: 'Ocimum tenuiflorum',
-    plantId: 'tulsi_plant',
-    ingredients: [
-      '8-10 fresh Tulsi leaves (or 1 tsp dried)',
-      '1 inch crushed fresh ginger root',
-      '3-4 whole black peppercorns (crushed)',
-      '1 tsp raw organic honey',
-      '2 cups clean water',
-    ],
-    preparationSteps: [
-      'In a saucepan, bring 2 cups of clean water to a rolling boil.',
-      'Add crushed ginger, fresh Tulsi leaves, and crushed black peppercorns.',
-      'Reduce flame to low and simmer for 6 to 8 minutes until water reduces to 1 cup.',
-      'Strain liquid into a ceramic mug.',
-      'Allow to cool until warm, then stir in 1 teaspoon of raw honey (never add honey to boiling liquid).',
-    ],
-    howToUse:
-        'Sip slowly while warm, allowing the aromatic vapors to coat the throat and clear the chest.',
-    dosage: '1 cup twice daily, preferably morning and late afternoon for 3-5 days.',
-    precautions: [
-      'Avoid giving raw honey to infants under 12 months of age.',
-      'If cough is accompanied by blood, shortness of breath, or high fever (>102°F), consult a doctor immediately.',
-    ],
-    category: 'Cough',
-    timeToPrepare: '10 mins',
-  ),
+  // ──────────────────────────────────────────────────────────────────────────
+  // MALABAR NUT – Respiratory
+  // ──────────────────────────────────────────────────────────────────────────
   const Remedy(
     id: 'remedy_malabar_nut_decoction',
     condition: 'Cough & Bronchial Congestion',
     title: 'Vasaka (Malabar Nut) Bronchial Expectorant',
     primaryPlantName: 'Malabar Nut (Vasaka)',
     primaryPlantScientific: 'Justicia adhatoda',
-    plantId: 'malabar_nut_plant',
+    plantId: 'malabar_nut',
     ingredients: [
-      '4-5 fresh Vasaka leaves thoroughly washed',
-      '1/2 inch fresh crushed ginger',
+      '5-6 fresh Vasaka leaves, thoroughly washed',
+      '1/2 inch fresh ginger, crushed',
       '1 tsp raw honey',
-      '2 cups water',
+      '2 cups clean water',
+      'Pinch of black pepper',
     ],
     preparationSteps: [
-      'Tear leaves roughly and boil in 2 cups of water with ginger.',
-      'Boil down to 1 cup on low flame.',
-      'Strain through a fine tea strainer.',
-      'Add honey once the decoction is warm (not boiling hot).',
+      'Tear the Vasaka leaves roughly and place in a saucepan.',
+      'Add 2 cups of water and crushed ginger.',
+      'Bring to a boil then reduce to a simmer for 10-12 minutes until reduced to 1 cup.',
+      'Strain through a fine strainer into a cup.',
+      'Add honey and black pepper once the liquid is warm (not boiling hot).',
     ],
     howToUse:
-        'Drink warm. Helps liquify sticky mucus and expand constricted bronchial airways.',
-    dosage: '2-3 tablespoons twice daily after light food.',
+        'Drink warm slowly. The vasicine alkaloid actively liquifies sticky bronchial mucus '
+        'and expands constricted airways, providing significant relief from chest congestion.',
+    dosage: '2-3 tablespoons twice daily after light food for 3-5 days.',
     precautions: [
-      'Contraindicated in early pregnancy as Vasaka stimulates uterine contraction.',
-      'Do not exceed recommended dosage.',
+      'Strictly contraindicated in pregnancy — Vasaka stimulates uterine contraction.',
+      'Do not exceed recommended dosage as high doses may cause nausea.',
+      'Consult a doctor if symptoms worsen or include blood in cough.',
     ],
     category: 'Cough',
-    timeToPrepare: '12 mins',
+    timeToPrepare: '15 mins',
+    isEducationalOnly: true,
   ),
+
+  // ──────────────────────────────────────────────────────────────────────────
+  // CINNAMON – Respiratory / Cold
+  // ──────────────────────────────────────────────────────────────────────────
   const Remedy(
     id: 'remedy_cinnamon_honey_tea',
-    condition: 'Cold & Sore Throat',
-    title: 'Cinnamon & Honey Warming Infusion',
-    primaryPlantName: 'Cinnamon',
+    condition: 'Cold, Sore Throat & Blood Sugar',
+    title: 'Ceylon Cinnamon & Honey Warming Infusion',
+    primaryPlantName: 'Cinnamon (Ceylon)',
     primaryPlantScientific: 'Cinnamomum verum',
     plantId: 'cinnamon_plant',
     ingredients: [
@@ -74,474 +61,413 @@ final List<Remedy> mockRemedies = [
       '1 cup boiling water',
       '1 tsp raw honey',
       '1 tsp fresh lemon juice',
+      'Optional: 2-3 cloves',
     ],
     preparationSteps: [
-      'Place cinnamon stick or powder in a cup.',
-      'Pour 1 cup of boiling water over the cinnamon.',
+      'Place cinnamon stick (or powder) in a ceramic mug.',
+      'Pour 1 cup of freshly boiled water over the cinnamon.',
       'Cover with a saucer and steep for 8-10 minutes.',
-      'Stir in lemon juice and raw honey when comfortably warm.',
+      'Strain and allow to cool to a comfortable drinking temperature.',
+      'Stir in fresh lemon juice and raw honey.',
     ],
     howToUse:
-        'Drink slowly while warm to soothe throat tickle, stimulate circulation, and provide natural antimicrobial benefits.',
-    dosage: '1 cup up to 2 times daily.',
+        'Drink slowly while warm to soothe throat tickle, stimulate circulation, '
+        'and provide natural antimicrobial and blood-sugar-moderating benefits.',
+    dosage: '1 cup up to 2 times daily. Use Ceylon cinnamon only for daily long-term use.',
     precautions: [
       'Use true Ceylon cinnamon rather than Cassia cinnamon to avoid high coumarin content.',
       'Avoid high doses during early pregnancy.',
+      'Monitor blood sugar if taking with antidiabetic medication.',
     ],
     category: 'Cold',
     timeToPrepare: '10 mins',
+    isEducationalOnly: true,
   ),
+
+  // ──────────────────────────────────────────────────────────────────────────
+  // AYAPANA – Digestive / Wound
+  // ──────────────────────────────────────────────────────────────────────────
   const Remedy(
-    id: 'remedy_kadha_decoction',
-    condition: 'Seasonal Fever & Immunity',
-    title: 'Ayush Traditional Immunity Kadha',
-    primaryPlantName: 'Tulsi & Spices',
-    primaryPlantScientific: 'Ocimum tenuiflorum',
-    plantId: 'tulsi_plant',
+    id: 'remedy_ayapana_infusion',
+    condition: 'Stomach Cramps, Indigestion & Minor Bleeding',
+    title: 'Ayapana Hemostatic Leaf Decoction',
+    primaryPlantName: 'Ayapana',
+    primaryPlantScientific: 'Ayapana triplinervis',
+    plantId: 'ayapana_plant',
     ingredients: [
-      '6-8 Tulsi leaves',
-      '1/2 cinnamon stick',
-      '1/2 tsp crushed dry ginger (sunthi)',
-      '3 crushed black peppercorns',
-      '1 small piece jaggery (optional for taste)',
-      '2.5 cups water',
+      '5-6 fresh Ayapana leaves, thoroughly washed',
+      '1.5 cups clean water',
+      '1/2 tsp honey (optional)',
     ],
     preparationSteps: [
-      'Combine all spices and herbs in water.',
-      'Boil on medium heat until volume is reduced by half.',
-      'Strain into a cup and drink warm.',
+      'Wash the Ayapana leaves carefully in clean running water.',
+      'Crush the leaves gently between your palms to release the aromatic compounds.',
+      'Boil in 1.5 cups water for 5-6 minutes until the water takes a pale amber tint.',
+      'Strain into a cup and allow to cool to a comfortable temperature.',
     ],
     howToUse:
-        'Drink warm in the morning or during seasonal transitions to bolster innate immunity.',
-    dosage: '1/2 to 1 cup once daily.',
+        'Sip warm to alleviate stomach cramps and indigestion. '
+        'For minor surface cuts, apply the cooled crushed leaf pulp directly as a traditional '
+        'hemostatic poultice to help stop minor bleeding.',
+    dosage: '1 cup once daily for digestive support; topical application as needed.',
     precautions: [
-      'Individuals with active gastric ulcers should reduce pepper and ginger.',
+      'Do not use internally during pregnancy.',
+      'Patients on anticoagulant medications should consult a physician before use.',
     ],
-    category: 'Immunity',
-    timeToPrepare: '15 mins',
+    category: 'Digestive',
+    timeToPrepare: '10 mins',
+    isEducationalOnly: true,
   ),
-  const Remedy(
-    id: 'remedy_tulsi_honey_chew',
-    condition: 'Sore Throat',
-    title: 'Fresh Tulsi Leaf & Honey Chew',
-    primaryPlantName: 'Holy Basil (Tulsi)',
-    primaryPlantScientific: 'Ocimum tenuiflorum',
-    plantId: 'tulsi_plant',
-    ingredients: [
-      '4-5 fresh clean Tulsi leaves',
-      '1/2 tsp raw honey',
-    ],
-    preparationSteps: [
-      'Wash fresh tender Tulsi leaves in clean drinking water.',
-      'Dip the leaves in pure honey.',
-    ],
-    howToUse:
-        'Chew slowly and swallow the extracted juices, allowing them to coat the irritated mucosal throat lining.',
-    dosage: 'Repeat 2 to 3 times a day as needed.',
-    precautions: [
-      'Rinse mouth with water afterward as frequent chewing of acidic herbs can affect tooth enamel.',
-    ],
-    category: 'Sore throat',
-    timeToPrepare: '2 mins',
-  ),
-  const Remedy(
-    id: 'remedy_tooth_ache_gargle',
-    condition: 'Toothache & Oral Health',
-    title: 'Toothache Plant Analgesic Oral Rinse',
-    primaryPlantName: 'Toothache Plant (Akarkara)',
-    primaryPlantScientific: 'Acmella oleracea',
-    plantId: 'tooth_ache_plant',
-    ingredients: [
-      '1 fresh flower bud or 3-4 fresh leaves of Toothache Plant',
-      '1/2 cup warm water',
-      'Pinch of rock salt',
-    ],
-    preparationSteps: [
-      'Crush the flower bud or leaves lightly in a mortar.',
-      'Steep in warm water with a pinch of rock salt for 5 minutes.',
-      'Strain the infusion.',
-    ],
-    howToUse:
-        'Swish around the mouth and target near the painful tooth or gum for 1-2 minutes, then spit out completely. The spilanthol compound provides natural numbing.',
-    dosage: 'Use 2-3 times daily as temporary relief until seeing a dentist.',
-    precautions: [
-      'Spits out completely; do not swallow in large volumes.',
-      'Does not replace definitive professional dental treatment for caries or abscesses.',
-    ],
-    category: 'Dental',
-    timeToPrepare: '5 mins',
-  ),
-  const Remedy(
-    id: 'remedy_aloe_vera_juice',
-    condition: 'Mild Indigestion & Heartburn',
-    title: 'Cooling Aloe Vera Digestive Juice',
-    primaryPlantName: 'Aloe Vera',
-    primaryPlantScientific: 'Aloe barbadensis miller',
-    plantId: 'aloe_vera_plant',
-    ingredients: [
-      '2 tbsp fresh clear inner Aloe Vera gel fillet (no yellow latex)',
-      '1 cup room temperature water or coconut water',
-      '1 tsp cumin seed powder (optional)',
-    ],
-    preparationSteps: [
-      'Harvest mature leaf, stand vertically for 10 minutes to drain yellow aloin latex.',
-      'Carefully peel outer green rind and rinse the clear gel fillet in cold water.',
-      'Blend gel fillet with water until smooth.',
-    ],
-    howToUse:
-        'Drink slowly on an empty stomach in the morning to soothe hyperacidity and stomach lining irritation.',
-    dosage: '50-100 ml once daily in the morning.',
-    precautions: [
-      'Ensure complete removal of yellow latex which has strong laxative properties.',
-      'Avoid during active diarrhea or acute abdominal pain.',
-    ],
-    category: 'Mild Indigestion',
-    timeToPrepare: '8 mins',
-  ),
-  const Remedy(
-    id: 'remedy_wood_apple_digestive',
-    condition: 'Digestive Upset & Diarrhea',
-    title: 'Wood Apple (Bael) Gut-Balancing Sherbet',
-    primaryPlantName: 'Wood Apple (Bael)',
-    primaryPlantScientific: 'Aegle marmelos',
-    plantId: 'wood_apple_plant',
-    ingredients: [
-      '3-4 tbsp fresh pulp of ripe Wood Apple',
-      '1 glass cool water',
-      'Pinch of roasted cumin powder',
-      '1 tsp raw sugar or jaggery',
-    ],
-    preparationSteps: [
-      'Scoop ripe pulp from shell and soak in cool water for 15 minutes.',
-      'Mash with fingers or spoon and strain seeds and fibrous strands through a sieve.',
-      'Mix in cumin powder and jaggery.',
-    ],
-    howToUse:
-        'Drink chilled or room temperature. Renowned in Ayurveda for healing intestinal epithelium, IBS, and chronic dysentery.',
-    dosage: '1 glass once daily before noon.',
-    precautions: [
-      'Avoid excessive consumption which can cause constipation.',
-    ],
-    category: 'Mild Indigestion',
-    timeToPrepare: '15 mins',
-  ),
-  const Remedy(
-    id: 'remedy_methi_seed_water',
-    condition: 'Metabolic & Digestive Support',
-    title: 'Fenugreek (Methi) Overnight Metabolic Water',
-    primaryPlantName: 'Fenugreek (Methi)',
-    primaryPlantScientific: 'Trigonella foenum-graecum',
-    plantId: 'methi_plant',
-    ingredients: [
-      '1 tsp whole Fenugreek seeds',
-      '1 glass warm drinking water',
-    ],
-    preparationSteps: [
-      'Rinse methi seeds and soak in 1 glass of water overnight (8 hours).',
-      'In the morning, warm the water slightly.',
-    ],
-    howToUse:
-        'Strain and drink the water on an empty stomach, and chew the softened seeds. Helps modulate postprandial blood glucose and supports digestive regularity.',
-    dosage: '1 glass daily every morning.',
-    precautions: [
-      'Patients taking hypoglycemic medications should monitor blood sugar closely.',
-      'Avoid large quantities during pregnancy.',
-    ],
-    category: 'Diabetes & Digestion',
-    timeToPrepare: '5 mins (overnight soak)',
-  ),
+
+  // ──────────────────────────────────────────────────────────────────────────
+  // GOTU KOLA – Cognitive / Anxiety
+  // ──────────────────────────────────────────────────────────────────────────
   const Remedy(
     id: 'remedy_gotu_kola_tea',
-    condition: 'Headache & Mental Fatigue',
+    condition: 'Headache, Mental Fatigue & Cognitive Support',
     title: 'Gotu Kola (Mandukaparni) Clarity & Calming Tea',
-    primaryPlantName: 'Gotu Kola (Centella)',
+    primaryPlantName: 'Gotu Kola (Indian Pennywort)',
     primaryPlantScientific: 'Centella asiatica',
     plantId: 'gotu_kola_plant',
     ingredients: [
-      '6-8 fresh Gotu Kola leaves (or 1 tsp dried herb)',
-      '1 cup hot water',
-      '1/2 tsp honey',
+      '8-10 fresh Gotu Kola leaves (or 1 tsp dried herb)',
+      '1 cup hot water (just off the boil)',
+      '1/2 tsp raw honey',
+      'Pinch of black pepper (optional, enhances absorption)',
     ],
     preparationSteps: [
-      'Wash fresh leaves thoroughly.',
-      'Bruise leaves gently with fingertips and place in a cup.',
-      'Pour hot water over leaves and steep covered for 6-8 minutes.',
-      'Strain and add a drop of honey.',
+      'Wash fresh Gotu Kola leaves thoroughly in clean water.',
+      'Bruise the leaves gently with your fingertips to release the triterpenoids.',
+      'Place leaves in a cup and pour hot water over them.',
+      'Cover and steep for 6-8 minutes.',
+      'Strain and add honey and pepper when comfortably warm.',
     ],
     howToUse:
-        'Drink in the afternoon or evening to calm nervous tension, relieve tension headaches, and enhance cognitive resilience.',
-    dosage: '1 cup once or twice daily.',
+        'Drink in the afternoon or evening to calm nervous tension, relieve tension headaches, '
+        'and enhance cognitive resilience. Regular use supports memory and mental clarity.',
+    dosage: '1 cup once or twice daily. Cycle on for 6 weeks, then pause for 2 weeks.',
     precautions: [
       'Avoid high doses in liver disease or with sedative medications.',
+      'Limit continuous use to 6-week cycles to protect liver.',
     ],
     category: 'Headache',
-    timeToPrepare: '8 mins',
-  ),
-  const Remedy(
-    id: 'remedy_ylang_ylang_aroma',
-    condition: 'Stress & Insomnia',
-    title: 'Ylang Ylang Soothing Nighttime Aromatherapy',
-    primaryPlantName: 'Ylang Ylang',
-    primaryPlantScientific: 'Cananga odorata',
-    plantId: 'ylang_ylang_plant',
-    ingredients: [
-      '2 fresh Ylang Ylang blossoms (or 2-3 drops essential oil)',
-      'Diffuser or warm water bowl',
-    ],
-    preparationSteps: [
-      'Float fresh flowers in a bowl of warm water near the bedside or add 2 drops of essential oil to a diffuser.',
-    ],
-    howToUse:
-        'Inhale the naturally sedative floral aroma 20 minutes before retiring to bed to ease anxiety and promote restful sleep.',
-    dosage: 'Nightly aromatherapy session for 20-30 minutes.',
-    precautions: [
-      'Never ingest essential oils directly. Keep diffuser away from small pets.',
-    ],
-    category: 'Stress & Sleep',
-    timeToPrepare: '3 mins',
-  ),
-  const Remedy(
-    id: 'remedy_rosemary_steam',
-    condition: 'Sinus Headache & Congestion',
-    title: 'Rosemary Sinus Clearing Herbal Steam',
-    primaryPlantName: 'Rosemary',
-    primaryPlantScientific: 'Salvia rosmarinus',
-    plantId: 'rosemary_plant',
-    ingredients: [
-      '2 fresh rosemary sprigs (or 1 tbsp dried rosemary)',
-      '1 liter boiling water',
-      'Clean towel',
-    ],
-    preparationSteps: [
-      'Add rosemary sprigs to a bowl of steaming boiling water.',
-      'Crush sprigs with a wooden spoon to release 1,8-cineole and camphor oils.',
-    ],
-    howToUse:
-        'Drape towel over head and inhale steam gently with eyes closed for 5-8 minutes.',
-    dosage: 'Once or twice daily during sinus congestion.',
-    precautions: [
-      'Keep safe distance to prevent hot steam burns. Keep eyes closed.',
-    ],
-    category: 'Headache',
-    timeToPrepare: '5 mins',
-  ),
-  const Remedy(
-    id: 'remedy_neem_turmeric_paste',
-    condition: 'Acne & Skin Blemishes',
-    title: 'Purifying Neem & Turmeric Spot Compress',
-    primaryPlantName: 'Neem',
-    primaryPlantScientific: 'Azadirachta indica',
-    plantId: 'neem_plant',
-    ingredients: [
-      '10-12 fresh Neem leaves',
-      '1/4 tsp pure turmeric powder',
-      '1-2 tsp pure rosewater',
-    ],
-    preparationSteps: [
-      'Wash neem leaves thoroughly and grind to a smooth paste with minimal water.',
-      'Mix in turmeric powder and rosewater to form a thick, spreadable paste.',
-    ],
-    howToUse:
-        'Apply directly onto acne spots or inflamed blemishes. Leave on for 15-20 minutes, then rinse gently with lukewarm water.',
-    dosage: 'Apply once daily in the evening until inflammation calms.',
-    precautions: [
-      'Perform patch test on inner wrist before applying to facial skin.',
-      'Do not apply directly into open bleeding wounds or eyes.',
-    ],
-    category: 'Skin',
-    timeToPrepare: '8 mins',
-  ),
-  const Remedy(
-    id: 'remedy_pure_aloe_gel',
-    condition: 'Skin Irritation & Sunburn',
-    title: 'Pure Soothing Aloe Gel Compress',
-    primaryPlantName: 'Aloe Vera',
-    primaryPlantScientific: 'Aloe barbadensis miller',
-    plantId: 'aloe_vera_plant',
-    ingredients: [
-      '2 tbsp fresh clear inner Aloe Vera fillet',
-      '1 tsp pure rosewater',
-    ],
-    preparationSteps: [
-      'Extract clear inner gel, ensuring no yellow margin is included.',
-      'Mash or blend with rosewater until silky smooth.',
-      'Chill in refrigerator for 10 minutes.',
-    ],
-    howToUse:
-        'Spread cool gel generously over irritated, dry, or sunburned skin.',
-    dosage: 'Apply 2-3 times daily as soothing relief.',
-    precautions: [
-      'For external dermatological use only.',
-    ],
-    category: 'Skin',
     timeToPrepare: '10 mins',
+    isEducationalOnly: true,
   ),
+
   const Remedy(
-    id: 'remedy_neem_leaf_wash',
-    condition: 'Skin Infections & Dandruff',
-    title: 'Antiseptic Neem Leaf Cleansing Wash',
-    primaryPlantName: 'Neem',
-    primaryPlantScientific: 'Azadirachta indica',
-    plantId: 'neem_plant',
+    id: 'remedy_gotu_kola_skin_paste',
+    condition: 'Skin Wound Healing & Scar Reduction',
+    title: 'Gotu Kola Fresh Leaf Wound-Healing Paste',
+    primaryPlantName: 'Gotu Kola (Indian Pennywort)',
+    primaryPlantScientific: 'Centella asiatica',
+    plantId: 'gotu_kola_plant',
     ingredients: [
-      'A handful (20-25) of fresh Neem leaves',
-      '1 liter clean water',
+      '10-12 fresh Gotu Kola leaves, washed',
+      '1/2 tsp pure coconut oil or cold-pressed sesame oil',
     ],
     preparationSteps: [
-      'Boil neem leaves in water for 10-12 minutes until water turns greenish.',
-      'Strain leaves and let the liquid cool completely to room temperature.',
+      'Wash the leaves thoroughly in clean water.',
+      'Grind the fresh leaves with a small amount of coconut oil into a smooth paste.',
+      'Apply gently to the affected skin area.',
     ],
     howToUse:
-        'Use as a final hair rinse for stubborn dandruff, or as a topical antiseptic wash for itchy skin, boils, and fungal rashes.',
-    dosage: 'Use 2-3 times a week after bathing.',
+        'Apply the fresh paste directly over minor wounds, healing scars, or irritated skin. '
+        'Leave on for 20-30 minutes then rinse with cool water. '
+        'Asiaticoside actively stimulates collagen synthesis for faster healing.',
+    dosage: 'Apply once daily on clean skin for wound healing; twice weekly for scar reduction.',
     precautions: [
-      'Avoid contact with eyes; rinse immediately with cool water if stinging occurs.',
+      'Perform a patch test on inner forearm before facial or sensitive area application.',
+      'Do not apply to deep infected wounds without medical advice.',
     ],
-    category: 'Skin & Scalp',
-    timeToPrepare: '15 mins',
+    category: 'Skin',
+    timeToPrepare: '5 mins',
+    isEducationalOnly: true,
   ),
-  const Remedy(
-    id: 'remedy_rosemary_joint_rub',
-    condition: 'Joint & Muscle Aches',
-    title: 'Warm Rosemary Joint Massage Oil',
-    primaryPlantName: 'Rosemary',
-    primaryPlantScientific: 'Salvia rosmarinus',
-    plantId: 'rosemary_plant',
-    ingredients: [
-      '3 sprigs fresh rosemary bruised',
-      '1/4 cup virgin coconut or sesame oil',
-    ],
-    preparationSteps: [
-      'Warm oil gently in a double boiler.',
-      'Add bruised rosemary sprigs and steep on lowest heat for 20 minutes.',
-      'Strain into a clean glass jar.',
-    ],
-    howToUse:
-        'Massage warm herbal oil into stiff joints, knees, or fatigued muscles using circular strokes.',
-    dosage: 'Apply once daily before bath or before bed.',
-    precautions: [
-      'Ensure oil is warm, not hot, before applying to skin.',
-    ],
-    category: 'Joint & Muscle',
-    timeToPrepare: '25 mins',
-  ),
+
+  // ──────────────────────────────────────────────────────────────────────────
+  // INSULIN PLANT – Diabetes
+  // ──────────────────────────────────────────────────────────────────────────
   const Remedy(
     id: 'remedy_insulin_leaf_chew',
-    condition: 'Diabetes & Glucose Support',
-    title: 'Costus (Insulin Plant) Morning Protocol',
-    primaryPlantName: 'Insulin Plant (Fiery Costus)',
-    primaryPlantScientific: 'Costus igneus',
+    condition: 'Blood Sugar & Diabetes Support',
+    title: 'Insulin Plant (Costus) Morning Glycemic Protocol',
+    primaryPlantName: 'Insulin Plant (Spiral Ginger)',
+    primaryPlantScientific: 'Chamaecostus cuspidatus',
     plantId: 'insulin_plant',
     ingredients: [
       '1-2 fresh mature Insulin Plant leaves',
       '1 glass lukewarm water',
     ],
     preparationSteps: [
-      'Wash fresh leaves thoroughly in running water.',
+      'Harvest 1-2 mature leaves from the plant in the morning.',
+      'Wash the leaves thoroughly under running water.',
     ],
     howToUse:
-        'Chew 1 fresh leaf thoroughly on an empty stomach in the morning for the first 15 days, followed by a glass of lukewarm water.',
-    dosage: '1 leaf daily in morning on empty stomach.',
+        'Chew 1 fresh leaf thoroughly and slowly on an empty stomach in the morning. '
+        'Follow immediately with 1 glass of lukewarm water. The corosolic acid is absorbed '
+        'through the oral mucosa for best glycemic effect.',
+    dosage: '1 leaf daily in morning on empty stomach. Begin with 1 leaf for 15 days, '
+        'then assess blood sugar response before continuing.',
     precautions: [
-      'Adjuvant natural support only. Never stop or modify prescription insulin or diabetes medications without your physician.',
-      'Monitor blood glucose regularly.',
+      'This is a supportive natural adjuvant only. NEVER stop or reduce prescribed insulin '
+      'or diabetes medications without physician guidance.',
+      'Monitor blood glucose with a glucometer regularly.',
+      'Risk of hypoglycemia if used alongside strong antidiabetic drugs.',
     ],
     category: 'Diabetes',
     timeToPrepare: '2 mins',
+    isEducationalOnly: true,
   ),
+
+  // ──────────────────────────────────────────────────────────────────────────
+  // ASHWAGANDHA – Immunity / Stress / Energy
+  // ──────────────────────────────────────────────────────────────────────────
+  const Remedy(
+    id: 'remedy_ashwagandha_milk',
+    condition: 'Stress, Fatigue, Insomnia & Weak Immunity',
+    title: 'Ashwagandha Golden Milk (Adaptogenic Night Tonic)',
+    primaryPlantName: 'Ashwagandha (Indian Ginseng)',
+    primaryPlantScientific: 'Withania somnifera',
+    plantId: 'ashwagandha_plant',
+    ingredients: [
+      '1/2 tsp ashwagandha root powder (standardized)',
+      '1 cup warm full-fat milk (or oat/almond milk)',
+      '1/4 tsp pure turmeric powder',
+      '1/4 tsp Ceylon cinnamon powder',
+      '1 tsp raw honey or jaggery',
+      'Pinch of black pepper (enhances withanolide absorption)',
+    ],
+    preparationSteps: [
+      'Warm the milk gently in a saucepan on low heat (do not boil).',
+      'Add ashwagandha powder, turmeric, and cinnamon.',
+      'Whisk well until the powder is fully dissolved and no lumps remain.',
+      'Pour into a mug and allow to cool to a comfortable temperature.',
+      'Stir in honey or jaggery and a pinch of black pepper before drinking.',
+    ],
+    howToUse:
+        'Drink warm every night 30 minutes before bedtime. The adaptogenic withanolides '
+        'reduce cortisol, calm the nervous system, and promote deep restorative sleep. '
+        'Consistent use over 4-8 weeks shows best results for stress reduction.',
+    dosage: '1 cup nightly before bed. Continue for minimum 4-6 weeks for full adaptogenic benefit.',
+    precautions: [
+      'Avoid in pregnancy and hyperthyroid conditions.',
+      'Discontinue 2 weeks before any scheduled surgery.',
+      'Start with 1/4 tsp and gradually increase to assess tolerance.',
+    ],
+    category: 'Stress & Sleep',
+    timeToPrepare: '5 mins',
+    isEducationalOnly: true,
+  ),
+
+  // ──────────────────────────────────────────────────────────────────────────
+  // ROSEMARY – Hair / Joints / Cognitive
+  // ──────────────────────────────────────────────────────────────────────────
   const Remedy(
     id: 'remedy_rosemary_scalp_oil',
-    condition: 'Hair Fall & Scalp Health',
+    condition: 'Hair Loss & Scalp Stimulation',
     title: 'Rosemary Scalp Follicle Stimulating Tonic',
     primaryPlantName: 'Rosemary',
     primaryPlantScientific: 'Salvia rosmarinus',
     plantId: 'rosemary_plant',
     ingredients: [
-      '2 sprigs fresh rosemary (or 5 drops pure rosemary essential oil)',
+      '2 fresh rosemary sprigs (or 5 drops pure rosemary essential oil)',
       '2 tbsp cold-pressed jojoba or coconut oil',
     ],
     preparationSteps: [
-      'Mix rosemary extract into carrier oil thoroughly.',
+      'If using fresh sprigs: gently bruise the rosemary between your fingers to release oils.',
+      'Mix rosemary into carrier oil and warm gently in a double boiler for 20 minutes.',
+      'Alternatively, if using essential oil: simply mix 5 drops into 2 tbsp carrier oil and blend well.',
+      'Strain if using fresh herb and store in a clean glass bottle.',
     ],
     howToUse:
-        'Part hair and massage 5-10 drops directly into scalp with fingertips for 5 minutes. Leave on for 30-60 minutes before washing with mild shampoo.',
-    dosage: 'Apply 2-3 times weekly.',
+        'Part the hair and massage 8-10 drops of the oil directly into the scalp with '
+        'fingertip circular motion for 5 full minutes to boost blood circulation. '
+        'Leave on for a minimum of 30-60 minutes (or overnight) before washing.',
+    dosage: 'Apply 2-3 times weekly for at least 3 months to see significant hair growth results.',
     precautions: [
-      'Dilute pure essential oil properly in carrier oil before scalp application.',
+      'Never apply undiluted rosemary essential oil directly to scalp — always dilute properly.',
+      'Epilepsy patients should avoid rosemary essential oil entirely.',
     ],
     category: 'Hair & Scalp',
     timeToPrepare: '5 mins',
+    isEducationalOnly: true,
   ),
+
   const Remedy(
-    id: 'remedy_bryophyllum_poultice',
-    condition: 'Wound Healing & Inflammation',
-    title: 'Bryophyllum Warm Leaf Poultice',
-    primaryPlantName: 'Bryophyllum (Pashanbheda)',
-    primaryPlantScientific: 'Bryophyllum pinnatum',
-    plantId: 'bryophyllum_plant',
+    id: 'remedy_rosemary_joint_rub',
+    condition: 'Joint & Muscle Aches',
+    title: 'Warm Rosemary Anti-Inflammatory Joint Massage Oil',
+    primaryPlantName: 'Rosemary',
+    primaryPlantScientific: 'Salvia rosmarinus',
+    plantId: 'rosemary_plant',
     ingredients: [
-      '2 thick fleshy Bryophyllum leaves',
-      'Few drops pure castor oil or ghee',
+      '3 sprigs fresh rosemary, bruised',
+      '1/4 cup virgin coconut or sesame oil',
     ],
     preparationSteps: [
-      'Wash leaves and lightly smear one side with ghee or castor oil.',
-      'Gently warm the leaf over a low flame or hot pan until pliable.',
+      'Warm oil gently in a double boiler on lowest heat.',
+      'Add the bruised rosemary sprigs and steep on the lowest possible heat for 20 minutes.',
+      'Strain the infused oil into a clean glass jar.',
     ],
     howToUse:
-        'Apply the warm leaf directly over closed bruises, sprains, or minor skin swellings and bind with a clean gauze.',
-    dosage: 'Apply once daily for 30 minutes.',
+        'Warm a small amount of oil between palms and massage thoroughly into stiff joints, '
+        'aching knees, or fatigued muscles using firm circular strokes. '
+        'The ursolic acid in rosemary inhibits COX-2 inflammatory enzymes.',
+    dosage: 'Apply once daily, ideally before bathing or before bed for best absorption.',
     precautions: [
-      'Do not place over deep infected or open puncture wounds.',
+      'Ensure oil is comfortably warm, not hot, before applying to avoid burns.',
     ],
-    category: 'Skin & Bruises',
-    timeToPrepare: '5 mins',
+    category: 'Joint & Muscle',
+    timeToPrepare: '25 mins',
+    isEducationalOnly: true,
   ),
+
   const Remedy(
-    id: 'remedy_ayapana_infusion',
-    condition: 'Stomach Cramps & Bleeding Cuts',
-    title: 'Ayapana Soothing Leaf Decoction',
-    primaryPlantName: 'Ayapana',
-    primaryPlantScientific: 'Ayapana triplinervis',
-    plantId: 'ayapana_plant',
+    id: 'remedy_rosemary_steam',
+    condition: 'Sinus Headache & Nasal Congestion',
+    title: 'Rosemary Sinus Clearing Herbal Steam Inhalation',
+    primaryPlantName: 'Rosemary',
+    primaryPlantScientific: 'Salvia rosmarinus',
+    plantId: 'rosemary_plant',
     ingredients: [
-      '4-5 fresh Ayapana leaves',
-      '1.5 cups clean water',
-    ],
-    preparationSteps: [
-      'Wash and crush leaves gently.',
-      'Boil in water for 5 minutes until water takes a pale tint.',
-      'Strain into a cup.',
-    ],
-    howToUse:
-        'Sip warm to alleviate stomach cramps and indigestion, or use cool crushed leaf pulp as traditional hemostatic poultice for minor surface scrapes.',
-    dosage: '1 cup once daily.',
-    precautions: [
-      'Do not use during pregnancy.',
-    ],
-    category: 'Mild Indigestion',
-    timeToPrepare: '7 mins',
-  ),
-  const Remedy(
-    id: 'remedy_clocimum_steam',
-    condition: 'Cough & Sinus Congestion',
-    title: 'Clocimum (Clove Basil) Therapeutic Steam',
-    primaryPlantName: 'Clocimum (Clove Basil)',
-    primaryPlantScientific: 'Ocimum gratissimum',
-    plantId: 'clocimum_plant',
-    ingredients: [
-      '8-10 fresh Clocimum leaves',
+      '2-3 fresh rosemary sprigs (or 1 tbsp dried rosemary)',
       '1 liter boiling water',
+      'Clean large towel',
     ],
     preparationSteps: [
-      'Bruise eugenol-rich leaves and immerse in boiling water.',
+      'Pour 1 liter of freshly boiled water into a wide-mouthed heat-safe bowl.',
+      'Add rosemary sprigs and crush them with a wooden spoon to release 1,8-cineole and camphor oils.',
+      'Allow to sit for 30 seconds before beginning inhalation.',
     ],
     howToUse:
-        'Inhale vapors with a towel tent over the head for 5-7 minutes to relieve chest and sinus heaviness.',
-    dosage: 'Once daily during congestion.',
+        'Drape towel over head and the bowl to form a steam tent. '
+        'Inhale the fragrant steam gently with eyes firmly closed for 5-8 minutes. '
+        'The camphor and 1,8-cineole clear blocked sinuses and sharpen mental alertness.',
+    dosage: 'Once or twice daily during active sinus congestion or tension headache.',
     precautions: [
-      'Keep eyes closed to avoid eugenol vapor irritation.',
+      'Keep face at a safe distance — at least 30 cm — to prevent hot steam burns.',
+      'Always keep eyes closed during inhalation.',
+      'Do not use if you have epilepsy due to high camphor content.',
     ],
-    category: 'Cold',
+    category: 'Headache',
     timeToPrepare: '5 mins',
+    isEducationalOnly: true,
+  ),
+
+  // ──────────────────────────────────────────────────────────────────────────
+  // YLANG YLANG – Stress / Anxiety / Hair
+  // ──────────────────────────────────────────────────────────────────────────
+  const Remedy(
+    id: 'remedy_ylang_ylang_aroma',
+    condition: 'Anxiety, Stress & Insomnia',
+    title: 'Ylang Ylang Soothing Nighttime Aromatherapy',
+    primaryPlantName: 'Ylang Ylang',
+    primaryPlantScientific: 'Cananga odorata',
+    plantId: 'ylang_ylang_plant',
+    ingredients: [
+      '2-3 fresh Ylang Ylang blossoms (or 2-3 drops pure essential oil)',
+      'Diffuser or warm water bowl',
+    ],
+    preparationSteps: [
+      'Option A — Fresh flowers: Float 2-3 fresh blossoms in a bowl of warm water and '
+          'place near the bedside.',
+      'Option B — Essential oil: Add 2-3 drops of ylang ylang essential oil to a room '
+          'diffuser filled with 100 ml water.',
+    ],
+    howToUse:
+        'Inhale the naturally sedative floral aroma for 20-30 minutes before retiring to bed. '
+        'The linalool and benzyl acetate activate GABA receptors to ease anxiety, '
+        'lower blood pressure, and promote deep restful sleep.',
+    dosage: 'Nightly aromatherapy session of 20-30 minutes. '
+        'For acute stress relief, a 5-minute targeted inhalation is effective.',
+    precautions: [
+      'Never ingest essential oils directly.',
+      'Diffuse with good room ventilation to avoid headache from concentrated inhalation.',
+      'Keep diffuser away from small pets and infants.',
+      'Avoid if you have hypotension as Ylang Ylang can further lower blood pressure.',
+    ],
+    category: 'Stress & Sleep',
+    timeToPrepare: '3 mins',
+    isEducationalOnly: true,
+  ),
+
+  // ──────────────────────────────────────────────────────────────────────────
+  // WOOD APPLE – Digestive
+  // ──────────────────────────────────────────────────────────────────────────
+  const Remedy(
+    id: 'remedy_wood_apple_digestive',
+    condition: 'Digestive Upset, Diarrhea & Liver Health',
+    title: 'Wood Apple Gut-Balancing Probiotic Sherbet',
+    primaryPlantName: 'Wood Apple (Elephant Apple)',
+    primaryPlantScientific: 'Limonia acidissima',
+    plantId: 'wood_apple_plant',
+    ingredients: [
+      '3-4 tablespoons fresh pulp of ripe Wood Apple fruit',
+      '1 glass cool water',
+      'Pinch of roasted cumin powder',
+      '1 tsp raw sugar or jaggery',
+      'Pinch of rock salt',
+    ],
+    preparationSteps: [
+      'Crack open the hard woody shell of the Wood Apple fruit carefully.',
+      'Scoop out the aromatic brown pulp and soak it in 1 glass of cool water for 10 minutes.',
+      'Mash the pulp thoroughly with a spoon and strain through a fine sieve to remove seeds and fibers.',
+      'Add roasted cumin powder, rock salt, and jaggery to the strained liquid.',
+    ],
+    howToUse:
+        'Drink chilled or at room temperature before meals. '
+        'Wood Apple is renowned in Ayurveda for healing intestinal epithelium, treating IBS, '
+        'and balancing gut microbiota through its pectin and tannin content.',
+    dosage: '1 glass once daily, preferably before the main afternoon meal.',
+    precautions: [
+      'Avoid excessive consumption which can cause constipation due to high tannin content.',
+      'Not recommended for those with severe constipation.',
+    ],
+    category: 'Digestive',
+    timeToPrepare: '15 mins',
+    isEducationalOnly: true,
+  ),
+
+  // ──────────────────────────────────────────────────────────────────────────
+  // PIRANDAI – Bone / Joint
+  // ──────────────────────────────────────────────────────────────────────────
+  const Remedy(
+    id: 'remedy_pirandai_preparation',
+    condition: 'Bone Fracture Healing, Joint Pain & Osteoporosis',
+    title: 'Pirandai (Hadjod) Traditional Bone-Healing Preparation',
+    primaryPlantName: 'Pirandai (Veldt Grape)',
+    primaryPlantScientific: 'Cissus quadrangularis',
+    plantId: 'pirandai_plant',
+    ingredients: [
+      '200 g fresh Pirandai stems, peeled and chopped',
+      '1 tbsp sesame oil or ghee',
+      '1/2 tsp turmeric powder',
+      '1/2 tsp dry ginger powder',
+      'Salt and pepper to taste',
+      '1/2 cup warm milk (for dry powder preparation)',
+    ],
+    preparationSteps: [
+      'Peel the outer layer of the quadrangular stems to remove the fibrous skin and calcium oxalate.',
+      'Chop the stems into small pieces.',
+      'Option A (Food): Sauté the chopped stems in sesame oil with turmeric and ginger '
+          'until cooked through, about 8-10 minutes. Serve as a vegetable side dish.',
+      'Option B (Medicinal powder): Sun-dry the stems for 3-4 days, then grind to a fine powder. '
+          'Mix 1/2 tsp powder in warm milk with turmeric and honey.',
+    ],
+    howToUse:
+        'As a cooked vegetable: eat alongside regular meals 3-4 times per week. '
+        'As a milk decoction: drink 1 cup warm in the morning for bone strengthening. '
+        'The ketosterone phytosterols directly stimulate osteoblast bone-forming cells.',
+    dosage: '1/2 tsp dried stem powder in warm milk once daily; '
+        'or 1/2 cup cooked stems 3-4 times per week.',
+    precautions: [
+      'ALWAYS cook or peel Pirandai stems before consumption — raw stems contain '
+      'irritating calcium oxalate crystals.',
+      'Consult a physician before using as a fracture adjuvant with other medications.',
+    ],
+    category: 'Bone & Joint',
+    timeToPrepare: '15 mins',
+    isEducationalOnly: true,
   ),
 ];

@@ -278,7 +278,7 @@ class BackendRecognitionService implements RecognitionService {
       debugPrint('[DatabaseLookup Warning] SQLite query failed: $e');
     }
 
-    // 2. In-Memory fallback: Instant resolution from verified 11-species catalog
+    // 2. In-Memory fallback: Instant resolution from the verified 10-class MediPlant catalog
     try {
       final cleanQuery = normalized.replaceAll('_plant', '').replaceAll('_', ' ');
       for (final p in mockPlants) {

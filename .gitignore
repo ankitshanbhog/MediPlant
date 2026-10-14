@@ -47,11 +47,15 @@ app.*.map.json
 # ML / Python Backend - Large files excluded from git
 # The training dataset is ~5.4GB - store via Git LFS or separately
 MediPlant_backend/Medicinal_dataset/
+MediPlant_backend/Medicinal_dataset_split/
+MediPlant_backend/Dataset_All/
 MediPlant_backend/Check_dataset/
 MediPlant_backend/venv/
 MediPlant_backend/__pycache__/
 MediPlant_backend/*.keras
 MediPlant_backend/*.h5
+*.keras
+*.h5
 
 # Python cache
 __pycache__/

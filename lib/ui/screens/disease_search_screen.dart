@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../data/database_helper.dart';
 import '../../viewmodels/search_viewmodel.dart';
+import '../../viewmodels/voice_viewmodel.dart';
 import '../theme/app_colors.dart';
 import '../widgets/disease_chip.dart';
 import '../widgets/plant_card.dart';
@@ -202,6 +203,32 @@ class DiseaseSearchScreen extends StatelessWidget {
                                     ),
                                   ],
                                 ),
+                              ),
+                              Builder(
+                                builder: (ctx) {
+                                  final voiceVM = ctx.watch<VoiceViewModel>();
+                                  final isThisSpeaking = voiceVM.isPlaying && voiceVM.currentNarrationTitle == d.name;
+                                  return IconButton(
+                                    visualDensity: VisualDensity.compact,
+                                    padding: EdgeInsets.zero,
+                                    constraints: const BoxConstraints(),
+                                    icon: Icon(
+                                      isThisSpeaking ? Icons.volume_up_rounded : Icons.volume_down_rounded,
+                                      color: isThisSpeaking ? AppColors.primaryAccent : AppColors.textSecondaryLight,
+                                      size: 20,
+                                    ),
+                                    onPressed: () {
+                                      final plantNames = d.relatedPlantIds.map(_formatPlantId).join(', ');
+                                      final speechText =
+                                          '${d.name}. Category: ${d.category}. '
+                                          '${d.description}. '
+                                          'Key symptoms: ${d.symptoms.join(', ')}. '
+                                          'Recommended medicinal plants: $plantNames.';
+                                      voiceVM.togglePlayPause(title: d.name, text: speechText);
+                                    },
+                                    tooltip: 'Listen to Condition & Plants',
+                                  );
+                                },
                               ),
                             ],
                           ),
