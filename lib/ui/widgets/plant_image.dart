@@ -21,14 +21,28 @@ class PlantImage extends StatelessWidget {
     this.borderRadius,
   });
 
-  String get _assetPath {
+  static String resolveAssetPath(String plantId) {
     final cleanId = plantId
         .trim()
+        .toLowerCase()
         .replaceAll('.jpg', '')
         .replaceAll('.jpeg', '')
-        .replaceAll('.png', '');
-    return 'assets/plants/$cleanId.jpg';
+        .replaceAll('.png', '')
+        .replaceAll('.webp', '');
+
+    if (cleanId == 'malabar_nut' || cleanId == 'malabar_nut_plant') {
+      return 'assets/plants/malabar_nut_plant.jpg';
+    }
+    if (cleanId == 'pirandai' || cleanId == 'pirandai_plant') {
+      return 'assets/plants/pirandai_plant.webp';
+    }
+    if (cleanId.endsWith('_plant')) {
+      return 'assets/plants/$cleanId.jpg';
+    }
+    return 'assets/plants/${cleanId}_plant.jpg';
   }
+
+  String get _assetPath => resolveAssetPath(plantId);
 
   @override
   Widget build(BuildContext context) {
@@ -38,20 +52,35 @@ class PlantImage extends StatelessWidget {
       height: height,
       fit: fit,
       errorBuilder: (context, error, stackTrace) {
-        if (fallbackUrl != null && fallbackUrl!.isNotEmpty && fallbackUrl!.startsWith('http')) {
-          return Image.network(
-            fallbackUrl!,
-            width: width,
-            height: height,
-            fit: fit,
-            errorBuilder: (context, err, stack) => _buildPlaceholder(),
-            loadingBuilder: (context, child, progress) {
-              if (progress == null) return child;
-              return _buildPlaceholder(isLoading: true);
-            },
-          );
-        }
-        return _buildPlaceholder();
+        // Try alternate asset file if initial fails (e.g. pirandai_plant.jpg or malabar_nut.jpg)
+        final fallbackAsset = _assetPath.endsWith('.webp')
+            ? _assetPath.replaceAll('.webp', '.jpg')
+            : (_assetPath.contains('_plant')
+                ? _assetPath.replaceAll('_plant.jpg', '.jpg')
+                : _assetPath.replaceAll('.jpg', '_plant.jpg'));
+
+        return Image.asset(
+          fallbackAsset,
+          width: width,
+          height: height,
+          fit: fit,
+          errorBuilder: (context, err2, stack2) {
+            if (fallbackUrl != null && fallbackUrl!.isNotEmpty && fallbackUrl!.startsWith('http')) {
+              return Image.network(
+                fallbackUrl!,
+                width: width,
+                height: height,
+                fit: fit,
+                errorBuilder: (context, err, stack) => _buildPlaceholder(),
+                loadingBuilder: (context, child, progress) {
+                  if (progress == null) return child;
+                  return _buildPlaceholder(isLoading: true);
+                },
+              );
+            }
+            return _buildPlaceholder();
+          },
+        );
       },
     );
 

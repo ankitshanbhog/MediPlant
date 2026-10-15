@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../data/models/plant_model.dart';
 import '../../services/backend_recognition_service.dart';
-import '../../viewmodels/history_viewmodel.dart';
 import '../../viewmodels/recognition_viewmodel.dart';
 import '../theme/app_colors.dart';
 import 'plant_encyclopedia_screen.dart';
@@ -48,7 +47,6 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final recognitionVM = context.read<RecognitionViewModel>();
-    final historyVM = context.watch<HistoryViewModel>();
 
     return Scaffold(
       backgroundColor: isDark ? AppColors.backgroundDark : const Color(0xFFF6FAF7),
@@ -365,82 +363,6 @@ class _HomeScreenState extends State<HomeScreen> {
                     );
                   },
                 ),
-                const SizedBox(height: 20),
-                if (historyVM.items.isNotEmpty) ...[
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text(
-                        'Recent Identifications',
-                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.w900, letterSpacing: -0.3),
-                      ),
-                      TextButton(
-                        onPressed: widget.onNavigateToHistory,
-                        child: const Text('History', style: TextStyle(fontWeight: FontWeight.w700)),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  ...historyVM.items.take(3).map((item) {
-                    return Container(
-                      margin: const EdgeInsets.only(bottom: 10),
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: isDark ? AppColors.surfaceDark : Colors.white,
-                        borderRadius: BorderRadius.circular(16),
-                        border: Border.all(
-                          color: isDark ? AppColors.borderDark : const Color(0xFFE5EBE7),
-                        ),
-                      ),
-                      child: Row(
-                        children: [
-                          Container(
-                            width: 54,
-                            height: 54,
-                            decoration: BoxDecoration(color: AppColors.lightMint, borderRadius: BorderRadius.circular(12)),
-                            child: const Icon(Icons.spa, color: AppColors.primary),
-                          ),
-                          const SizedBox(width: 14),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  item.plantName,
-                                  style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 15),
-                                ),
-                                const SizedBox(height: 2),
-                                Text(
-                                  item.scientificName,
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    fontStyle: FontStyle.italic,
-                                    color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                            decoration: BoxDecoration(
-                              color: const Color(0xFFE8F5E9),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Text(
-                              '${(item.confidence * 100).toStringAsFixed(0)}%',
-                              style: const TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w800,
-                                color: Color(0xFF2E7D32),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    );
-                  }),
-                ],
               ],
             ),
           ),
