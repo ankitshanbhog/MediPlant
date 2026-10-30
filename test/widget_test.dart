@@ -22,8 +22,8 @@ void main() {
       final repo = MockPlantRepository();
       final plants = await repo.getAllPlants();
       expect(plants.isNotEmpty, true);
-      expect(plants.any((p) => p.id == 'tulsi_plant'), true);
-      expect(plants.any((p) => p.id == 'aloe_vera_plant'), true);
+      expect(plants.any((p) => p.id == 'tulsi'), true);
+      expect(plants.any((p) => p.id == 'aloe_vera'), true);
     });
 
     test('DiseaseRepository searches conditions accurately', () async {

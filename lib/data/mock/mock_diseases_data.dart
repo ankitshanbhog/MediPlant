@@ -1,383 +1,383 @@
 import '../models/disease_model.dart';
 
-/// Disease database for the MediPlant 10-class model.
-/// All relatedPlantIds reference only the 10 supported plant classes:
-///   ashwagandha_plant, ayapana_plant, cinnamon_plant, gotu_kola_plant,
-///   insulin_plant, malabar_nut, pirandai_plant, rosemary_plant,
-///   wood_apple_plant, ylang_ylang_plant
+/// Disease and health conditions database for all 13 supported MediPlant species:
+///   aloe_vera, amla, ashwagandha, ayapana, brahmi, gotu_kola, moringa,
+///   multi_vitamin_plant, neem, rosemary, sarpagandha, tulsi, wood_apple
 final List<Disease> mockDiseases = [
   const Disease(
     id: 'cough',
     name: 'Cough & Chest Congestion',
     category: 'Respiratory',
     description:
-        'A reflex response to clear the respiratory tract of irritants, mucus, and infectious '
-        'microbes. Herbal expectorants and demulcents help soothe irritated throat tissue and '
-        'facilitate phlegm expulsion. Malabar Nut (Vasaka) is the gold-standard Ayurvedic herb '
-        'for respiratory mucus clearance.',
+        'A reflex response to clear the respiratory tract of irritants, mucus, and infectious microbes. '
+        'Herbal expectorants, bronchodilators, and demulcents soothe inflamed mucosal linings and facilitate '
+        'productive phlegm expulsion. Tulsi, Rosemary, and Ayapana provide powerful respiratory relief.',
     symptoms: [
-      'Dry or productive cough',
-      'Chest tightness or heaviness',
-      'Throat tickle and irritation',
-      'Post-nasal drip',
+      'Productive chest cough with thick mucus',
+      'Dry, scratchy throat tickle',
+      'Chest tightness and wheezing',
+      'Post-nasal drip and bronchial irritation',
     ],
     iconName: 'air',
     relatedPlantIds: [
-      'malabar_nut',
-      'cinnamon_plant',
-      'ayapana_plant',
-      'gotu_kola_plant',
-      'ashwagandha_plant',
+      'tulsi',
+      'rosemary',
+      'ayapana',
+      'moringa',
+      'ashwagandha',
     ],
     homeRemedyIds: [
-      'remedy_malabar_nut_decoction',
-      'remedy_cinnamon_honey_tea',
-      'remedy_ayapana_infusion',
+      'remedy_tulsi_ginger_kadha',
+      'remedy_tulsi_sinus_steam',
+      'remedy_rosemary_steam_inhalation',
     ],
     medicalDisclaimer:
-        'This information is for educational purposes only. Always consult a qualified healthcare '
-        'professional for diagnosis and treatment of persistent or severe cough.',
+        'This information is for educational purposes only. Always consult a qualified physician '
+        'if coughing persists beyond 7 days, produces blood, or is accompanied by high fever.',
   ),
+
   const Disease(
     id: 'cold',
-    name: 'Common Cold & Flu',
+    name: 'Common Cold & Upper Respiratory Virus',
     category: 'Respiratory',
     description:
-        'A viral infection of the upper respiratory tract causing nasal blockage, sneezing, malaise, '
-        'and mild fever. Supportive natural herbs stimulate immunity and clear nasal congestion. '
-        'Ashwagandha and Cinnamon are key immunomodulatory and warming herbs for cold management.',
+        'Viral infection of the upper respiratory tract causing mucosal congestion, sneezing, '
+        'rhinorrhea, low-grade fever, and general fatigue. Antiviral, warming adaptogenic herbs '
+        'stimulate phagocytosis, clear nasal passageways, and truncate symptom duration.',
     symptoms: [
-      'Runny or stuffy nose',
-      'Sneezing and sinus pressure',
-      'Mild feverish feeling and chills',
-      'Body fatigue and malaise',
+      'Runny or blocked nasal passages',
+      'Frequent sneezing and sinus heaviness',
+      'Throat soreness and swallowing discomfort',
+      'Mild feverish sensation and body aches',
     ],
     iconName: 'ac_unit',
     relatedPlantIds: [
-      'cinnamon_plant',
-      'gotu_kola_plant',
-      'rosemary_plant',
-      'ayapana_plant',
-      'ashwagandha_plant',
+      'tulsi',
+      'amla',
+      'rosemary',
+      'ashwagandha',
+      'ayapana',
     ],
     homeRemedyIds: [
-      'remedy_cinnamon_honey_tea',
-      'remedy_rosemary_steam',
-      'remedy_ayapana_infusion',
+      'remedy_tulsi_ginger_kadha',
+      'remedy_amla_immunity_elixir',
+      'remedy_rosemary_steam_inhalation',
     ],
     medicalDisclaimer:
-        'This information is for educational purposes only. Seek medical attention if flu symptoms '
-        'are severe, worsen rapidly, or persist beyond 7 days.',
+        'Herbal remedies support immune recovery. Seek medical attention if you experience '
+        'difficulty breathing, severe chest pain, or symptoms lasting over 10 days.',
   ),
+
   const Disease(
     id: 'indigestion',
-    name: 'Indigestion, Gas & Acid Reflux',
-    category: 'Digestive',
+    name: 'Indigestion, Gastric Acidity & Dyspepsia',
+    category: 'Digestion',
     description:
-        'Discomfort in the upper abdomen characterized by bloating, fullness, burping, and acid '
-        'sensation. Wood Apple and Ayapana are premier digestive herbs with proven carminative '
-        'and gastrointestinal soothing properties in South Asian tradition.',
+        'Gastrointestinal distress characterized by epigastric burning, acid regurgitation, bloating, '
+        'and delayed gastric emptying. Cooling mucilaginous plants and carminatives restore the stomach’s '
+        'protective mucosal barrier, neutralize excess hydrochloric acid, and soothe irritation.',
     symptoms: [
-      'Upper abdominal bloating',
-      'Burning sensation in chest or throat',
-      'Excess gas and flatulence',
-      'Post-meal heaviness and nausea',
+      'Epigastric fullness and burning heartburn',
+      'Sour acid eructation after eating',
+      'Abdominal distention, bloating, and gas',
+      'Mild nausea or sluggish morning appetite',
     ],
     iconName: 'restaurant',
     relatedPlantIds: [
-      'wood_apple_plant',
-      'ayapana_plant',
-      'cinnamon_plant',
-      'gotu_kola_plant',
-      'insulin_plant',
+      'wood_apple',
+      'aloe_vera',
+      'ayapana',
+      'amla',
+      'tulsi',
     ],
     homeRemedyIds: [
-      'remedy_wood_apple_digestive',
-      'remedy_ayapana_infusion',
-      'remedy_cinnamon_honey_tea',
+      'remedy_wood_apple_sharbat',
+      'remedy_aloe_vera_digestive_juice',
+      'remedy_ayapana_digestive_infusion',
     ],
     medicalDisclaimer:
-        'This information is for educational purposes only. Consult a doctor for persistent '
-        'acid reflux or suspected peptic ulcers.',
+        'Chronic recurrent heartburn may indicate GERD or peptic ulcer disease. '
+        'Consult a gastroenterologist if symptoms persist or interfere with nutrition.',
   ),
+
   const Disease(
-    id: 'headache',
-    name: 'Tension Headache & Stress',
-    category: 'Neurological',
+    id: 'stress_anxiety',
+    name: 'Chronic Stress, Anxiety & Adrenal Fatigue',
+    category: 'Stress & Mental Wellness',
     description:
-        'Mild to moderate diffuse ache or pressure around the temples, forehead, and neck muscles '
-        'caused by mental stress, eye strain, or muscular tension. Gotu Kola, Rosemary, and '
-        'Ylang Ylang are proven herbal allies for tension headache and stress-related symptoms.',
+        'Protracted nervous system overdrive mediated by elevated hypothalamic-pituitary-adrenal (HPA) '
+        'axis activation and cortisol surges. Adaptogenic and nervine herbs modulate GABA and serotonin '
+        'pathways, restore adrenal equilibrium, and promote calm focus without sedation.',
     symptoms: [
-      'Dull, aching head pain',
-      'Tightness across forehead or back of head',
-      'Tenderness in scalp, neck, and shoulder muscles',
-      'Fatigue and irritability',
+      'Restless, racing thoughts and nervous tension',
+      'Chronic daytime fatigue and brain fog',
+      'Palpitations and muscle tightness in neck/shoulders',
+      'Difficulty falling asleep and fragmented sleep',
     ],
-    iconName: 'psychology',
+    iconName: 'self_improvement',
     relatedPlantIds: [
-      'gotu_kola_plant',
-      'rosemary_plant',
-      'ylang_ylang_plant',
-      'ashwagandha_plant',
-      'cinnamon_plant',
+      'ashwagandha',
+      'brahmi',
+      'gotu_kola',
+      'sarpagandha',
+      'tulsi',
     ],
     homeRemedyIds: [
-      'remedy_gotu_kola_tea',
-      'remedy_ylang_ylang_aroma',
-      'remedy_rosemary_steam',
+      'remedy_ashwagandha_moon_milk',
+      'remedy_brahmi_memory_ghee',
+      'remedy_gotu_kola_memory_salad',
+      'remedy_sarpagandha_bp_infusion',
     ],
     medicalDisclaimer:
-        'This information is for educational purposes only. Sudden severe headache, vision changes, '
-        'or neurological symptoms require emergency medical care.',
+        'Adaptogens provide natural emotional and nervous system balance. '
+        'Severe panic disorders or clinical depression require comprehensive psychiatric evaluation.',
   ),
+
   const Disease(
-    id: 'anxiety_sleep',
-    name: 'Insomnia, Anxiety & Fatigue',
-    category: 'Mental Wellness',
+    id: 'skin_acne',
+    name: 'Acne, Skin Inflammation & Blemishes',
+    category: 'Skin',
     description:
-        'Difficulty initiating or maintaining restful sleep accompanied by daytime restlessness, '
-        'elevated cortisol, and mental hyperactivity. Ashwagandha (adaptogen), Ylang Ylang '
-        '(anxiolytic aroma), and Gotu Kola (nervine) form a powerful trifecta for natural '
-        'stress and sleep support.',
+        'Inflammatory follicular obstruction driven by sebum hypersecretion, Propionibacterium acnes '
+        'colonization, and cutaneous microbial imbalance. Potent antibacterial limonoids and soothing '
+        'aloe acemannan reduce redness, accelerate healing, and clear cystic outbreaks without scarring.',
     symptoms: [
-      'Trouble falling asleep',
-      'Frequent nighttime awakenings',
-      'Racing thoughts and mental tension',
-      'Chronic daytime tiredness and exhaustion',
-    ],
-    iconName: 'bedtime',
-    relatedPlantIds: [
-      'ashwagandha_plant',
-      'ylang_ylang_plant',
-      'gotu_kola_plant',
-      'rosemary_plant',
-      'cinnamon_plant',
-    ],
-    homeRemedyIds: [
-      'remedy_ashwagandha_milk',
-      'remedy_ylang_ylang_aroma',
-      'remedy_gotu_kola_tea',
-    ],
-    medicalDisclaimer:
-        'This information is for educational purposes only. Persistent insomnia or severe anxiety '
-        'disorders require professional mental health evaluation.',
-  ),
-  const Disease(
-    id: 'joint_pain',
-    name: 'Joint Stiffness, Arthritis & Bone Health',
-    category: 'Musculoskeletal',
-    description:
-        'Chronic or exertion-induced joint inflammation, stiffness, and reduced mobility. '
-        'Pirandai (Hadjod) is the premier Ayurvedic bone-strengthening herb, while Rosemary '
-        'and Cinnamon provide powerful anti-inflammatory support for arthritic joints.',
-    symptoms: [
-      'Morning joint stiffness and reduced mobility',
-      'Aching knees, wrists, or hips',
-      'Localized mild swelling and tenderness',
-      'Reduced range of joint motion',
-    ],
-    iconName: 'accessibility_new',
-    relatedPlantIds: [
-      'pirandai_plant',
-      'rosemary_plant',
-      'cinnamon_plant',
-      'gotu_kola_plant',
-      'ashwagandha_plant',
-    ],
-    homeRemedyIds: [
-      'remedy_pirandai_preparation',
-      'remedy_rosemary_joint_rub',
-      'remedy_cinnamon_honey_tea',
-    ],
-    medicalDisclaimer:
-        'This information is for educational purposes only. Rheumatoid arthritis and severe '
-        'osteoarthritis require qualified medical management.',
-  ),
-  const Disease(
-    id: 'fever_immunity',
-    name: 'Seasonal Fever & Weak Immunity',
-    category: 'Immunity',
-    description:
-        'Elevated body temperature during viral seasons or recurring infections signaling a need '
-        'for natural immunomodulators and antipyretics. Ashwagandha is the premier Ayurvedic '
-        'immunomodulator, while Ayapana provides direct antipyretic effects.',
-    symptoms: [
-      'Elevated body temperature',
-      'Generalized body aches and malaise',
-      'Loss of appetite and lethargy',
-      'Susceptibility to recurrent infections',
-    ],
-    iconName: 'shield',
-    relatedPlantIds: [
-      'ashwagandha_plant',
-      'ayapana_plant',
-      'gotu_kola_plant',
-      'cinnamon_plant',
-      'malabar_nut',
-    ],
-    homeRemedyIds: [
-      'remedy_ashwagandha_milk',
-      'remedy_ayapana_infusion',
-      'remedy_cinnamon_honey_tea',
-    ],
-    medicalDisclaimer:
-        'This information is for educational purposes only. High or persistent fever requires '
-        'prompt medical evaluation and appropriate diagnosis.',
-  ),
-  const Disease(
-    id: 'diabetes',
-    name: 'Blood Sugar & Diabetes Management',
-    category: 'Metabolic',
-    description:
-        'Elevated fasting or postprandial blood glucose levels requiring dietary and lifestyle '
-        'management. The Insulin Plant (corosolic acid) and Cinnamon (cinnamaldehyde) are the '
-        'two most studied botanical adjuvants for glycemic control and insulin sensitivity support.',
-    symptoms: [
-      'Excessive thirst and frequent urination',
-      'Unexplained fatigue and weakness',
-      'Slow wound healing and recurrent infections',
-      'Blurred vision and frequent hunger',
-    ],
-    iconName: 'monitor_heart',
-    relatedPlantIds: [
-      'insulin_plant',
-      'cinnamon_plant',
-      'wood_apple_plant',
-      'gotu_kola_plant',
-      'ashwagandha_plant',
-    ],
-    homeRemedyIds: [
-      'remedy_insulin_leaf_chew',
-      'remedy_cinnamon_honey_tea',
-      'remedy_wood_apple_digestive',
-    ],
-    medicalDisclaimer:
-        'IMPORTANT: These plants are supportive adjuvants only. Never replace prescribed diabetes '
-        'medication without physician guidance. Monitor blood glucose closely.',
-  ),
-  const Disease(
-    id: 'hair_scalp',
-    name: 'Hair Loss & Scalp Health',
-    category: 'Dermatological',
-    description:
-        'Excessive hair shedding, dandruff, or scalp inflammation due to stress, nutritional '
-        'deficiency, or hormonal imbalance. Rosemary is clinically proven to match minoxidil '
-        'for androgenic hair loss, while Ylang Ylang nourishes scalp follicles.',
-    symptoms: [
-      'Excessive hair shedding or thinning',
-      'Visible scalp flaking (dandruff)',
-      'Itchy or inflamed scalp',
-      'Weak, brittle, dull hair texture',
+      'Red, tender inflammatory papules and pustules',
+      'Excess facial oiliness and clogged pores',
+      'Persistent post-inflammatory hyperpigmentation',
+      'Irritated, itchy dermal flare-ups',
     ],
     iconName: 'spa',
     relatedPlantIds: [
-      'rosemary_plant',
-      'ylang_ylang_plant',
-      'ashwagandha_plant',
-      'gotu_kola_plant',
-      'cinnamon_plant',
+      'neem',
+      'aloe_vera',
+      'ayapana',
+      'gotu_kola',
+      'amla',
     ],
     homeRemedyIds: [
-      'remedy_rosemary_scalp_oil',
-      'remedy_ylang_ylang_aroma',
-      'remedy_ashwagandha_milk',
+      'remedy_neem_acne_paste',
+      'remedy_aloe_vera_burn_gel',
+      'remedy_neem_antiseptic_wash',
     ],
     medicalDisclaimer:
-        'This information is for educational purposes only. Sudden or severe hair loss should be '
-        'evaluated by a dermatologist or trichologist for underlying causes.',
+        'Perform a patch test before topical facial application. '
+        'Severe nodulocystic acne may require evaluation by a board-certified dermatologist.',
   ),
+
   const Disease(
-    id: 'digestive_health',
-    name: 'Digestive Health & Gut Microbiome',
-    category: 'Digestive',
+    id: 'hair_thinning',
+    name: 'Hair Loss, Dandruff & Follicle Weakness',
+    category: 'Hair & Scalp',
     description:
-        'Gut dysbiosis, irregular bowel habits, and intestinal inflammation affect overall health '
-        'and immunity. Wood Apple is a premier probiotic-promoting digestive herb, while Pirandai '
-        'and Cinnamon support gut integrity and microbial balance.',
+        'Androgenetic follicle miniaturization, microvascular circulatory sluggishness, and fungal '
+        'Malassezia scalp overgrowth leading to thinning and flaking. Rosemary carnosic acid and Amla '
+        'polyphenols stimulate follicle microcirculation, arrest hair fall, and restore hair luster.',
     symptoms: [
-      'Irregular bowel movements or constipation',
-      'Abdominal cramping and discomfort',
-      'Excessive gas and intestinal bloating',
-      'Loss of appetite or food aversions',
+      'Excessive daily hair shedding during brushing/washing',
+      'Itchy scalp with visible dry or greasy flakes',
+      'Gradual widening of hair parting and scalp visibility',
+      'Dry, brittle hair shafts prone to breakage',
     ],
-    iconName: 'restaurant_menu',
+    iconName: 'brush',
     relatedPlantIds: [
-      'wood_apple_plant',
-      'pirandai_plant',
-      'cinnamon_plant',
-      'ayapana_plant',
-      'gotu_kola_plant',
+      'rosemary',
+      'amla',
+      'neem',
+      'aloe_vera',
     ],
     homeRemedyIds: [
-      'remedy_wood_apple_digestive',
-      'remedy_ayapana_infusion',
-      'remedy_cinnamon_honey_tea',
+      'remedy_rosemary_hair_growth_tonic',
+      'remedy_amla_hair_oil',
+      'remedy_neem_antiseptic_wash',
     ],
     medicalDisclaimer:
-        'This information is for educational purposes only. Persistent digestive issues should be '
-        'evaluated by a gastroenterologist.',
+        'Topical herbal hair rinses promote follicular vitality. Consult a trichologist or doctor '
+        'to rule out underlying thyroid disorders, severe nutritional deficiencies, or autoimmune alopecia.',
   ),
+
   const Disease(
-    id: 'skin_care',
-    name: 'Skin Health & Wound Healing',
-    category: 'Dermatological',
+    id: 'low_immunity',
+    name: 'Nutritional Depletion & Low Immunity',
+    category: 'Immunity & Nutrition',
     description:
-        'Cutaneous inflammation, slow-healing wounds, or dry irritated skin due to oxidative stress '
-        'or microbial overgrowth. Gotu Kola is scientifically proven to accelerate wound healing '
-        'and skin regeneration, while Ylang Ylang and Rosemary provide antimicrobial support.',
+        'Susceptibility to recurrent opportunistic infections, chronic daytime fatigue, and micronutrient '
+        'deficiencies (vitamins A, B, C, iron, and bioavailable antioxidants). Botanical superfoods '
+        'restore cellular micronutrient stores and stimulate natural killer cell activity.',
     symptoms: [
-      'Slow-healing wounds or cuts',
-      'Dry, itchy, or inflamed skin',
-      'Acne breakouts or blemishes',
-      'Post-wound scarring or keloids',
+      'Recurrent seasonal infections and prolonged recovery',
+      'Sluggish vitality, brain fatigue, and low stamina',
+      'Pale nail beds, brittle hair, and micro-nutritional anemia',
+      'General feeling of burnout and low vitality',
     ],
-    iconName: 'face',
+    iconName: 'shield',
     relatedPlantIds: [
-      'gotu_kola_plant',
-      'ylang_ylang_plant',
-      'rosemary_plant',
-      'ayapana_plant',
-      'cinnamon_plant',
+      'amla',
+      'moringa',
+      'multi_vitamin_plant',
+      'tulsi',
+      'ashwagandha',
     ],
     homeRemedyIds: [
-      'remedy_gotu_kola_skin_paste',
-      'remedy_ylang_ylang_aroma',
-      'remedy_rosemary_scalp_oil',
+      'remedy_amla_immunity_elixir',
+      'remedy_moringa_green_soup',
+      'remedy_multivitamin_daily_greens',
+      'remedy_ashwagandha_moon_milk',
     ],
     medicalDisclaimer:
-        'This information is for educational purposes only. Severe or widespread skin conditions '
-        'should be evaluated by a dermatologist.',
+        'Botanical superfoods provide whole-food cellular replenishment. '
+        'Confirm nutritional status through routine blood panels if anemia or extreme lethargy persists.',
   ),
+
   const Disease(
-    id: 'bone_health',
-    name: 'Bone Health & Fracture Recovery',
-    category: 'Musculoskeletal',
+    id: 'hypertension',
+    name: 'High Blood Pressure & Arterial Stress',
+    category: 'Cardiovascular',
     description:
-        'Age-related bone mineral density loss and fracture recovery are major health concerns. '
-        'Pirandai (Hadjod) is the only plant with direct clinical evidence for bone healing '
-        'acceleration, reducing recovery time significantly through its unique phytosterol content.',
+        'Elevated systemic vascular resistance and hyperactive sympathetic nervous tone predisposing '
+        'to cardiovascular strain. Rauvolfia reserpine and Moringa isothiocyanates promote peripheral '
+        'arterial vasodilation, reduce cardiac workload, and restore autonomic tranquility.',
     symptoms: [
-      'Bone pain or chronic tenderness',
-      'Slow fracture healing post-injury',
-      'Increased susceptibility to fractures',
-      'Height loss and stooped posture (osteoporosis)',
+      'Occipital morning headaches and neck tightness',
+      'Occasional lightheadedness and blurred vision',
+      'Tense inner restlessness and bounding pulse',
+      'Elevated sphygmomanometer readings (> 130/80 mmHg)',
     ],
-    iconName: 'accessibility_new',
+    iconName: 'favorite',
     relatedPlantIds: [
-      'pirandai_plant',
-      'ashwagandha_plant',
-      'gotu_kola_plant',
-      'cinnamon_plant',
-      'wood_apple_plant',
+      'sarpagandha',
+      'moringa',
+      'gotu_kola',
+      'tulsi',
     ],
     homeRemedyIds: [
-      'remedy_pirandai_preparation',
-      'remedy_ashwagandha_milk',
-      'remedy_cinnamon_honey_tea',
+      'remedy_sarpagandha_bp_infusion',
+      'remedy_moringa_green_soup',
+      'remedy_gotu_kola_memory_salad',
     ],
     medicalDisclaimer:
-        'This information is for educational purposes only. Fractures and osteoporosis require '
-        'proper medical imaging and treatment by an orthopedic specialist.',
+        'Hypertension is a serious medical condition requiring ongoing clinical monitoring. '
+        'Never stop prescribed cardiovascular medications without direct physician consultation.',
+  ),
+
+  const Disease(
+    id: 'memory_decline',
+    name: 'Memory Loss, Brain Fog & Study Fatigue',
+    category: 'Neurological & Cognitive',
+    description:
+        'Suboptimal neurotransmitter signaling, synaptic oxidation, and mental exhaustion affecting '
+        'concentration, executive function, and long-term memory recall. Traditional Medhya Rasayanas '
+        'repair dendrite branching, elevate brain-derived neurotrophic factor (BDNF), and sharpen intellect.',
+    symptoms: [
+      'Difficulty recalling names, details, and recent information',
+      'Sluggish mental processing speed and poor concentration',
+      'Brain fog during prolonged work or academic study',
+      'Mental exhaustion and difficulty focusing under pressure',
+    ],
+    iconName: 'psychology',
+    relatedPlantIds: [
+      'brahmi',
+      'gotu_kola',
+      'rosemary',
+      'ashwagandha',
+    ],
+    homeRemedyIds: [
+      'remedy_brahmi_memory_ghee',
+      'remedy_gotu_kola_memory_salad',
+      'remedy_rosemary_hair_growth_tonic',
+    ],
+    medicalDisclaimer:
+        'Nootropic herbs support cognitive retention and focus. '
+        'Progressive memory deterioration in older adults should be evaluated by a neurologist.',
+  ),
+
+  const Disease(
+    id: 'diarrhea',
+    name: 'Diarrhea, Dysentery & Loose Stools',
+    category: 'Digestion',
+    description:
+        'Acute or chronic intestinal hypermotility with excessive water loss and mucosal inflammation '
+        'triggered by food contamination or enterotoxins. Wood apple (Bael) tannins and Ayapana '
+        'coumarins bind the intestinal mucosa, inhibit fluid hypersecretion, and eliminate pathogens.',
+    symptoms: [
+      'Frequent watery or loose bowel movements',
+      'Lower abdominal cramping and tenesmus',
+      'Dehydration, dry mouth, and electrolyte weakness',
+      'Intestinal rumbling and urgency',
+    ],
+    iconName: 'water_drop',
+    relatedPlantIds: [
+      'wood_apple',
+      'ayapana',
+    ],
+    homeRemedyIds: [
+      'remedy_wood_apple_diarrhea_decoction',
+      'remedy_wood_apple_sharbat',
+      'remedy_ayapana_digestive_infusion',
+    ],
+    medicalDisclaimer:
+        'Oral rehydration therapy with water and electrolytes is critical during diarrhea. '
+        'Seek immediate emergency medical care if blood appears in stools or if signs of severe dehydration develop.',
+  ),
+
+  const Disease(
+    id: 'wounds_cuts',
+    name: 'Cuts, Superficial Wounds & Bleeding',
+    category: 'First Aid & Dermal Care',
+    description:
+        'Mechanical breaks in the cutaneous skin barrier accompanied by capillary bleeding and risk '
+        'of secondary bacterial invasion. Fast-acting hemostatic herbs (Ayapana) and cell-proliferating '
+        'botanicals (Aloe Vera, Gotu Kola) arrest bleeding and accelerate tissue regeneration.',
+    symptoms: [
+      'Active minor bleeding from skin lacerations',
+      'Pain, stinging, and localized inflammation',
+      'Bruising, abrasions, and scrape marks',
+      'Delayed wound granulation and healing',
+    ],
+    iconName: 'healing',
+    relatedPlantIds: [
+      'ayapana',
+      'aloe_vera',
+      'neem',
+      'gotu_kola',
+    ],
+    homeRemedyIds: [
+      'remedy_ayapana_wound_poultice',
+      'remedy_aloe_vera_burn_gel',
+      'remedy_neem_acne_paste',
+    ],
+    medicalDisclaimer:
+        'Clean all wounds thoroughly with potable water before herbal poultice application. '
+        'Deep puncture wounds, arterial bleeding, or animal bites require immediate hospital emergency treatment and tetanus prophylaxis.',
+  ),
+
+  const Disease(
+    id: 'insomnia',
+    name: 'Insomnia & Fragmented Sleep',
+    category: 'Stress & Mental Wellness',
+    description:
+        'Inability to initiate or maintain restorative nocturnal sleep due to hyperarousal of the '
+        'central nervous system. Gentle herbal hypnotics and GABA-enhancers induce natural drowsiness, '
+        'reduce nighttime awakenings, and restore healthy circadian rhythm architectures.',
+    symptoms: [
+      'Lying awake for over 30 minutes struggling to sleep',
+      'Frequent midnight awakenings with racing mind',
+      'Non-restorative sleep leading to unrefreshed mornings',
+      'Daytime drowsiness and mood irritability',
+    ],
+    iconName: 'bedtime',
+    relatedPlantIds: [
+      'ashwagandha',
+      'sarpagandha',
+      'brahmi',
+    ],
+    homeRemedyIds: [
+      'remedy_ashwagandha_moon_milk',
+      'remedy_sarpagandha_bp_infusion',
+      'remedy_brahmi_memory_ghee',
+    ],
+    medicalDisclaimer:
+        'Herbal sleep tonics promote natural neurochemical relaxation. '
+        'Chronic insomnia accompanied by sleep apnea or severe mood disorders requires clinical evaluation.',
   ),
 ];

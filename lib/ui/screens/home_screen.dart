@@ -8,6 +8,10 @@ import 'plant_encyclopedia_screen.dart';
 import 'plant_detail_screen.dart';
 import '../widgets/plant_image.dart';
 import '../../data/database_helper.dart';
+import '../../viewmodels/auth_viewmodel.dart';
+import 'farmer/farmer_dashboard_screen.dart';
+import 'admin/admin_dashboard_screen.dart';
+import 'auth/login_screen.dart';
 
 
 /// Redesigned Vibrant Home Dashboard Screen
@@ -317,6 +321,175 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ],
                   ),
+                ),
+                const SizedBox(height: 16),
+
+                // ── Role-Based Ecosystem Card ───────────────────────────────
+                Consumer<AuthViewModel>(
+                  builder: (context, authVM, _) {
+                    final user = authVM.currentUser;
+                    final isFarmer = authVM.isFarmer;
+                    final isAdmin = authVM.isAdmin;
+
+                    return Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: isAdmin
+                              ? [const Color(0xFFB71C1C), const Color(0xFF7F0000)]
+                              : isFarmer
+                                  ? [const Color(0xFF1B5E20), const Color(0xFF2E7D32)]
+                                  : [const Color(0xFF0F172A), const Color(0xFF1E293B)],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                        borderRadius: BorderRadius.circular(20),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.08),
+                            blurRadius: 10,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Row(
+                                children: [
+                                  Icon(
+                                    isAdmin
+                                        ? Icons.shield_rounded
+                                        : isFarmer
+                                            ? Icons.agriculture_rounded
+                                            : Icons.people_alt_rounded,
+                                    color: Colors.white,
+                                    size: 24,
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Text(
+                                    isAdmin
+                                        ? 'ADMIN CONSOLE'
+                                        : isFarmer
+                                            ? 'FARMER WORKSPACE'
+                                            : 'GROWER ECOSYSTEM',
+                                    style: const TextStyle(
+                                      color: Colors.white70,
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w800,
+                                      letterSpacing: 1.0,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              if (user != null && user.isVerified)
+                                Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white.withOpacity(0.2),
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: const Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Icon(Icons.verified_rounded, size: 12, color: Colors.white),
+                                      SizedBox(width: 4),
+                                      Text('VERIFIED', style: TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold)),
+                                    ],
+                                  ),
+                                ),
+                            ],
+                          ),
+                          const SizedBox(height: 10),
+                          Text(
+                            isAdmin
+                                ? 'Botanical Review & User Oversight'
+                                : isFarmer
+                                    ? 'Crop Batches & Harvest Management'
+                                    : 'Connect with Farmers & Botanical Reviewers',
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 18,
+                              fontWeight: FontWeight.w800,
+                              letterSpacing: -0.3,
+                            ),
+                          ),
+                          const SizedBox(height: 6),
+                          Text(
+                            isAdmin
+                                ? 'Verify farmer accounts, audit data, and manage botantical evidence.'
+                                : isFarmer
+                                    ? 'Log sowing dates, monitor harvest readiness, and receive weather advisories.'
+                                    : 'MediPlant bridges plant enthusiasts with verified farmers and botanical experts.',
+                            style: TextStyle(
+                              color: Colors.white.withOpacity(0.85),
+                              fontSize: 12,
+                              height: 1.4,
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          Wrap(
+                            spacing: 8,
+                            runSpacing: 8,
+                            children: [
+                              if (isFarmer)
+                                ElevatedButton.icon(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.white,
+                                    foregroundColor: const Color(0xFF1B5E20),
+                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                                  ),
+                                  icon: const Icon(Icons.dashboard_rounded, size: 18),
+                                  label: const Text('Open Farmer Workspace', style: TextStyle(fontWeight: FontWeight.bold)),
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(builder: (_) => const FarmerDashboardScreen()),
+                                    );
+                                  },
+                                ),
+                              if (isAdmin)
+                                ElevatedButton.icon(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.white,
+                                    foregroundColor: const Color(0xFFB71C1C),
+                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                                  ),
+                                  icon: const Icon(Icons.admin_panel_settings_rounded, size: 18),
+                                  label: const Text('Open Admin Console', style: TextStyle(fontWeight: FontWeight.bold)),
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(builder: (_) => const AdminDashboardScreen()),
+                                    );
+                                  },
+                                ),
+                              if (!authVM.isAuthenticated)
+                                ElevatedButton.icon(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.white,
+                                    foregroundColor: const Color(0xFF0F172A),
+                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                                  ),
+                                  icon: const Icon(Icons.login_rounded, size: 18),
+                                  label: const Text('Sign In to Role Workspace', style: TextStyle(fontWeight: FontWeight.bold)),
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(builder: (_) => const LoginScreen()),
+                                    );
+                                  },
+                                ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    );
+                  },
                 ),
                 const SizedBox(height: 16),
 

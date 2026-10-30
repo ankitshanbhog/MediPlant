@@ -1,0 +1,22 @@
+{
+  "classes": [
+    "non_plant",
+    "plant"
+  ],
+  "split_ratio": "80/19",
+  "counts": {
+    "non_plant": {
+      "train": 352,
+      "val": 89,
+      "total": 441
+    },
+    "plant": {
+      "train": 321,
+      "val": 81,
+      "total": 402
+    },
+    "total_train": 673,
+    "total_val": 170,
+    "grand_total": 843
+  }
+}

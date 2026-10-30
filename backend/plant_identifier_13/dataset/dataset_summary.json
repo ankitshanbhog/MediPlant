@@ -1,0 +1,97 @@
+{
+  "num_classes": 13,
+  "split_ratio": "80/19",
+  "classes": {
+    "ashwagandha": {
+      "class_id": 0,
+      "common_name": "Ashwagandha",
+      "botanical_name": "Withania somnifera",
+      "train_samples": 128,
+      "val_samples": 33
+    },
+    "ayapana": {
+      "class_id": 1,
+      "common_name": "Ayapana",
+      "botanical_name": "Ayapana triplinervis",
+      "train_samples": 34,
+      "val_samples": 9
+    },
+    "gotu_kola": {
+      "class_id": 2,
+      "common_name": "Gotu Kola",
+      "botanical_name": "Centella asiatica",
+      "train_samples": 124,
+      "val_samples": 32
+    },
+    "rosemary": {
+      "class_id": 3,
+      "common_name": "Rosemary",
+      "botanical_name": "Salvia rosmarinus",
+      "train_samples": 124,
+      "val_samples": 31
+    },
+    "wood_apple": {
+      "class_id": 4,
+      "common_name": "Wood Apple",
+      "botanical_name": "Limonia acidissima",
+      "train_samples": 127,
+      "val_samples": 32
+    },
+    "moringa": {
+      "class_id": 5,
+      "common_name": "Moringa",
+      "botanical_name": "Moringa oleifera",
+      "train_samples": 114,
+      "val_samples": 29
+    },
+    "tulsi": {
+      "class_id": 6,
+      "common_name": "Tulsi",
+      "botanical_name": "Ocimum tenuiflorum",
+      "train_samples": 120,
+      "val_samples": 30
+    },
+    "neem": {
+      "class_id": 7,
+      "common_name": "Neem",
+      "botanical_name": "Azadirachta indica",
+      "train_samples": 120,
+      "val_samples": 31
+    },
+    "aloe_vera": {
+      "class_id": 8,
+      "common_name": "Aloe Vera",
+      "botanical_name": "Aloe barbadensis",
+      "train_samples": 120,
+      "val_samples": 30
+    },
+    "multi_vitamin_plant": {
+      "class_id": 9,
+      "common_name": "Multi Vitamin Plant",
+      "botanical_name": "Sauropus androgynus",
+      "train_samples": 130,
+      "val_samples": 33
+    },
+    "amla": {
+      "class_id": 10,
+      "common_name": "Amla",
+      "botanical_name": "Phyllanthus emblica",
+      "train_samples": 128,
+      "val_samples": 33
+    },
+    "brahmi": {
+      "class_id": 11,
+      "common_name": "Brahmi",
+      "botanical_name": "Bacopa monnieri",
+      "train_samples": 113,
+      "val_samples": 29
+    },
+    "sarpagandha": {
+      "class_id": 12,
+      "common_name": "Sarpagandha",
+      "botanical_name": "Rauvolfia serpentina",
+      "train_samples": 119,
+      "val_samples": 30
+    }
+  }
+}

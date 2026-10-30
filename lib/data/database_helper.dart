@@ -27,7 +27,7 @@ class DatabaseHelper {
 
     return await openDatabase(
       path,
-      version: 7,
+      version: 8,
       onCreate: _createDB,
       onUpgrade: _onUpgrade,
     );
@@ -164,6 +164,72 @@ class DatabaseHelper {
       // Full reseed for the new MediPlant 10-class model.
       // Remove all existing plants, diseases, and remedies, then re-insert
       // the 10 supported classes with accurate, updated information.
+      await db.execute('DELETE FROM plants');
+      await db.execute('DELETE FROM diseases');
+      await db.execute('DELETE FROM remedies');
+      final batch = db.batch();
+      for (final p in mockPlants) {
+        batch.insert('plants', {
+          'id': p.id,
+          'commonName': p.commonName,
+          'scientificName': p.scientificName,
+          'family': p.family,
+          'vernacularNames': jsonEncode(p.vernacularNames),
+          'description': p.description,
+          'imageUrl': p.imageUrl,
+          'medicinalUses': jsonEncode(p.medicinalUses),
+          'healthBenefits': jsonEncode(p.healthBenefits),
+          'traditionalUses': jsonEncode(p.traditionalUses),
+          'activeConstituents': jsonEncode(p.activeConstituents),
+          'partsUsed': jsonEncode(p.partsUsed),
+          'sideEffects': jsonEncode(p.sideEffects),
+          'precautions': jsonEncode(p.precautions),
+          'contraindications': jsonEncode(p.contraindications),
+          'preparationMethods': p.preparationMethods,
+          'dosageGuidelines': p.dosageGuidelines,
+          'habitat': p.habitat,
+          'appearance': p.appearance,
+          'plantType': p.plantType,
+          'isSupportedInModel2': p.isSupportedInModel2 ? 1 : 0,
+        }, conflictAlgorithm: ConflictAlgorithm.replace);
+      }
+      for (final d in mockDiseases) {
+        batch.insert('diseases', {
+          'id': d.id,
+          'name': d.name,
+          'category': d.category,
+          'description': d.description,
+          'symptoms': jsonEncode(d.symptoms),
+          'iconName': d.iconName,
+          'relatedPlantIds': jsonEncode(d.relatedPlantIds),
+          'homeRemedyIds': jsonEncode(d.homeRemedyIds),
+          'medicalDisclaimer': d.medicalDisclaimer,
+        }, conflictAlgorithm: ConflictAlgorithm.replace);
+      }
+      for (final r in mockRemedies) {
+        batch.insert('remedies', {
+          'id': r.id,
+          'condition': r.condition,
+          'title': r.title,
+          'primaryPlantName': r.primaryPlantName,
+          'primaryPlantScientific': r.primaryPlantScientific,
+          'plantId': r.plantId,
+          'ingredients': jsonEncode(r.ingredients),
+          'preparationSteps': jsonEncode(r.preparationSteps),
+          'howToUse': r.howToUse,
+          'dosage': r.dosage,
+          'precautions': jsonEncode(r.precautions),
+          'category': r.category,
+          'timeToPrepare': r.timeToPrepare,
+          'isEducationalOnly': r.isEducationalOnly ? 1 : 0,
+        }, conflictAlgorithm: ConflictAlgorithm.replace);
+      }
+      await batch.commit(noResult: true);
+    }
+    if (oldVersion < 8) {
+      // Full reseed for the 13-class MediPlant ONNX model.
+      // Remove all existing plants, diseases, and remedies, then re-insert
+      // all 13 supported classes with accurate, updated botanical information.
       await db.execute('DELETE FROM plants');
       await db.execute('DELETE FROM diseases');
       await db.execute('DELETE FROM remedies');
@@ -410,12 +476,23 @@ class DatabaseHelper {
       return _rowToPlant(direct.first);
     }
 
-    // 2. Alias variations (e.g., malabar_nut <-> malabar_nut_plant, insulin_plant <-> insulin)
+    // 2. Alias variations for all 13 supported classes & synonyms
     final aliases = <String>[
       normalized.replaceAll('_plant', ''),
       '${normalized.replaceAll('_plant', '')}_plant',
-      if (normalized.contains('malabar_nut')) 'vasaka',
-      if (normalized.contains('vasaka')) 'malabar_nut',
+      if (normalized.contains('aloe')) 'aloe_vera',
+      if (normalized.contains('amla') || normalized.contains('gooseberry')) 'amla',
+      if (normalized.contains('ashwagandha')) 'ashwagandha',
+      if (normalized.contains('ayapana')) 'ayapana',
+      if (normalized.contains('brahmi')) 'brahmi',
+      if (normalized.contains('gotu_kola') || normalized.contains('centella') || normalized.contains('mandukaparni')) 'gotu_kola',
+      if (normalized.contains('moringa') || normalized.contains('drumstick')) 'moringa',
+      if (normalized.contains('multi_vitamin') || normalized.contains('chakra_muni') || normalized.contains('katuk')) 'multi_vitamin_plant',
+      if (normalized.contains('neem') || normalized.contains('azadirachta')) 'neem',
+      if (normalized.contains('rosemary')) 'rosemary',
+      if (normalized.contains('sarpagandha') || normalized.contains('snakeroot') || normalized.contains('serpentina')) 'sarpagandha',
+      if (normalized.contains('tulsi') || normalized.contains('holy_basil')) 'tulsi',
+      if (normalized.contains('wood_apple') || normalized.contains('bael') || normalized.contains('limonia')) 'wood_apple',
     ];
 
     for (final alias in aliases) {

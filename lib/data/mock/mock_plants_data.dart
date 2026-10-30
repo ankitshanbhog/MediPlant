@@ -1,18 +1,182 @@
 import '../models/plant_model.dart';
 
-/// Verified database of all 10 medicinal plant classes supported by the
-/// MediPlant 10-class ML model (mediplant_10class_best.keras).
+/// Verified botanical database of all 13 medicinal plant classes supported by the
+/// MediPlant dual-stage vision system (medicinal_plant_model.onnx + plant_gate_model.onnx).
 ///
-/// Classes (alphabetical by model label):
-///   ashwagandha_plant, ayapana_plant, cinnamon_plant, gotu_kola_plant,
-///   insulin_plant, malabar_nut, pirandai_plant, rosemary_plant,
-///   wood_apple_plant, ylang_ylang_plant
+/// 13 Supported Classes (alphabetical by model slug):
+///   1. aloe_vera
+///   2. amla
+///   3. ashwagandha
+///   4. ayapana
+///   5. brahmi
+///   6. gotu_kola
+///   7. moringa
+///   8. multi_vitamin_plant
+///   9. neem
+///   10. rosemary
+///   11. sarpagandha
+///   12. tulsi
+///   13. wood_apple
 final List<Plant> mockPlants = [
   // ═══════════════════════════════════════════════════════════════════════════
-  // 1. ASHWAGANDHA
+  // 1. ALOE VERA
   // ═══════════════════════════════════════════════════════════════════════════
   const Plant(
-    id: 'ashwagandha_plant',
+    id: 'aloe_vera',
+    commonName: 'Aloe Vera (Ghritkumari)',
+    scientificName: 'Aloe barbadensis miller',
+    family: 'Asphodelaceae (Aloe Family)',
+    vernacularNames: {
+      'Hindi': 'Ghritkumari / Gwarpatha',
+      'Sanskrit': 'Ghritakumari',
+      'Kannada': 'Lolisara',
+      'Tamil': 'Katrazhai',
+      'Telugu': 'Kalabanda',
+      'Malayalam': 'Kattarvazha',
+    },
+    description:
+        'Aloe Vera is a stemless or very short-stemmed succulent plant renowned for thousands '
+        'of years across Egyptian, Ayurvedic, and Mediterranean medicine. Its thick, fleshy, '
+        'lanceolate leaves contain clear mucilaginous gel packed with polysaccharides (acemannan), '
+        'vitamins, minerals, and enzymes. It accelerates dermal wound repair, soothes gastrointestinal '
+        'inflammation, stimulates collagen synthesis, and provides intense hydration.',
+    imageUrl:
+        'https://images.unsplash.com/photo-1596547609652-9cf5d8d76921?auto=format&fit=crop&w=800&q=80',
+    medicinalUses: [
+      'Accelerates burn, sunburn, and superficial wound healing',
+      'Soothes gastritis, acid reflux, and ulcerative colitis (inner fillet)',
+      'Moisturizes dry skin and combats inflammatory acne and psoriasis',
+      'Reduces dental plaque and oral candida when used as an oral rinse',
+      'Assists in mild blood glucose and lipid management in metabolic syndrome',
+    ],
+    healthBenefits: [
+      'Acemannan activates macrophage phagocytosis and epidermal fibroblast growth',
+      'Glucomannan and gibberellin stimulate collagen synthesis and cross-linking',
+      'Contains bradykinase, which reduces excessive skin inflammation when applied topically',
+      'High water content with antioxidant vitamins A (beta-carotene), C, and E',
+      'Anthraquinones in latex offer potent short-term laxative effects',
+    ],
+    traditionalUses: [
+      'Fresh inner gel applied directly to minor burns, cuts, and irritated skin',
+      'Pulp blended with water or amla juice taken in the morning for liver and gut health',
+      'Gel mixed with turmeric applied as an Ayurvedic face mask for blemishes',
+      'Root and leaf juice prepared as classical Kumari Asava for female reproductive tonification',
+    ],
+    activeConstituents: [
+      'Acemannan (acetylated polymannose)',
+      'Aloin & Aloe-emodin (anthraquinone glycosides)',
+      'Bradykinase & Amylase enzymes',
+      'Salicylic acid & Saponins',
+      'Vitamins A, C, E, B12, and Choline',
+    ],
+    partsUsed: ['Fresh inner gel / pulp', 'Leaf outer rind (extracts)', 'Leaf exudate (latex)'],
+    sideEffects: [
+      'Topical use is safe; occasional allergic contact dermatitis in sensitive individuals',
+      'Oral ingestion of whole leaf/latex containing aloin may cause abdominal cramping and diarrhea',
+      'Excessive internal intake can cause electrolyte imbalance (hypokalemia)',
+    ],
+    precautions: [
+      'Always use purified inner gel free of yellow bitter latex for oral consumption',
+      'Perform a skin patch test before widespread topical application',
+      'Do not apply on deep surgical wounds or severe third-degree burns',
+    ],
+    contraindications: [
+      'Contraindicated orally during pregnancy (aloin induces uterine contractions)',
+      'Contraindicated in intestinal obstruction, Crohn’s disease, or appendicitis',
+      'Caution with concurrent diuretic and anti-arrhythmic medications',
+    ],
+    preparationMethods:
+        'Fillet the outer green rind to extract the clear inner jelly. Wash thoroughly with clean water '
+        'to purge yellow bitter aloin latex before topical use or culinary blending.',
+    dosageGuidelines:
+        'Topical: Apply generous layer of fresh gel 2-3 times daily. '
+        'Internal: 15-30 ml purified inner gel juice mixed with water once daily before breakfast.',
+    habitat: 'Arid, tropical, and subtropical regions; easily cultivated in sunny home gardens and pots.',
+    appearance: 'Dense rosette of thick, lanceolate, fleshy green leaves with serrated spiny margins.',
+    plantType: 'Medicinal Succulent',
+    isSupportedInModel2: true,
+  ),
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // 2. AMLA
+  // ═══════════════════════════════════════════════════════════════════════════
+  const Plant(
+    id: 'amla',
+    commonName: 'Amla (Indian Gooseberry)',
+    scientificName: 'Phyllanthus emblica',
+    family: 'Phyllanthaceae (Gooseberry Family)',
+    vernacularNames: {
+      'Hindi': 'Amla / Aonla',
+      'Sanskrit': 'Amalaki / Dhatri',
+      'Kannada': 'Nellikai',
+      'Tamil': 'Nellikai',
+      'Telugu': 'Usirikaya',
+      'Malayalam': 'Nellikka',
+    },
+    description:
+        'Amla, or Indian Gooseberry, is one of the most celebrated rejuvenating rasayana herbs in '
+        'Ayurvedic pharmacology and the chief ingredient in Chyawanprash and Triphala. The greenish-yellow '
+        'globular fruit possesses one of the highest concentrations of heat-stable Vitamin C found in nature, '
+        'bound to protective polyphenols (ellagitannins, emblicanin A & B). It strengthens immune vitality, '
+        'reverses oxidative stress, promotes hair pigmentation and follicle growth, and fortifies digestion.',
+    imageUrl: 'assets/plants/amla_plant.jpg',
+    medicinalUses: [
+      'Potent systemic antioxidant protection and cellular rejuvenation',
+      'Immune defense against seasonal viral and upper respiratory infections',
+      'Strengthens hair follicles, prevents premature graying and combats alopecia',
+      'Aids glycemic control and reduces HbA1c in type 2 diabetic profiles',
+      'Protects liver tissue against hepatotoxins and lipid peroxidation',
+    ],
+    healthBenefits: [
+      'Contains 600-900 mg of Vitamin C per 100g, stabilized by emblicanin polyphenols',
+      'Inhibits 5-alpha reductase enzyme to curb hair follicle shrinkage and thinning',
+      'Promotes digestive agni without aggravating pitta dosha due to cooling virya',
+      'Reduces LDL cholesterol and triglyceride accumulation in blood vessels',
+      'Protects lens and retinal cells from diabetic oxidative glycation',
+    ],
+    traditionalUses: [
+      'Fresh fruit chewed with a pinch of rock salt for oral hygiene and saliva stimulation',
+      'Dried fruit decoction cooked in coconut oil to create cooling hair revitalizing oil',
+      'Key component of Triphala Churna for colon regulation and gentle detoxification',
+      'Raw juice taken with raw honey for morning immunity and metabolic activation',
+    ],
+    activeConstituents: [
+      'Ascorbic acid (Vitamin C)',
+      'Emblicanin A and Emblicanin B',
+      'Ellagitannins (Punigluconin, Pedunculagin)',
+      'Gallic acid & Ellagic acid',
+      'Chebulinic acid & Quercetin',
+    ],
+    partsUsed: ['Fresh / dried fruit', 'Fruit pericarp', 'Leaves', 'Seeds'],
+    sideEffects: [
+      'Very safe nutritional fruit; excessive raw consumption can cause mild stomach acidity or loosen stools',
+      'May enhance bleeding tendency when taken in concentrated extracts alongside antiplatelet agents',
+    ],
+    precautions: [
+      'Diabetic patients should monitor glucose when starting therapeutic high-dose amla',
+      'Avoid high doses late at night to prevent acid regurgitation in sensitive stomachs',
+    ],
+    contraindications: [
+      'Contraindicated in acute dysentery or cold aggravated dry cough without proper carrier',
+      'Discontinue high-dose extracts 2 weeks prior to scheduled surgery',
+    ],
+    preparationMethods:
+        'Eat fresh fruit raw, prepare cold-pressed fresh juice with water, or grind shade-dried '
+        'deseeded fruit into a fine micro-powder (churna).',
+    dosageGuidelines:
+        'Fresh juice: 15-20 ml diluted in water with honey. '
+        'Churna (powder): 3-6 grams daily with warm water or ghee after meals.',
+    habitat: 'Deciduous tropical and subtropical forests across the Indian subcontinent and Southeast Asia.',
+    appearance: 'Small to medium tree with light gray bark, feathery pinnate leaves, and pale green round fruit.',
+    plantType: 'Medicinal Deciduous Tree',
+    isSupportedInModel2: true,
+  ),
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // 3. ASHWAGANDHA
+  // ═══════════════════════════════════════════════════════════════════════════
+  const Plant(
+    id: 'ashwagandha',
     commonName: 'Ashwagandha (Indian Ginseng)',
     scientificName: 'Withania somnifera',
     family: 'Solanaceae (Nightshade Family)',
@@ -22,6 +186,7 @@ final List<Plant> mockPlants = [
       'Kannada': 'Ashwagandha / Amukkara',
       'Tamil': 'Amukkira Kilangu',
       'Telugu': 'Pennerugadda',
+      'Malayalam': 'Amukkuram',
     },
     description:
         'Ashwagandha is one of the most revered adaptogenic herbs in Ayurvedic medicine, '
@@ -29,8 +194,7 @@ final List<Plant> mockPlants = [
         'The name literally means "smell of horse," reflecting its traditional belief in imparting '
         'the strength and stamina of a horse. Its roots are rich in withanolides — steroidal lactones '
         'scientifically proven to modulate the stress axis, boost testosterone, and protect neurons.',
-    imageUrl:
-        'https://images.unsplash.com/photo-1615485290382-441e4d049cb5?auto=format&fit=crop&w=800&q=80',
+    imageUrl: 'assets/plants/ashwagandha_plant.jpg',
     medicinalUses: [
       'Adaptogenic stress relief and cortisol normalization',
       'Enhancement of male reproductive health and testosterone levels',
@@ -58,757 +222,786 @@ final List<Plant> mockPlants = [
       'Iron, Steroidal Lactones',
       'Glycowithanolides',
     ],
-    partsUsed: ['Dried roots', 'Root powder', 'Leaves (less common)'],
+    partsUsed: ['Dried Roots', 'Leaves (topical)', 'Seeds'],
     sideEffects: [
-      'Large doses can cause gastrointestinal upset, diarrhea, and nausea',
-      'May cause excessive sedation when combined with CNS depressants',
-      'Rare: thyroid overstimulation in hyperthyroid individuals',
+      'Generally very well tolerated at standard dosages',
+      'High doses may cause mild stomach upset, nausea, or loose stools',
+      'May cause mild drowsiness in sensitive individuals',
     ],
     precautions: [
-      'Use standardized root extracts (2.5–5% withanolides) for consistent dosing',
-      'Avoid in autoimmune conditions (lupus, RA) without physician clearance',
-      'Discontinue 2 weeks before surgery due to CNS depressant interaction',
+      'Monitor thyroid levels if taking synthetic thyroid hormones',
+      'May potentiate the sedative effect of barbiturates and benzodiazepines',
+      'Discontinue 2 weeks prior to scheduled surgery',
     ],
     contraindications: [
-      'Pregnancy — risk of uterine contractions and potential miscarriage',
-      'Hyperthyroidism — may exacerbate overactive thyroid',
-      'Patients on immunosuppressants or sedative medications',
+      'Contraindicated in pregnancy — potential abortifacient activity at high doses',
+      'Avoid in active hyperthyroidism unless supervised by an integrative physician',
+      'Caution in autoimmune conditions (SLE, rheumatoid arthritis, Hashimoto’s)',
     ],
     preparationMethods:
-        'Mix 1/2 to 1 teaspoon ashwagandha root powder in warm milk or water. '
-        'Add honey or jaggery to taste. Drink at bedtime for best effect.',
+        'Roots dried and ground to fine powder. Consumed as churna in warm milk, ghee, '
+        'or standardized liquid or capsule extract (KSM-66 or Sensoril).',
     dosageGuidelines:
-        '300–600 mg standardized root extract once or twice daily with meals; '
-        'or 1/2 tsp (3–6 g) root powder in milk once daily.',
-    habitat:
-        'Dry subtropical and tropical regions; grows wild on dry stony hills and open wastelands '
-        'across India, North Africa, and Mediterranean countries.',
-    appearance:
-        'Erect branching perennial shrub up to 1.5 m tall, with downy grayish-green elliptical leaves, '
-        'small pale greenish-yellow bell-shaped flowers, and bright orange-red berries enclosed in papery husks.',
-    plantType: 'Perennial Shrub',
+        'Churna (root powder): 3-6 grams daily with warm milk before bedtime. '
+        'Standardized extract: 300-600 mg once or twice daily with food.',
+    habitat: 'Dry, arid regions of India, the Middle East, and parts of Africa.',
+    appearance: 'Small woody shrub (35-75 cm) with dull green elliptic leaves, bell-shaped greenish-yellow flowers, and red berries.',
+    plantType: 'Medicinal Shrub',
     isSupportedInModel2: true,
   ),
 
   // ═══════════════════════════════════════════════════════════════════════════
-  // 2. AYAPANA
+  // 4. AYAPANA
   // ═══════════════════════════════════════════════════════════════════════════
   const Plant(
-    id: 'ayapana_plant',
+    id: 'ayapana',
     commonName: 'Ayapana (Water Hemp)',
     scientificName: 'Ayapana triplinervis',
-    family: 'Asteraceae (Sunflower Family)',
+    family: 'Asteraceae (Daisy Family)',
     vernacularNames: {
-      'Hindi': 'Ayapan',
+      'Hindi': 'Ayapana',
+      'Sanskrit': 'Ayapanah',
+      'Kannada': 'Ayapana',
+      'Tamil': 'Ayapani',
+      'Malayalam': 'Ayapana / Vishahari',
       'Bengali': 'Ayapan',
-      'Malayalam': 'Ayapana',
-      'Tamil': 'Ayapanai',
-      'Portuguese': 'Japana',
     },
     description:
-        'Ayapana is a perennial aromatic subshrub native to tropical South America and now '
-        'widely naturalized across India, Southeast Asia, and tropical Africa. It is celebrated '
-        'in folk medicine as a potent natural hemostatic agent, wound coagulant, digestive '
-        'stimulant, and antipyretic herb. Its coumarins — ayapanin and ayapin — give the plant '
-        'its distinctive aroma and therapeutic action.',
-    imageUrl:
-        'https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?auto=format&fit=crop&w=800&q=80',
+        'Ayapana is an aromatic medicinal perennial herb native to tropical South America '
+        'and naturalized widely across South India and Southeast Asia. Renowned for its potent '
+        'hemostatic, antiseptic, and gastroprotective properties, it is traditionally applied '
+        'to arrest active external bleeding and heal gastric ulcers. It contains ayapanin and '
+        'ayapin, coumarin derivatives with proven antimicrobial and clot-stabilizing actions.',
+    imageUrl: 'assets/plants/ayapana_plant.jpg',
     medicinalUses: [
-      'Topical styptic to arrest bleeding from fresh lacerations and wounds',
-      'Relief from acute indigestion, flatulence, and stomach cramps',
-      'Oral rinse to reduce bleeding gums, mouth ulcers, and stomatitis',
-      'Antipyretic infusion for mild seasonal fevers and chills',
-      'Wound healing and antimicrobial poultice for skin abrasions',
+      'Rapid hemostasis to stop bleeding from cuts, wounds, and hemorrhoids',
+      'Gastric ulcer healing, digestive stimulant, and hyperacidity relief',
+      'Antimicrobial protection against skin pathogens and fungal infections',
+      'Antidote for insect bites, scorpion stings, and minor reptile bites',
+      'Gentle diaphoretic tea for clearing fever, cold, and respiratory phlegm',
     ],
     healthBenefits: [
-      'Ayapanin and ayapin coumarins exhibit rapid blood-clotting and hemostatic activity',
-      'Demonstrates broad-spectrum antimicrobial action against skin and oral bacteria',
-      'Soothes digestive hyperacidity and restores gastric motility and comfort',
-      'Reduces inflammatory tissue swelling around dermal wounds',
+      'Ayapanin and ayapin act as coumarins with significant vascular protective actions',
+      'Accelerates tissue granulation and wound closure when applied as fresh crushed poultice',
+      'Inhibits excessive gastric acid secretion and protects mucosal lining',
+      'Essential oil fractions demonstrate broad-spectrum antimicrobial efficacy',
     ],
     traditionalUses: [
-      'Bruised fresh leaves squeezed directly onto bleeding cuts to arrest hemorrhage',
-      'Leaf tea brewed with dry ginger and jaggery for stomach spasms and cramps',
-      'Gargle prepared from boiled leaves for stomatitis and sore throats',
-      'Poultice of crushed leaves applied on skin boils and infected cuts',
+      'Fresh leaf crushed between fingers and applied directly to cuts for instant hemostasis',
+      'Hot water leaf infusion consumed for stomach cramps, indigestion, and diarrhea',
+      'Decoction used as an antiseptic gargle for bleeding gums and mouth ulcers',
+      'Leaves boiled in coconut oil applied topically on chronic slow-healing wounds',
     ],
     activeConstituents: [
-      'Ayapanin (Herniarin)',
-      'Ayapin',
+      'Ayapanin (7-methoxycoumarin)',
+      'Ayapin (6,7-methylenedioxycoumarin)',
       'Thymohydroquinone dimethyl ether',
-      'Caryophyllene',
-      'Coumarins',
+      'Stigmasterol and Beta-sitosterol',
+      'Essential oils, Flavonoids, Tannins',
     ],
-    partsUsed: ['Fresh leaves', 'Aerial stems', 'Whole plant'],
+    partsUsed: ['Fresh leaves', 'Tender stems', 'Whole aerial plant'],
     sideEffects: [
-      'Excessive oral intake can provoke nausea or emetic sensations in sensitive individuals',
-      'High coumarin content may potentiate anticoagulant medications',
+      'Extremely safe in traditional external applications',
+      'Very high oral doses of raw coumarins may cause mild nausea',
     ],
     precautions: [
-      'Ensure leaves are thoroughly washed before crushing over open wounds',
-      'Not a substitute for emergency sutures or trauma treatment',
-      'Consult a physician before use alongside blood-thinning medications',
+      'Patients on prescription anticoagulant drugs (Warfarin, Heparin) should avoid high oral doses',
+      'Ensure leaves are thoroughly washed before application on open skin breaks',
     ],
     contraindications: [
-      'Patients on prescription anticoagulant medications (warfarin, heparin)',
-      'Pregnancy — use only under medical supervision',
+      'Contraindicated in severe bleeding disorders (hemophilia) without medical supervision',
+      'Avoid high-dose internal consumption during pregnancy',
     ],
     preparationMethods:
-        'Crush 4–6 fresh leaves to release sap for topical hemostatic application. '
-        'For internal use: steep 10 g leaves in 200 ml hot water for 6 minutes, strain and drink warm.',
+        'Fresh leaves bruised to extract juice for topical wound application. '
+        'Dry or fresh leaves steeped in boiling water for 5-7 minutes for herbal digestive tea.',
     dosageGuidelines:
-        'Fresh leaf paste topically as needed for wounds; '
-        '15–25 ml light infusion internally once daily.',
-    habitat:
-        'Humid tropical riverbanks, gardens, and moist forest margins in partial shade. '
-        'Found across India, Sri Lanka, and tropical Asia.',
-    appearance:
-        'Slender reddish-purple stems with narrow lanceolate subserrate leaves and small '
-        'pale purplish-white clustered flower heads. Strongly aromatic when crushed.',
-    plantType: 'Perennial Aromatic Subshrub',
+        'Topical: Apply bruised leaves or extracted juice directly on wound. '
+        'Internal: 10-15 ml fresh leaf juice or 50-100 ml infusion twice daily before meals.',
+    habitat: 'Tropical river banks, damp forest edges, and cultivated home gardens in moist climates.',
+    appearance: 'Erect perennial herb (40-60 cm) with reddish-purple stems, narrow lanceolate aromatic leaves, and pale purple flower heads.',
+    plantType: 'Medicinal Herb',
     isSupportedInModel2: true,
   ),
 
   // ═══════════════════════════════════════════════════════════════════════════
-  // 3. CINNAMON
+  // 5. BRAHMI
   // ═══════════════════════════════════════════════════════════════════════════
   const Plant(
-    id: 'cinnamon_plant',
-    commonName: 'Cinnamon (Ceylon Cinnamon)',
-    scientificName: 'Cinnamomum verum',
-    family: 'Lauraceae (Laurel Family)',
+    id: 'brahmi',
+    commonName: 'Brahmi (Water Hyssop)',
+    scientificName: 'Bacopa monnieri',
+    family: 'Plantaginaceae (Plantain Family)',
     vernacularNames: {
-      'Hindi': 'Dalchini',
-      'Sanskrit': 'Tvak / Darusita',
-      'Kannada': 'Dalchini',
-      'Tamil': 'Lavangapattai / Ilavangam',
-      'Spanish': 'Canela',
+      'Hindi': 'Brahmi / Jalneem',
+      'Sanskrit': 'Brahmi / Medhya',
+      'Kannada': 'Brahmi / Ondelaga',
+      'Tamil': 'Neerbrahmi',
+      'Telugu': 'Sambhramachettu',
+      'Malayalam': 'Brahmi',
     },
     description:
-        'Ceylon Cinnamon is an aromatic evergreen tree indigenous to Sri Lanka and South India. '
-        'Celebrated since antiquity as both a prized culinary spice and powerful medicine, its '
-        'dried inner bark delivers potent cinnamaldehyde that confers remarkable insulin-sensitizing, '
-        'antimicrobial, and antioxidant properties. True Ceylon cinnamon (Cinnamomum verum) is '
-        'distinct from Cassia cinnamon in its lower coumarin content and superior safety profile.',
-    imageUrl:
-        'https://images.unsplash.com/photo-1509358271058-acd22cc93898?auto=format&fit=crop&w=800&q=80',
+        'Brahmi is one of the premier "Medhya Rasayana" (brain-enhancing intellect rejuvenators) '
+        'in the Vedic medical tradition, documented in Charaka Samhita for boosting memory, '
+        'concentration, and neurological longevity. A small creeping marsh succulent, its active '
+        'bacosides repair damaged neurons, enhance synaptic synaptic transmission, stimulate '
+        'cerebral protein synthesis, and exert anxiolytic, neuroprotective calm without sedation.',
+    imageUrl: 'assets/plants/brahmi_plant.jpg',
     medicinalUses: [
-      'Modulation of postprandial glucose metabolism and insulin sensitivity',
-      'Broad-spectrum antimicrobial protection against oral and gastrointestinal pathogens',
-      'Relief from intestinal colic, bloating, and sluggish digestion',
-      'Warming respiratory decongestant for winter colds and sinus congestion',
-      'Anti-inflammatory and antioxidant support for metabolic health',
+      'Improves memory consolidation, cognitive retention, and information recall',
+      'Reduces anxiety, mental fatigue, brain fog, and chronic nervous restlessness',
+      'Supports neuro-regeneration and neuroplasticity in age-related cognitive decline',
+      'Assists focus and executive functioning in attention deficit conditions',
+      'Exerts mild anticonvulsant and neuroprotective antioxidant actions',
     ],
     healthBenefits: [
-      'Cinnamaldehyde improves cellular glucose uptake by mimicking insulin receptor pathways',
-      'Delivers very high ORAC antioxidant scores against cellular lipid peroxidation',
-      'Inhibits pathogenic bacterial biofilm formations in oral cavities',
-      'Stimulates peripheral blood circulation and thermogenic metabolic balance',
-      'Proanthocyanidins support cardiovascular health and reduce LDL oxidation',
+      'Bacosides A & B cross the blood-brain barrier to repair damaged synaptic structures',
+      'Modulates dopamine and serotonin receptor density, improving emotional equilibrium',
+      'Up-regulates brain superoxide dismutase (SOD) and catalase against free radical toxicity',
+      'Stimulates GABA synthesis to alleviate neurogenic stress and insomnia',
+      'Enhances cerebral blood flow and oxygenation without elevating cardiac blood pressure',
     ],
     traditionalUses: [
-      'Bark decoction simmered with green tea and honey for winter chills and colds',
-      'Fine bark powder dusted over oatmeal or warm milk to moderate blood sugar spikes',
-      'Bark paste mixed with clove oil for temporary toothache pain relief',
-      'Cinnamon stick chewed after meals as a natural breath freshener and digestive',
+      'Fresh leaves sautéed in pure cow ghee (Brahmi Ghrita) consumed on an empty stomach for intellect',
+      'Fresh juice given to students to enhance exam preparation and retention',
+      'Leaves boiled in coconut or sesame oil massaged into the scalp for cooling mental calm and deep sleep',
+      'Decoction mixed with honey for hoarseness of voice, speech clarity, and throat stamina',
     ],
     activeConstituents: [
-      'Cinnamaldehyde',
-      'Eugenol',
-      'Cinnamic acid',
-      'Proanthocyanidins',
-      'Linalool',
+      'Bacoside A (bacoside A3, bacopaside II, jujubogenin isomer)',
+      'Bacoside B',
+      'Bacopasaponins & Betulinic acid',
+      'Luteolin & Apigenin flavonoids',
+      'Hersaponin, D-mannitol, Stigmasterol',
     ],
-    partsUsed: ['Inner bark (quills)', 'Dried leaves', 'Volatile essential oil'],
+    partsUsed: ['Whole creeping plant', 'Fresh leaves', 'Tender succulent stems'],
     sideEffects: [
-      'Excess consumption of Cassia varieties (high coumarin) can cause liver stress',
-      'Undiluted cinnamon oil can cause dermal burning and oral blistering',
-      'May lower blood sugar excessively if combined with antidiabetic drugs',
+      'Very safe botanical; can occasionally cause mild gastrointestinal cramps or nausea if taken on an empty stomach without ghee/milk',
+      'May produce a mild laxative effect at higher doses',
     ],
     precautions: [
-      'Prefer authentic Ceylon cinnamon (Cinnamomum verum) for long-term daily intake',
-      'Monitor blood glucose closely if combining with antidiabetic prescription drugs',
-      'Use no more than 1–2 g per day for medicinal purposes',
+      'Best absorbed when taken alongside dietary healthy fats (milk, ghee, coconut oil)',
+      'May increase thyroid hormone concentrations; monitor if hyperthyroid',
     ],
     contraindications: [
-      'Severe liver impairment or acute hepatitis',
-      'Undiluted essential oil on mucosal membranes',
-      'High-dose supplements during first trimester of pregnancy',
+      'Caution with concurrent sedatives, thyroid medication, or calcium channel blockers',
+      'Contraindicated in urinary tract obstruction or acute gastrointestinal ulceration',
     ],
     preparationMethods:
-        'Boil 1 small Ceylon cinnamon stick (approx 3 g) in 250 ml water for 10 minutes. '
-        'Strain and add honey when warm. Alternatively, stir 1/2 tsp ground powder into warm beverage.',
+        'Consume as fresh juice with honey, take powdered dried whole herb blended in warm milk, '
+        'or administer medically prepared classical Brahmi Ghrita.',
     dosageGuidelines:
-        '1 to 2 grams dried bark powder daily; '
-        '1 cup bark tea once or twice daily. Maximum 6 g/day.',
-    habitat:
-        'Tropical humid lowlands with sandy, well-drained fertile soils. '
-        'Cultivated commercially in Sri Lanka, India, Madagascar, and Indonesia.',
-    appearance:
-        'Evergreen tree up to 10–15 m tall with aromatic papery layered inner bark, '
-        'glossy leathery oval leaves with 3–5 prominent longitudinal veins, and small yellow flowers.',
-    plantType: 'Evergreen Spice Tree',
+        'Fresh leaf juice: 10-15 ml once daily. '
+        'Dry herb powder: 2-3 grams daily in warm milk with honey. '
+        'Standardized extract (20% bacosides): 300-450 mg daily with a fat-containing meal.',
+    habitat: 'Wet, marshy wetlands, stream banks, and tropical shallow rice paddies across India.',
+    appearance: 'Low creeping succulent perennial with oblong fleshy leaves and delicate pale blue or white flowers.',
+    plantType: 'Medicinal Aquatic Succulent',
     isSupportedInModel2: true,
   ),
 
   // ═══════════════════════════════════════════════════════════════════════════
-  // 4. GOTU KOLA
+  // 6. GOTU KOLA
   // ═══════════════════════════════════════════════════════════════════════════
   const Plant(
-    id: 'gotu_kola_plant',
-    commonName: 'Gotu Kola (Indian Pennywort)',
+    id: 'gotu_kola',
+    commonName: 'Gotu Kola (Mandukaparni)',
     scientificName: 'Centella asiatica',
-    family: 'Apiaceae (Carrot Family)',
+    family: 'Apiaceae (Parsley Family)',
     vernacularNames: {
-      'Hindi': 'Brahmi / Mandukparni',
-      'Sanskrit': 'Mandukparni / Brahmi',
-      'Kannada': 'Ondelaga',
+      'Hindi': 'Mandukaparni / Brahmi booti',
+      'Sanskrit': 'Mandukaparni / Saraswati',
+      'Kannada': 'Ondelaga / Timare',
       'Tamil': 'Vallarai',
-      'Sinhalese': 'Gotu Kola',
+      'Telugu': 'Saraswathi Aku',
+      'Malayalam': 'Muthil / Kodangal',
     },
     description:
-        'Gotu Kola is a premier nootropic and adaptogenic creeping herb revered in Ayurveda '
-        'and Traditional Chinese Medicine for over 3,000 years. Its triterpenoid saponins — '
-        'asiaticoside and asiatic acid — are scientifically proven to enhance cognitive function, '
-        'accelerate wound healing, repair skin, and reduce anxiety. Often called "the herb of '
-        'longevity," it is used fresh in Sri Lankan cuisine and as a brain tonic across Asia.',
-    imageUrl:
-        'https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?auto=format&fit=crop&w=800&q=80',
+        'Gotu Kola is a revered Ayurvedic rejuvenating herb (Medhya Rasayana) and a staple of '
+        'traditional Chinese medicine, frequently referred to as the "herb of longevity." '
+        'Its distinctive fan- or kidney-shaped leaves resemble the hemispheres of the human brain, '
+        'echoing the traditional doctrine of signatures. Clinically, it stimulates microcirculation, '
+        'promotes collagen synthesis type I, enhances memory retention, and soothes systemic inflammation.',
+    imageUrl: 'assets/plants/gotu_kola_plant.jpg',
     medicinalUses: [
-      'Enhancement of memory, concentration, and cognitive learning capacity',
-      'Accelerated wound healing, scar reduction, and skin collagen regeneration',
-      'Reduction of venous insufficiency, leg swelling, and varicose vein discomfort',
-      'Anxiolytic adaptogenic support for chronic stress, anxiety, and mental fatigue',
-      'Neuroprotection in age-related cognitive decline and neurodegenerative support',
+      'Cognitive enhancement, concentration, and mental stamina',
+      'Venous insufficiency, varicose veins, and microcirculation support',
+      'Wound healing, scar reduction, and collagen type I stimulation',
+      'Anxiety reduction and nervous system equilibrium',
+      'Skin rejuvenation, eczema management, and stretch mark healing',
     ],
     healthBenefits: [
-      'Asiaticoside stimulates dermal collagen synthesis and accelerates epithelial wound closure',
-      'Madecassoside crosses the blood-brain barrier to exert neuroprotective antioxidant effects',
-      'Reduces cortisol and modulates GABA receptors to achieve natural anxiolysis',
-      'Improves peripheral venous tone and microcirculatory blood flow dynamics',
-      'Supports myelin sheath integrity and neurite outgrowth in neuronal research',
+      'Asiaticoside stimulates type I collagen synthesis and angiogenesis for tissue repair',
+      'Madecassoside exhibits potent neuroprotective actions against amyloid-beta neurotoxicity',
+      'Improves microvascular flow and reduces capillary filtration in chronic venous insufficiency',
+      'Modulates GABA and BDNF pathways to improve mental focus and relieve anxiety',
     ],
     traditionalUses: [
-      'Fresh leaves eaten daily as a memory-enhancing brain food in Sri Lanka and South India',
-      'Leaf chutney prepared with coconut and cumin as a cognitive tonic side dish',
-      'Leaf paste applied on surgical scars, keloids, and chronic skin ulcers',
-      'Juice consumed as a nervine tonic for epilepsy and mental weakness in Ayurveda',
+      'Fresh leaves eaten raw with grated coconut and rice (Vallarai Thuvaiyal / Sambol) for memory',
+      'Leaf juice mixed with honey taken daily in the morning for nervous clarity',
+      'Leaf paste applied to wounds, burns, and chronic eczema to prevent hypertrophic scarring',
+      'Infused in sesame oil for cooling head massage to stimulate hair growth and calm the mind',
     ],
     activeConstituents: [
-      'Asiaticoside',
-      'Madecassoside',
-      'Asiatic acid',
-      'Madecassic acid',
-      'Brahminoside',
+      'Triterpenoid saponins (Asiaticoside, Madecassoside)',
+      'Asiatic acid and Madecassic acid',
+      'Centelloside, Brahminoside',
+      'Quercetin, Kaempferol flavonoids',
+      'Vitamins B, C, and mineral ash',
     ],
-    partsUsed: ['Fresh aerial leaves', 'Whole plant', 'Dried leaf powder'],
+    partsUsed: ['Fresh leaves', 'Aerial parts', 'Whole plant'],
     sideEffects: [
-      'Rare: mild nausea, gastric upset, or headache at high doses',
-      'Potential hepatotoxicity with very prolonged excessive intake',
+      'Extremely safe culinary and medicinal herb consumed daily as food in Sri Lanka and India',
+      'Very high doses may rarely cause mild headache or skin rash in hypersensitive individuals',
     ],
     precautions: [
-      'Limit continuous use to 6-week cycles; pause for 2 weeks before resuming',
-      'Monitor liver enzymes with extended high-dose supplementation',
-      'Avoid driving heavy machinery when using high doses due to mild sedative effect',
+      'May interact additively with sedative or anxiolytic medications',
+      'Discontinue 2 weeks before elective surgical procedures',
     ],
     contraindications: [
-      'Existing liver disease or hepatotoxicity history',
-      'Pregnancy and lactation at medicinal doses',
-      'Allergy to Apiaceae (carrot/celery) family',
+      'High-dose medicinal extracts contraindicated during pregnancy and lactation',
+      'Caution in patients with severe pre-existing hepatic impairment',
     ],
     preparationMethods:
-        'Blend 10–15 fresh washed leaves into a chutney or smoothie. '
-        'Or steep 1 tsp dried powder in 200 ml hot water for 8 minutes, strain, and drink.',
+        'Fresh leaves consumed raw in salads or pestos. Dried whole herb ground to powder '
+        'or steeped as hot water herbal infusion.',
     dosageGuidelines:
-        '500–1000 mg standardized extract (8–10% asiaticosides) once or twice daily; '
-        '1 cup fresh leaf tea twice daily.',
-    habitat:
-        'Moist shaded areas, paddy field margins, river banks, and tropical garden beds '
-        'with high humidity across India, Sri Lanka, Southeast Asia, and China.',
-    appearance:
-        'Low creeping perennial with small round to kidney-shaped bright green leaves '
-        'on slender petioles, forming dense ground-covering mats with tiny pinkish-white flowers.',
-    plantType: 'Creeping Perennial Herb',
+        'Fresh leaves: 5-10 leaves daily. '
+        'Churna (powder): 2-4 grams daily with warm water, milk, or ghee. '
+        'Extract: 500-1000 mg standardized extract daily.',
+    habitat: 'Tropical and subtropical wetlands, stream edges, and damp shaded soils.',
+    appearance: 'Creeping herbaceous perennial with slender stolons, kidney-shaped notched leaves, and tiny pinkish-white flowers.',
+    plantType: 'Medicinal Herb',
     isSupportedInModel2: true,
   ),
 
   // ═══════════════════════════════════════════════════════════════════════════
-  // 5. INSULIN PLANT
+  // 7. MORINGA
   // ═══════════════════════════════════════════════════════════════════════════
   const Plant(
-    id: 'insulin_plant',
-    commonName: 'Insulin Plant (Spiral Ginger)',
-    scientificName: 'Chamaecostus cuspidatus',
-    family: 'Costaceae (Costus Family)',
+    id: 'moringa',
+    commonName: 'Moringa (Drumstick Tree)',
+    scientificName: 'Moringa oleifera',
+    family: 'Moringaceae (Moringa Family)',
     vernacularNames: {
-      'Hindi': 'Insulin Patta',
-      'Kannada': 'Insulin Gida',
-      'Malayalam': 'Insulin Chethi',
-      'Tamil': 'Insulin Chedi',
-      'Telugu': 'Insulin Moku',
+      'Hindi': 'Sahjan / Munaga',
+      'Sanskrit': 'Shigru / Shobhanjana',
+      'Kannada': 'Nuggekai',
+      'Tamil': 'Murungai',
+      'Telugu': 'Munaga Chettu',
+      'Malayalam': 'Muringa',
     },
     description:
-        'The Insulin Plant is a tropical herbaceous perennial plant famed in Indian folk medicine '
-        'for its notable ability to assist in glycemic regulation and reduce post-meal blood glucose '
-        'levels. The spirally arranged leaves with distinctive reddish-purple undersides make it '
-        'easily recognizable. Its corosolic acid content has attracted significant research interest '
-        'for diabetes management and antidiabetic support therapy.',
-    imageUrl:
-        'https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?auto=format&fit=crop&w=800&q=80',
+        'Moringa, often crowned "The Miracle Tree," is an exceptionally resilient drought-resistant '
+        'tree whose leaves boast extraordinary nutrient density. Gram for gram, fresh moringa leaves '
+        'contain 7x more Vitamin C than oranges, 4x more calcium than milk, 4x more Vitamin A than carrots, '
+        'and 3x more potassium than bananas. It serves as an anti-inflammatory, antioxidant power plant, '
+        'combats malnutrition, stabilizes blood sugar, and supports lactation in nursing mothers.',
+    imageUrl: 'assets/plants/moringa_plant.jpg',
     medicinalUses: [
-      'Supportive dietary adjuvant for Type-2 diabetic glycemic management',
-      'Attenuation of postprandial glucose spikes when taken before meals',
-      'Antioxidant protection against advanced glycation end-products',
-      'Diuretic and mild urinary tract cleansing and soothing action',
-      'Hyperlipidemia management and lipid profile improvement',
+      'Combatting nutritional deficiencies, chronic fatigue, and anemia',
+      'Blood glucose regulation and postprandial insulin sensitivity',
+      'Anti-inflammatory relief for joint stiffness, arthritis, and edema',
+      'Cardioprotective lipid lowering and blood pressure modulation',
+      'Natural galactagogue stimulating breast milk production in postpartum mothers',
     ],
     healthBenefits: [
-      'Corosolic acid stimulates cellular glucose transport and GLUT4 receptor expression',
-      'Exerts protective antioxidant influence on pancreatic beta-islet cells',
-      'Aids in lipid profile management and reduces oxidative liver strain',
-      'Rich in natural flavonoids, triterpenoids, and bioactive minerals',
+      'Isothiocyanates (moringin) suppress inflammatory cytokines and NF-kB signaling',
+      'High polyphenol content (chlorogenic acid, quercetin) inhibits hepatic glucose release',
+      'Bioavailable plant iron and folate elevate hemoglobin levels safely in nutritional anemia',
+      'Potent antimicrobial action against enteric bacteria and dermatophytes',
+      'Rich in all 9 essential amino acids, making it a complete botanical protein source',
     ],
     traditionalUses: [
-      'Chewing one fresh leaf thoroughly twice daily for 30 consecutive days in traditional use',
-      'Sun-dried leaf powder mixed in warm water as an adjunct health beverage',
-      'Juice extracted from fresh stems consumed for urinary irritation and infection',
+      'Fresh leaves cooked into savory dhal, stir-fries, and medicinal soups for strength',
+      'Leaf juice mixed with honey taken for high blood pressure and bronchial asthma',
+      'Leaf poultice applied over glandular swellings, joint inflammation, and headaches',
+      'Crushed seeds utilized for traditional coagulant water purification',
     ],
     activeConstituents: [
-      'Corosolic acid',
-      'Diosgenin',
-      'Quercetin',
-      'Lupeol',
-      'Beta-carotene',
+      'Isothiocyanates (Moringin)',
+      'Chlorogenic acid & Quercetin',
+      'Beta-carotene, Vitamins A, C, E, K',
+      'Calcium, Potassium, Iron, Magnesium',
+      'Complete essential amino acids profile',
     ],
-    partsUsed: ['Fresh leaves', 'Rhizomes', 'Leaf powder (dried)'],
+    partsUsed: ['Fresh / dried leaves', 'Tender seed pods (drumsticks)', 'Seeds', 'Bark (external)'],
     sideEffects: [
-      'Risk of hypoglycemia if consumed concurrently with strong pharmaceutical antidiabetic drugs',
-      'Occasional mild gastric sourness if chewed on an empty stomach',
+      'Leaves and pods are widely consumed safe culinary staples',
+      'Overconsumption of raw leaf powder may cause mild laxative effects or stomach rumble',
+      'Bark and roots contain alkaloid spirochin and should NOT be consumed internally',
     ],
     precautions: [
-      'Regularly monitor blood sugar with a glucometer when introducing this plant',
-      'Never discontinue prescribed insulin or metformin without physician consultation',
-      'Use only as an adjuvant — not a replacement for prescribed antidiabetic medication',
+      'Monitor blood sugar levels if taking oral antidiabetic agents',
+      'Stick to leaves and culinary pods; avoid roots, bark, and excessive seed consumption',
     ],
     contraindications: [
-      'Hypoglycemic episodes or brittle unstable diabetes with extreme glucose swings',
-      'Pregnancy and nursing women',
+      'Moringa bark, roots, and flowers are contraindicated in pregnancy due to potential uterine stimulation',
+      'Use caution if taking thyroid replacement hormones',
     ],
     preparationMethods:
-        'Wash 1 mature leaf thoroughly in clean water. Chew and swallow early in the morning '
-        'followed by a glass of warm water. Alternatively, dry leaves and grind to a fine powder.',
+        'Incorporate fresh leaves into curries and soups. Dry leaves in shade and powder '
+        'for adding to smoothies, warm water, or herbal teas.',
     dosageGuidelines:
-        '1 fresh leaf chewed daily on an empty stomach for maintenance; '
-        'never exceed 2 leaves daily.',
-    habitat:
-        'Shady moist tropical understories, stream banks, and humus-rich garden borders '
-        'across southern India, Sri Lanka, and Southeast Asia.',
-    appearance:
-        'Herbaceous perennial with distinctive spiral stem arrangement, large glossy dark green '
-        'oblong-lanceolate leaves with reddish-purple undersides and bright orange tubular flowers.',
-    plantType: 'Perennial Rhizomatous Herb',
+        'Fresh leaves: 1-2 cups cooked daily. '
+        'Leaf powder: 3-5 grams daily with warm water, juice, or meals.',
+    habitat: 'Sub-Himalayan tracts, arid and semi-arid tropical regions worldwide.',
+    appearance: 'Fast-growing slender deciduous tree with drooping branches, tripinnate feathery leaves, fragrant white flowers, and long ribbed seed pods.',
+    plantType: 'Medicinal Superfood Tree',
     isSupportedInModel2: true,
   ),
 
   // ═══════════════════════════════════════════════════════════════════════════
-  // 6. MALABAR NUT (VASAKA)
+  // 8. MULTI VITAMIN PLANT
   // ═══════════════════════════════════════════════════════════════════════════
   const Plant(
-    id: 'malabar_nut',
-    commonName: 'Malabar Nut (Vasaka)',
-    scientificName: 'Justicia adhatoda (Adhatoda vasica)',
-    family: 'Acanthaceae (Acanthus Family)',
+    id: 'multi_vitamin_plant',
+    commonName: 'Multi Vitamin Plant (Chakra Muni / Katuk)',
+    scientificName: 'Sauropus androgynus',
+    family: 'Phyllanthaceae (Gooseberry Family)',
     vernacularNames: {
-      'Hindi': 'Adusa / Vasa',
-      'Sanskrit': 'Vasaka / Simhasya',
-      'Kannada': 'Adusoge',
-      'Tamil': 'Adathodai',
-      'Malayalam': 'Atalotakam',
+      'Hindi': 'Chakra Muni / Multivitamin paudha',
+      'Sanskrit': 'Chakramuni',
+      'Kannada': 'Chakramuni / Chekurmanis',
+      'Tamil': 'Thavasi Murungai',
+      'Malayalam': 'Madhura Cheera / Veli Cheera',
+      'English': 'Sweet Leaf Bush / Katuk',
     },
     description:
-        'Malabar Nut (Vasaka) is one of the most prominent respiratory therapeutics in classical '
-        'Ayurveda. Its leaves contain the alkaloid Vasicine, which served as the scientific '
-        'chemical prototype for the modern pharmaceutical mucolytic drug Bromhexine. The plant '
-        'is a dense evergreen shrub with large lanceolate leaves having a characteristically '
-        'strong bitter odor, used across South Asia for centuries.',
-    imageUrl:
-        'https://images.unsplash.com/photo-1598880940371-c756e015fea1?auto=format&fit=crop&w=800&q=80',
+        'Sauropus androgynus, popularly known across South and Southeast Asia as the "Multi-Vitamin Plant" '
+        'or "Chakra Muni," is a perennial shrub celebrated as nature’s living multivitamin tablet. '
+        'Consuming just a handful of its nutty, pea-flavored fresh leaves fulfills daily requirements '
+        'for essential vitamins A, B-complex, C, and K, together with iron, calcium, and protein. '
+        'It is extensively grown as an edible medicinal hedge for vitality, eye health, and lactation.',
+    imageUrl: 'assets/plants/multi_vitamin_plant.jpg',
     medicinalUses: [
-      'Liquefaction and expulsion of thick bronchial mucus in chronic coughs and bronchitis',
-      'Bronchodilation and soothing of asthmatic airway constriction',
-      'Hemostatic support for bleeding hemorrhoids and peptic ulcers',
-      'Relief from seasonal viral colds accompanied by chest congestion',
-      'Anti-inflammatory treatment for pharyngitis and upper respiratory infections',
+      'Natural whole-food multivitamin supplementation and prevention of nutritional deficiencies',
+      'Enhancing eye health and preventing night blindness (provitamin A beta-carotene)',
+      'Stimulating breast milk volume and quality in lactating mothers',
+      'Combatting iron-deficiency anemia and boosting cellular oxygenation',
+      'Supportive cooling green in fever, urinary dysuria, and metabolic heat',
     ],
     healthBenefits: [
-      'Vasicine and vasicinone exert powerful bronchodilatory and secretolytic action',
-      'Accelerates tracheal mucociliary clearance of particulate irritants and pathogens',
-      'Exerts significant antibacterial activity against pyogenic respiratory pathogens',
-      'Possesses anti-inflammatory and mild bronchospasmolytic properties',
+      'Unusually high botanical protein content (up to 7% fresh weight, 34% dry weight)',
+      'Massive beta-carotene concentration exceeds that of carrots and spinach',
+      'Bioavailable calcium and phosphorus strengthen bone matrix and dental enamel',
+      'Papaverine alkaloid fractions support smooth muscle relaxation and lactation induction',
+      'Antioxidant polyphenols defend hepatocytes and red blood cells from lipid oxidation',
     ],
     traditionalUses: [
-      'Fresh leaf juice blended with pure ginger juice and wild honey for stubborn cough',
-      'Leaf decoction (Kashayam) simmered with black pepper for chest colds',
-      'Leaf extract consumed as a traditional remedy for asthma and bronchial congestion',
+      'Fresh raw leaves (5-10 daily) chewed fresh straight from the plant for quick daily nourishment',
+      'Leaves lightly sautéed with garlic, grated coconut, and lentils as therapeutic sabzi/curry',
+      'Leaf soup prepared for newly delivered mothers to stimulate breast milk and rebuild blood',
+      'Leaves crushed in cool water applied as a wash for inflamed eyes and skin rashes',
     ],
     activeConstituents: [
-      'Vasicine (Peganine)',
-      'Vasicinone',
-      'Adhatodic acid',
-      'Betaine',
-      'Quinazoline alkaloids',
+      'Beta-carotene (Provitamin A) & Lutein',
+      'Vitamins B1 (thiamine), B2 (riboflavin), C, and K',
+      'High plant protein and amino acids',
+      'Calcium, Iron, Magnesium, Zinc, Phosphorus',
+      'Papaverine alkaloid (trace)',
     ],
-    partsUsed: ['Mature leaves', 'Roots', 'Flowers'],
+    partsUsed: ['Fresh leaves', 'Tender shoot tips'],
     sideEffects: [
-      'Excess doses can induce mild nausea, vomiting, or gastric irritation',
-      'Strong bitter taste may cause aversion; should be balanced with honey or ginger',
+      'Extremely safe and nutritious when eaten cooked or raw in customary culinary quantities (10-30 leaves/day)',
+      'Excessive industrial juicing of kilograms of raw leaves for fad weight loss in the 1990s was linked to bronchiolitis obliterans; always consume in moderate normal dietary amounts',
     ],
     precautions: [
-      'Always balance with honey or ginger to soothe the intensely bitter taste',
-      'Do not exceed recommended dosages; high doses may cause uterine stimulation',
+      'Cook or lightly steam leaves if consuming large bowlfuls to denature trace papaverine',
+      'Do not consume extreme concentrated raw juices in excessive amounts',
     ],
     contraindications: [
-      'Strictly contraindicated during pregnancy — exerts oxytocic uterine stimulation',
-      'Nursing mothers should avoid without medical advice',
+      'Individuals with severe pre-existing pulmonary obstructive disease should avoid massive raw consumption',
     ],
     preparationMethods:
-        'Simmer 5–8 fresh leaves in 300 ml water until reduced to 100 ml. '
-        'Strain and stir in 1 tsp wild honey and a pinch of black pepper.',
+        'Eat fresh raw leaves (5-10 leaves) daily, or steam/stir-fry with lentils, coconut, and ghee '
+        'for a delicious, highly nutritious medicinal vegetable dish.',
     dosageGuidelines:
-        '10–20 ml leaf decoction or 5–10 ml fresh leaf juice twice daily after meals.',
-    habitat:
-        'Abundant across the Indian subcontinent — plains, foothills, and roadsides '
-        'from the Himalayas to Sri Lanka. Grows in sunny open habitats and hedge tracts.',
-    appearance:
-        'Dense evergreen shrub 1–2.5 m tall with large lanceolate dark green leaves, '
-        'distinctive bitter aroma, and dense white spike-like flowers resembling a lion\'s mouth.',
-    plantType: 'Evergreen Medicinal Shrub',
+        'Fresh leaves: 5-15 raw leaves daily as a living multivitamin, or 1 small bowl cooked with food.',
+    habitat: 'Tropical home gardens, moist lowland shaded borders, and agroforestry hedges throughout India and Southeast Asia.',
+    appearance: 'Upright dark green shrub (1-2 m) with flexible slender stems, alternate ovate leaves, and tiny dark red flowers along the underside of branchlets.',
+    plantType: 'Medicinal Shrub / Vegetable',
     isSupportedInModel2: true,
   ),
 
   // ═══════════════════════════════════════════════════════════════════════════
-  // 7. PIRANDAI (VELDT GRAPE / DEVIL'S BACKBONE)
+  // 9. NEEM
   // ═══════════════════════════════════════════════════════════════════════════
   const Plant(
-    id: 'pirandai_plant',
-    commonName: 'Pirandai (Veldt Grape)',
-    scientificName: 'Cissus quadrangularis',
-    family: 'Vitaceae (Grape Family)',
+    id: 'neem',
+    commonName: 'Neem (Indian Lilac)',
+    scientificName: 'Azadirachta indica',
+    family: 'Meliaceae (Mahogany Family)',
     vernacularNames: {
-      'Hindi': 'Hadjod / Hadjora',
-      'Sanskrit': 'Asthisamharaka / Vajravalli',
-      'Kannada': 'Mangaravalli / Pirandai',
-      'Tamil': 'Pirandai',
-      'Telugu': 'Nalleru / Gudhaballi',
+      'Hindi': 'Neem / Nimb',
+      'Sanskrit': 'Nimba / Arishta',
+      'Kannada': 'Bevinamara',
+      'Tamil': 'Veppamaram',
+      'Telugu': 'Vepa Chettu',
+      'Malayalam': 'Aryaveppu',
     },
     description:
-        'Pirandai (Hadjod) is a remarkable succulent climbing plant known as the "bone setter" '
-        'across Ayurvedic and Siddha traditions. The Sanskrit name "Asthisamharaka" literally '
-        'translates to "bone fracture healer." Its quadrangular stems are rich in calcium, '
-        'phosphorus, and anabolic phytosterols that accelerate bone regeneration. Used across '
-        'India for thousands of years for fractures, osteoporosis, and joint health.',
-    imageUrl:
-        'https://images.unsplash.com/photo-1628556270448-4d4e4148e1b1?auto=format&fit=crop&w=800&q=80',
+        'Neem is revered across the Indian subcontinent as the "Village Pharmacy" and "Cure-All" '
+        '(Sarva Roga Nivarini). Every part of the tree possesses potent medicinal actions. Its intense '
+        'bitter taste (tikta rasa) indicates strong blood-purifying, antiviral, antibacterial, '
+        'antifungal, and antiparasitic properties. Rich in limonoids like azadirachtin and nimbin, '
+        'it resolves chronic inflammatory skin disorders, controls hyperglycemia, and protects oral health.',
+    imageUrl: 'assets/plants/neem_plant.jpg',
     medicinalUses: [
-      'Acceleration of bone fracture healing and mineralization',
-      'Management of osteoporosis and age-related bone density loss',
-      'Relief from joint pain, arthritis, and rheumatic conditions',
-      'Digestive tonic and treatment of hemorrhoids (piles)',
-      'Anti-obesity and metabolic syndrome management support',
+      'Dermatological conditions: severe acne, eczema, psoriasis, ringworm, and boils',
+      'Blood purification and systemic toxic heat clearing (Pitta-Kapha pacification)',
+      'Oral hygiene, gingivitis prevention, cavity reduction, and halitosis cure',
+      'Antidiabetic blood glucose management and beta-cell support',
+      'Natural insect repellent, head lice eradication, and wound disinfection',
     ],
     healthBenefits: [
-      'Ketosterone and onosmin phytosterols stimulate osteoblast activity for bone formation',
-      'Rich calcium and phosphorus content supports bone matrix mineralization',
-      'Beta-sitosterol and resveratrol exert anti-inflammatory action on joint tissues',
-      'Provides significant antioxidant protection against bone oxidative damage',
-      'Improves fracture healing rate by 30–50% in clinical and animal studies',
+      'Azadirachtin and gedunin disrupt bacterial cell walls and fungal ergosterol synthesis',
+      'Nimbolide and nimbidin exert potent anti-inflammatory COX/LOX enzymatic inhibition',
+      'Inhibits alpha-amylase and alpha-glucosidase to moderate glucose absorption',
+      'Modulates immune response without over-activating allergic autoimmune pathways',
+      'Promotes rapid re-epithelialization of infected or non-healing cutaneous ulcers',
     ],
     traditionalUses: [
-      'Stem pieces or paste mixed with sesame oil and applied as poultice over fractures',
-      'Tender stems cooked as a vegetable dish (Pirandai thuvaiyal in Tamil cuisine)',
-      'Stem juice mixed with pepper and turmeric for digestive ailments and piles',
-      'Dried stem powder taken with warm milk for bone strength and joint health',
+      'Tender young leaves chewed on an empty stomach in spring for blood purification and immunity',
+      'Leaf paste applied directly as a clarifying pack on cystic acne, rashes, and fungal infections',
+      'Neem twigs used traditionally as toothbrushes (datun) for sparkling teeth and healthy gums',
+      'Fresh leaves boiled in bathwater for treating skin eruptions, chickenpox rash, and pruritus',
     ],
     activeConstituents: [
-      'Ketosterone',
-      'Onosmin',
-      'Beta-sitosterol',
-      'Resveratrol',
-      'Calcium, Phosphorus, Iron',
+      'Azadirachtin (tetranortriterpenoid)',
+      'Nimbin, Nimbidin, Nimbolide',
+      'Gedunin, Salannin, Mahmoodin',
+      'Quercetin & Beta-sitosterol',
+      'Essential sulfur-containing compounds',
     ],
-    partsUsed: ['Quadrangular stems', 'Young stem tips', 'Stem powder'],
+    partsUsed: ['Leaves', 'Bark', 'Seeds / Seed Oil (external only)', 'Flowers', 'Twigs'],
     sideEffects: [
-      'Raw stems have astringent and irritant oxalic acid — must be cooked or processed before use',
-      'Gastrointestinal discomfort if consumed in large raw quantities',
-      'Rarely: mild thyroid stimulation reported at very high supplemental doses',
+      'Extremely bitter; high internal doses can cause nausea or gastric irritation',
+      'Neem seed oil is strictly for external use and is toxic if swallowed, especially in young children',
     ],
     precautions: [
-      'Always cook or process stems before consumption to neutralize calcium oxalate',
-      'Consult physician before using as a bone fracture adjuvant with anticoagulants',
-      'Start with small doses; individual tolerance varies',
+      'Monitor blood sugar closely if on insulin or metformin',
+      'Do not administer pure neem oil internally to children or infants',
     ],
     contraindications: [
-      'Pregnancy — insufficient safety data; avoid at medicinal doses',
-      'Known Vitaceae (grape family) allergy',
-      'Pre-existing thyroid conditions at high supplement doses',
+      'Contraindicated during pregnancy and for couples attempting conception (anti-fertility effect)',
+      'Avoid high-dose internal use in severe weakness, emaciation, or low blood pressure',
     ],
     preparationMethods:
-        'Peel and chop stems; sauté with sesame oil, onion, and spices as a vegetable dish. '
-        'For medicinal use: dry stem powder mixed with warm milk and turmeric.',
+        'Make fresh leaf paste with water for topical skin issues. Boil leaves in water for an antiseptic '
+        'wash. Grind dried leaves into churna for micro-dosing.',
     dosageGuidelines:
-        '500–1000 mg standardized stem extract daily; '
-        'or 1/2 cup cooked stem preparation 3–4 times per week.',
-    habitat:
-        'Dry deciduous forests, scrublands, rocky hillsides, and village hedges across '
-        'tropical Africa, India, Sri Lanka, and Southeast Asia.',
-    appearance:
-        'Climbing succulent vine with distinctive 4-angled (quadrangular) bright green jointed '
-        'stems, small lobed leaves, and tiny greenish-red inconspicuous flowers.',
-    plantType: 'Succulent Climbing Vine',
+        'Fresh leaves: 4-6 leaves chewed with water. '
+        'Leaf juice: 5-10 ml diluted in water. '
+        'Churna (powder): 1-2 grams daily for short courses (not exceeding 3-4 consecutive weeks).',
+    habitat: 'Tropical and semi-arid plains, roadsides, and dry deciduous forests across the Indian subcontinent.',
+    appearance: 'Large evergreen tree (15-20 m) with broad spreading crown, pinnate serrated leaflets, and fragrant white flowers.',
+    plantType: 'Medicinal Tree',
     isSupportedInModel2: true,
   ),
 
   // ═══════════════════════════════════════════════════════════════════════════
-  // 8. ROSEMARY
+  // 10. ROSEMARY
   // ═══════════════════════════════════════════════════════════════════════════
   const Plant(
-    id: 'rosemary_plant',
+    id: 'rosemary',
     commonName: 'Rosemary',
-    scientificName: 'Salvia rosmarinus (Rosmarinus officinalis)',
+    scientificName: 'Salvia rosmarinus',
     family: 'Lamiaceae (Mint Family)',
     vernacularNames: {
-      'Hindi': 'Rusmari / Gulmehendi',
-      'Sanskrit': 'Sinduvara (approximate)',
+      'Hindi': 'Rusmari / Rosemary',
+      'Sanskrit': 'Rusmari',
       'Kannada': 'Rosemary',
       'Tamil': 'Rosemary',
-      'Spanish': 'Romero',
+      'Malayalam': 'Rosemary',
     },
     description:
-        'Rosemary is a fragrant evergreen perennial shrub from the Mediterranean, renowned for '
-        'its powerful cognitive-enhancing, circulatory-stimulating, and antioxidant properties. '
-        'Its rosmarinic acid and carnosic acid place it among the most potent natural antioxidants '
-        'known to botany. The name derives from Latin "ros marinus" meaning "dew of the sea." '
-        'Used for thousands of years in cuisine, medicine, and ritual across the Mediterranean world.',
-    imageUrl:
-        'https://images.unsplash.com/photo-1628556270448-4d4e4148e1b1?auto=format&fit=crop&w=800&q=80',
+        'Rosemary is a fragrant evergreen shrub native to the Mediterranean hillsides, celebrated '
+        'since ancient Greece as the herb of memory and remembrance ("There’s rosemary, that’s for '
+        'remembrance" — Hamlet). Its pungent, pine-like aroma stems from high concentrations of '
+        'rosmarinic acid, carnosic acid, and camphor. It dramatically stimulates peripheral and '
+        'cerebral circulation, boosts mental alertness, and arrests androgenetic alopecia hair loss.',
+    imageUrl: 'assets/plants/rosemary_plant.jpg',
     medicinalUses: [
-      'Enhancement of memory, mental alertness, and cognitive concentration',
-      'Scalp stimulation and prevention of androgenic alopecia (hair loss)',
-      'Carminative digestive aid for gas, bloating, and sluggish liver function',
-      'Circulatory stimulant for cold extremities and poor peripheral blood flow',
-      'Antimicrobial mouth rinse for gum disease and oral bacterial control',
+      'Memory retention, mental focus, alertness, and cognitive endurance',
+      'Scalp stimulation, hair thinning reversal, and androgenetic alopecia defense',
+      'Digestive stimulation, bile production, and relief of flatulence and dyspepsia',
+      'Antimicrobial respiratory clearing, steam inhalation for sinusitis, and bronchial cough',
+      'Topical analgesic relief for muscular aches, tension headaches, and arthritis',
     ],
     healthBenefits: [
-      'Carnosic acid and carnosol are powerful neuroprotective antioxidants crossing the blood-brain barrier',
-      'Rosmarinic acid inhibits acetylcholinesterase to enhance cholinergic neurotransmission and memory',
-      'Ursolic acid exerts anti-inflammatory action by suppressing COX-2 and NF-κB pathways',
-      'Camphor and 1,8-cineole stimulate scalp microcirculation to promote hair follicle regeneration',
-      'Potent antifungal and antibacterial activity against Candida and Helicobacter pylori',
+      'Carnosic acid and carnosol inhibit lipid peroxidation and neutralize cerebral peroxynitrite radicals',
+      'Inhibits acetylcholinesterase (AChE) to preserve acetylcholine levels essential for memory',
+      'Topical rosemary oil shows efficacy comparable to 2% minoxidil in hair regrowth trials',
+      'Rosmarinic acid down-regulates inflammatory leukotrienes and suppresses histamine release',
+      'Stimulates microvascular capillary dilation to bring nutrients to nerve roots and hair follicles',
     ],
     traditionalUses: [
-      'Rosemary-infused olive oil massaged into scalp for hair growth and dandruff control',
-      'Sprigs boiled in steam water for inhalation to clear sinuses and sharpen mental focus',
-      'Infusion consumed as a digestive bitter tonic after heavy meals',
-      'Aromatic bundles burned or dried to purify living spaces in Mediterranean tradition',
+      'Crushed sprigs inhaled directly to banish fatigue, brain fog, and drowsiness while studying',
+      'Leaves boiled in water to prepare hair rinse water to stimulate follicles and remove dandruff',
+      'Infused in warm olive or jojoba oil massaged into the scalp 2-3 times per week for hair growth',
+      'Hot tea steeped with lemon and honey consumed for sluggish digestion and tension headache',
     ],
     activeConstituents: [
-      'Rosmarinic acid',
-      'Carnosic acid',
-      'Ursolic acid',
-      '1,8-Cineole',
-      'Camphor',
+      'Rosmarinic acid & Carnosic acid',
+      'Carnosol & Ursolic acid',
+      '1,8-Cineole (Eucalyptol)',
+      'Camphor & Alpha-pinene',
+      'Luteolin & Apigenin flavonoids',
     ],
-    partsUsed: ['Fresh and dried leaves', 'Flowering tops', 'Essential oil'],
+    partsUsed: ['Fresh / dried needle leaves', 'Flowering sprigs', 'Essential oil (external)'],
     sideEffects: [
-      'Very large quantities may cause seizures due to high camphor content',
-      'Undiluted essential oil is toxic and must never be ingested',
-      'May cause skin allergies in sensitive individuals when applied topically',
+      'Culinary amounts are completely safe',
+      'Undiluted essential oil can irritate sensitive skin; always dilute with carrier oil',
+      'High internal doses of pure volatile oil may trigger vomiting or convulsions',
     ],
     precautions: [
-      'Culinary use is entirely safe; medicinal doses should stay within 4–6 g dried herb daily',
-      'Epilepsy patients should avoid concentrated rosemary essential oil aromatherapy',
-      'Monitor blood pressure as rosemary can mildly elevate it',
+      'Always dilute pure essential oil to 2-3% in carrier oil before scalp application',
+      'Avoid high medicinal doses in individuals with epilepsy or high blood pressure',
     ],
     contraindications: [
-      'High-dose supplements during pregnancy — uterine stimulant at pharmacological doses',
-      'Seizure disorders — high camphor concentrations may lower seizure threshold',
-      'Aspirin allergy — rosmarinic acid may cross-react',
+      'High medicinal doses contraindicated in pregnancy (may stimulate menstrual flow)',
+      'Do not ingest pure concentrated rosemary essential oil',
     ],
     preparationMethods:
-        'Steep 1–2 fresh sprigs or 1 tsp dried leaves in 200 ml boiling water for 8 minutes. '
-        'Strain and drink. For scalp: dilute essential oil 2% in carrier oil for massage.',
+        'Steep 1 tsp dried or fresh needle leaves in 1 cup boiling water for 10 minutes. '
+        'For hair: simmer leaves in water for 20 minutes to make rosemary hair tonic water.',
     dosageGuidelines:
-        '1–2 cups herb tea daily; '
-        'rosemary oil diluted to 2% in carrier oil for scalp massage.',
-    habitat:
-        'Dry, rocky Mediterranean hillsides, coastal cliffs, and well-drained alkaline limestone soils. '
-        'Widely cultivated worldwide in temperate gardens.',
-    appearance:
-        'Woody evergreen shrub with narrow needle-like silvery-green leaves having a pungent '
-        'resinous aroma, pale blue to violet-blue flowers, and grayish woody aromatic bark.',
-    plantType: 'Evergreen Mediterranean Shrub',
+        'Tea: 1 cup (2-3 grams leaves) up to twice daily. '
+        'Hair tonic: Spray liberally onto clean scalp daily and gently massage for 2-3 minutes.',
+    habitat: 'Sunny, rocky Mediterranean hillsides; widely cultivated in well-drained garden pots.',
+    appearance: 'Woody evergreen shrub with aromatic needle-like leaves (dark green above, white-pubescent beneath) and pale blue flowers.',
+    plantType: 'Medicinal Aromatic Shrub',
     isSupportedInModel2: true,
   ),
 
   // ═══════════════════════════════════════════════════════════════════════════
-  // 9. WOOD APPLE
+  // 11. SARPAGANDHA
   // ═══════════════════════════════════════════════════════════════════════════
   const Plant(
-    id: 'wood_apple_plant',
-    commonName: 'Wood Apple (Elephant Apple)',
+    id: 'sarpagandha',
+    commonName: 'Sarpagandha (Indian Snakeroot)',
+    scientificName: 'Rauvolfia serpentina',
+    family: 'Apocynaceae (Dogbane Family)',
+    vernacularNames: {
+      'Hindi': 'Sarpagandha / Chandrabhaga',
+      'Sanskrit': 'Sarpagandha / Nakuli',
+      'Kannada': 'Sarpagandhi / Patalagandhi',
+      'Tamil': 'Sarpaganti',
+      'Telugu': 'Sarpagandhi',
+      'Malayalam': 'Sarpagandhi / Amalpori',
+    },
+    description:
+        'Sarpagandha is a legendary medicinal shrub whose serpent-like roots gave modern medicine '
+        'its first breakthrough pharmaceutical treatment for hypertension and schizophrenia — reserpine. '
+        'Documented in Ayurvedic texts for over two millennia as "Nidrajanani" (inducer of deep sleep) '
+        'and "Unmada Hara" (subduer of mental frenzy), it depletes catecholamines from peripheral sympathetic '
+        'nerve endings, producing dramatic blood pressure reduction and central nervous sedation.',
+    imageUrl: 'assets/plants/sarpagandha_plant.jpg',
+    medicinalUses: [
+      'Essential hypertension and acute hypertensive emergency management',
+      'Severe insomnia, agitated restlessness, and nervous excitability',
+      'Neuropsychiatric agitation, acute anxiety psychosis, and mania',
+      'Traditional calming remedy for venomous snake bites and scorpion stings',
+      'Uterine contractions stimulation in delayed or difficult labor (under strict supervision)',
+    ],
+    healthBenefits: [
+      'Reserpine irreversibly blocks vesicular monoamine transporter (VMAT), depleting noradrenaline and serotonin',
+      'Produces sustained, reliable peripheral vasodilatation and systemic blood pressure drop',
+      'Ajmaline exhibits anti-arrhythmic Class IA actions on cardiac sodium channels',
+      'Ajmalicine (raubasine) acts as an alpha-1 blocker improving peripheral and cerebral blood flow',
+      'Calms hyperactive autonomic sympathetic tone, inducing deep sleep and cardiac rest',
+    ],
+    traditionalUses: [
+      'Root powder mixed with pure rosewater or milk taken before bedtime for high blood pressure and insomnia',
+      'Root decoction administered in classical Ayurveda for psychiatric agitation and mania',
+      'Fresh root paste applied over the puncture wounds of viper and cobra bites',
+      'Root powder combined with jatamansi and shankhpushpi for chronic nervous insomnia',
+    ],
+    activeConstituents: [
+      'Reserpine (indole alkaloid)',
+      'Ajmaline, Ajmalicine (Raubasine)',
+      'Serpentine, Serpentinine',
+      'Rescinnamine, Yohimbine (trace)',
+      'Phytosterols and fatty acids',
+    ],
+    partsUsed: ['Dried Roots (primary)', 'Leaves (rare topical)'],
+    sideEffects: [
+      'POTENT MEDICINAL HERB — requires precise dosing; overdosage causes severe hypotension, bradycardia, nasal congestion, and severe depression',
+      'Chronic unmonitored use can deplete dopamine leading to Parkinsonian tremors',
+    ],
+    precautions: [
+      'MUST be used under qualified medical or Ayurvedic practitioner supervision',
+      'Monitor blood pressure and pulse regularly throughout usage',
+      'Do not abruptly discontinue high doses without medical advice',
+    ],
+    contraindications: [
+      'STRICTLY CONTRAINDICATED in clinical depression or history of suicidal ideation',
+      'Contraindicated in peptic ulcers, ulcerative colitis, Parkinson’s disease, and bradycardia',
+      'Strictly contraindicated during pregnancy and breastfeeding',
+    ],
+    preparationMethods:
+        'Roots dried and ground to fine standardized churna. Formulated in classical tablets '
+        'like Sarpagandha Ghan Vati alongside balancing carminatives.',
+    dosageGuidelines:
+        'Root powder (churna): 250 mg to 500 mg (strictly controlled) at bedtime with milk or warm water. '
+        'Sarpagandha Ghan Vati: 1 tablet (approx. 250 mg) at night under professional supervision.',
+    habitat: 'Shady moist tropical deciduous forests and foothills of the Western Ghats and Sub-Himalayas.',
+    appearance: 'Small erect glabrous evergreen shrub (30-90 cm) with whorled leaves, white-to-pinkish flowers, and black-purple berries.',
+    plantType: 'Medicinal Shrub (Controlled Dosing)',
+    isSupportedInModel2: true,
+  ),
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // 12. TULSI
+  // ═══════════════════════════════════════════════════════════════════════════
+  const Plant(
+    id: 'tulsi',
+    commonName: 'Tulsi (Holy Basil)',
+    scientificName: 'Ocimum tenuiflorum',
+    family: 'Lamiaceae (Mint Family)',
+    vernacularNames: {
+      'Hindi': 'Tulsi',
+      'Sanskrit': 'Tulasi / Surasa',
+      'Kannada': 'Tulasi',
+      'Tamil': 'Thulasi',
+      'Telugu': 'Tulasi Chettu',
+      'Malayalam': 'Tulasi',
+    },
+    description:
+        'Tulsi, worshipped as the "Queen of Herbs" and "The Incomparable One," occupies the central '
+        'courtyard of traditional Indian homes as a guardian of physical, spiritual, and ecological health. '
+        'An extraordinary adaptogen, it protects against physical, chemical, metabolic, and psychological '
+        'stress. Packed with eugenol, rosmarinic acid, and caryophyllene, Tulsi relieves coughs, colds, '
+        'and bronchial congestion, balances blood glucose, purifies the air, and protects vital organs.',
+    imageUrl: 'assets/plants/tulsi_plant.jpg',
+    medicinalUses: [
+      'Respiratory relief: productive cough, bronchitis, asthma, sinusitis, and cold',
+      'Adaptogenic defense against psychological stress, anxiety, and mental fatigue',
+      'Antimicrobial protection against viral pathogens, oral bacteria, and candida',
+      'Fever reduction and immune modulation during seasonal viral infections',
+      'Metabolic regulation of fasting blood glucose, lipid panels, and blood pressure',
+    ],
+    healthBenefits: [
+      'Eugenol acts as a natural COX-2 inhibitor with potent pain-relieving and anti-inflammatory action',
+      'Liquifies viscous bronchial phlegm and dilates airways through camphene and cineole volatile oils',
+      'Reduces elevated stress hormone (cortisol) levels and mitigates adrenal exhaustion',
+      'Elevates antioxidant glutathione and protects cellular DNA from toxic environmental radiation',
+      'Exerts broad-spectrum antiviral action against respiratory and enveloped viruses',
+    ],
+    traditionalUses: [
+      'Fresh leaves (4-5) plucked in the morning, chewed or swallowed with water for daily immunity',
+      'Tulsi Ginger Kadha (decoction) boiled with black pepper and honey for severe colds and cough',
+      'Leaves infused in boiling water used for steam inhalation to clear blocked sinuses',
+      'Fresh leaf juice with honey given to children for fever, phlegm, and colic discomfort',
+    ],
+    activeConstituents: [
+      'Eugenol (1-hydroxy-2-methoxy-4-allylbenzene)',
+      'Rosmarinic acid & Ursolic acid',
+      'Caryophyllene & Carvacrol',
+      'Linalool, Camphene, Cineole',
+      'Apigenin, Orientin, Vicenin flavonoids',
+    ],
+    partsUsed: ['Fresh leaves', 'Flowering tops / seeds', 'Root (decoctions)'],
+    sideEffects: [
+      'Extremely safe, widely consumed herb',
+      'May mildly thin the blood; caution with prescription blood thinners',
+      'High concentrated doses of eugenol over prolonged periods may have mild antifertility effects',
+    ],
+    precautions: [
+      'Traditional recommendation to swallow whole or brew into tea rather than intensely chewing raw leaves to protect dental enamel from trace iron/mercury compounds',
+      'Monitor blood sugar if taking antidiabetic pharmaceuticals',
+    ],
+    contraindications: [
+      'Avoid high therapeutic doses during pregnancy and when actively trying to conceive',
+      'Discontinue high-dose extracts 2 weeks before scheduled surgery',
+    ],
+    preparationMethods:
+        'Steep 5-10 fresh leaves in boiling water for 5-7 minutes. Boil with ginger and black pepper '
+        'for medicinal Kadha. Consume dried leaf tea daily.',
+    dosageGuidelines:
+        'Fresh leaves: 5-10 leaves daily. '
+        'Herbal tea/infusion: 1-2 cups daily. '
+        'Churna (powder): 2-3 grams daily with honey or warm water.',
+    habitat: 'Cultivated in home gardens, temple courtyards, and warm tropical regions across India.',
+    appearance: 'Aromatic branched subshrub (30-60 cm) with green or purple ovate serrate leaves and purple-flowered terminal racemes.',
+    plantType: 'Medicinal Aromatic Herb',
+    isSupportedInModel2: true,
+  ),
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // 13. WOOD APPLE
+  // ═══════════════════════════════════════════════════════════════════════════
+  const Plant(
+    id: 'wood_apple',
+    commonName: 'Wood Apple (Bael / Elephant Apple)',
     scientificName: 'Limonia acidissima',
     family: 'Rutaceae (Citrus Family)',
     vernacularNames: {
-      'Hindi': 'Kaith / Kapittha',
-      'Sanskrit': 'Kapittha / Danthasata',
-      'Kannada': 'Belakai / Kattubel',
-      'Tamil': 'Vilam Palam',
-      'Malayalam': 'Vilam',
+      'Hindi': 'Bael / Kaitha / Bel',
+      'Sanskrit': 'Kapittha / Bilva',
+      'Kannada': 'Belada Hannu / Bilva Patre',
+      'Tamil': 'Vilam Pazham / Vilvam',
+      'Telugu': 'Velaga Pandu / Maredu',
+      'Malayalam': 'Vilam Palam / Koovalam',
     },
     description:
-        'Wood Apple (Limonia acidissima) is a hardy thorny tree bearing a distinctive woody-shelled '
-        'fruit with aromatic brown pulp that has served South Asian medicine for over 3,000 years. '
-        'Its sour-sweet pulp is a potent probiotic promoter, liver tonic, and digestive remedy '
-        'packed with tannins, coumarins, and essential oils. The name "Elephant Apple" reflects '
-        'its popularity as wild elephant food across the Indian subcontinent.',
-    imageUrl:
-        'https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?auto=format&fit=crop&w=800&q=80',
+        'Wood Apple is a sacred and robust tree whose trifoliate leaves are reverently offered to Lord Shiva '
+        'and whose round, hard-shelled fruits are hailed as the supreme Ayurvedic remedy for gastrointestinal '
+        'disorders. Both the leaves and the aromatic brown fruit pulp possess high concentrations of tannins, '
+        'pectin, and coumarins (marmelosin), which tone intestinal mucosa, halt chronic diarrhea and dysentery, '
+        'cool the digestive tract, and combat intestinal parasites.',
+    imageUrl: 'assets/plants/wood_apple_plant.jpg',
     medicinalUses: [
-      'Treatment of chronic diarrhea, dysentery, and irritable bowel syndrome',
-      'Liver tonic and hepatoprotective support for jaundice and hepatitis recovery',
-      'Blood sugar regulation adjuvant in diabetic dietary management',
-      'Relief from peptic ulcers, gastritis, and gastric hyperacidity',
-      'Appetite stimulant and digestive enzyme activator for sluggish digestion',
+      'Gastrointestinal therapy: chronic dysentery, bacillary diarrhea, and ulcerative colitis',
+      'Digestive tonic for chronic indigestion, sluggish bowel, and hyperacidity',
+      'Metabolic regulation of elevated blood glucose and insulin sensitivity',
+      'Antiparasitic defense against intestinal worms and amoebic infections',
+      'Cooling summer beverage to prevent heat stroke and dehydration',
     ],
     healthBenefits: [
-      'Rich tannin content precipitates intestinal proteins to stop secretory diarrhea',
-      'Marmelosin and osthole coumarins exert hepatoprotective antioxidant liver defense',
-      'Pectin and dietary fiber act as prebiotics to promote beneficial gut microbiota',
-      'Vitamin C and riboflavin content assists immune function and metabolic energy',
-      'Alkaloids and volatile oils reduce intestinal spasms and cramping',
+      'Marmelosin and imperatorin coumarins provide antispasmodic and anti-inflammatory gut relief',
+      'High tannin content astringently binds and heals weeping inflamed mucosal walls',
+      'Rich in soluble pectin fiber, acting as a prebiotic substrate for healthy gut microbiota',
+      'Leaf extracts stimulate beta cells to release insulin and improve peripheral glucose uptake',
+      'Antimicrobial against enteropathogenic Escherichia coli, Shigella, and Salmonella strains',
     ],
     traditionalUses: [
-      'Ripe pulp scooped and consumed directly or blended with jaggery as digestive chutney',
-      'Dried unripe fruit powder mixed in buttermilk for acute diarrhea and dysentery',
-      'Raw pulp mixed with cumin and rock salt as a liver-stimulating digestive preparation',
-      'Bark and leaf decoction used as a gum and throat antiseptic gargle',
+      'Fresh fruit pulp blended with jaggery and water to make refreshing cooling Bael Sharbat',
+      'Unripe dried fruit slice decoction consumed for acute watery dysentery and gut spasms',
+      'Fresh leaves crushed and soaked overnight in water; the strained infusion consumed for diabetes',
+      'Leaf juice mixed with black pepper taken for jaundice and liver sluggishness',
     ],
     activeConstituents: [
-      'Marmelosin',
-      'Osthole',
-      'Tannins',
-      'Pectin',
-      'Limonene',
-      'Vitamin C',
+      'Marmelosin & Imperatorin (furocoumarins)',
+      'Tannins (up to 20% in unripe fruit)',
+      'Pectin (mucilage polysaccharides)',
+      'Aegeline & Lupeol',
+      'Citric acid, Ascorbic acid, Riboflavin',
     ],
-    partsUsed: ['Ripe and unripe fruit pulp', 'Leaves', 'Bark', 'Roots'],
+    partsUsed: ['Ripe & unripe fruit pulp', 'Leaves (trifoliate)', 'Bark', 'Root'],
     sideEffects: [
-      'Excessive consumption of raw pulp may worsen constipation due to very high tannin content',
-      'Unripe fruit in large quantities can cause gastric discomfort',
+      'Extremely safe and wholesome medicinal food',
+      'Excessive consumption of unripe fruit high in tannins may cause temporary constipation',
     ],
     precautions: [
-      'Prefer ripe fruit for nutritional use; use dried unripe fruit only medicinally for diarrhea',
-      'Moderate intake in individuals with chronic constipation',
+      'Monitor blood sugar levels closely if consuming therapeutic leaf extracts alongside diabetes drugs',
+      'Choose ripe fruit for constipation and unripe fruit for diarrhea/dysentery',
     ],
     contraindications: [
-      'Severe constipation — high tannin content may worsen obstipation',
-      'Known Rutaceae (citrus family) allergy',
+      'High-dose leaf extracts are contraindicated during pregnancy (traditional emmenagogue actions)',
+      'Avoid high unripe fruit tannin intake in acute intestinal obstruction',
     ],
     preparationMethods:
-        'Break open the hard shell, scoop ripe pulp, and blend with water and jaggery into a sherbet. '
-        'Or dry unripe fruit slices in sun and powder for medicinal use.',
+        'Crack open the hard woody shell and scoop out the pulp. Soak in water, mash and strain '
+        'seeds/fibers to make Bael Sharbat. Leaves steeped as hot water tea.',
     dosageGuidelines:
-        '1 ripe fruit serving daily as a health food; '
-        '1–2 tsp dried fruit powder twice daily for diarrhea control.',
-    habitat:
-        'Dry deciduous forests, scrublands, and semi-arid plains of India, Sri Lanka, '
-        'and Southeast Asia. Often found in temple gardens and rural homesteads.',
-    appearance:
-        'Medium deciduous thorny tree with pinnate compound leaves, small white flowers, '
-        'and distinctive woody rounded grey-brown fruits with an extremely hard shell '
-        'and aromatic brown sticky edible pulp.',
-    plantType: 'Deciduous Medicinal Tree',
-    isSupportedInModel2: true,
-  ),
-
-  // ═══════════════════════════════════════════════════════════════════════════
-  // 10. YLANG YLANG
-  // ═══════════════════════════════════════════════════════════════════════════
-  const Plant(
-    id: 'ylang_ylang_plant',
-    commonName: 'Ylang Ylang',
-    scientificName: 'Cananga odorata',
-    family: 'Annonaceae (Custard Apple Family)',
-    vernacularNames: {
-      'Hindi': 'Kanaanga / Sugandh Mantri',
-      'Sanskrit': 'Navarasa (approximate)',
-      'Kannada': 'Ylang Ylang',
-      'Tamil': 'Karumugai',
-      'Filipino': 'Ilang-Ilang',
-    },
-    description:
-        'Ylang Ylang is a tropical flowering tree native to Southeast Asia whose name literally '
-        'means "flower of flowers" in Tagalog. Its intensely fragrant star-shaped blossoms are '
-        'steam-distilled to produce one of the world\'s most prized aromatherapeutic essential '
-        'oils, revered for its anxiolytic, hypotensive, and skin-nourishing properties. '
-        'The oil is a core ingredient in Chanel No. 5 perfume and extensive aromatherapy practice.',
-    imageUrl:
-        'https://images.unsplash.com/photo-1628556270448-4d4e4148e1b1?auto=format&fit=crop&w=800&q=80',
-    medicinalUses: [
-      'Aromatherapeutic anxiety reduction, nervous tension relief, and mood elevation',
-      'Natural antihypertensive — lowers blood pressure through parasympathetic stimulation',
-      'Aphrodisiac and sensory relaxant for emotional tension and psychosomatic complaints',
-      'Topical scalp tonic to reduce hair loss, nourish follicles, and condition dry hair',
-      'Antifungal and antiseptic for minor skin infections and acne management',
-    ],
-    healthBenefits: [
-      'Linalool and benzyl acetate activate GABA-A receptors to produce anxiolytic calm',
-      'Geranyl acetate reduces sympathetic nervous activity to achieve antihypertensive effects',
-      'Beta-caryophyllene exerts anti-inflammatory COX-2 inhibition on skin and joints',
-      'Farnesol demonstrates broad-spectrum antimicrobial action against dermal pathogens',
-      'Reduces salivary cortisol in clinical aromatherapy studies for acute stress management',
-    ],
-    traditionalUses: [
-      'Freshly picked flowers placed on beds as a traditional calming sensory ritual in Philippines',
-      'Hair oil infused with ylang ylang flowers for scalp conditioning in Southeast Asia',
-      'Flower garlands worn during weddings and celebrations in South and Southeast Asian cultures',
-      'Diluted flower oil massaged into temples and wrists for insomnia and heart palpitations',
-    ],
-    activeConstituents: [
-      'Linalool',
-      'Benzyl acetate',
-      'Geranyl acetate',
-      'Farnesol',
-      'Beta-caryophyllene',
-    ],
-    partsUsed: ['Fresh flowers', 'Essential oil (steam-distilled)'],
-    sideEffects: [
-      'Headache or nausea with prolonged high-concentration inhalation in enclosed spaces',
-      'Contact dermatitis or allergic sensitization from undiluted essential oil on skin',
-    ],
-    precautions: [
-      'Always dilute essential oil to 1–2% maximum in a carrier oil before skin application',
-      'Diffuse for limited 20–30 minute sessions; ventilate room during aromatherapy',
-      'Avoid in low blood pressure patients due to hypotensive effects',
-    ],
-    contraindications: [
-      'Hypotension — may cause excessive blood pressure drop with antihypertensive drugs',
-      'Known sensitivity to Annonaceae plant family or tropical flower allergens',
-    ],
-    preparationMethods:
-        'Add 2–3 drops essential oil to 1 tablespoon carrier oil for topical use. '
-        'Diffuse 3–4 drops in 100 ml water for aromatherapy.',
-    dosageGuidelines:
-        'Topical 1–2% dilution applied twice daily; '
-        'aromatherapy diffusion for 20–30 minutes per session.',
-    habitat:
-        'Tropical lowland rainforests, humid coastal regions, and cultivated gardens '
-        'of the Philippines, Indonesia, Malaysia, and South Asia.',
-    appearance:
-        'Medium to large tropical tree with pendulous drooping branches, glossy oval leaves, '
-        'and distinctive star-shaped long-petaled fragrant flowers in greenish-yellow '
-        'to deep golden-yellow hues.',
-    plantType: 'Tropical Flowering Tree',
+        'Fruit pulp: 50-100 grams of fresh pulp diluted as beverage. '
+        'Leaf juice: 10-15 ml once daily. '
+        'Leaf churna: 2-3 grams daily before food.',
+    habitat: 'Dry deciduous forests, rocky dry soils, and plains of India, Sri Lanka, and Southeast Asia.',
+    appearance: 'Medium-sized armed thorny deciduous tree with smooth gray bark, alternate pinnate leaves (3-5 leaflets), and round hard woody-shelled fruit.',
+    plantType: 'Medicinal Fruit Tree',
     isSupportedInModel2: true,
   ),
 ];

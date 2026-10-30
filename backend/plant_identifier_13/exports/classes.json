@@ -1,0 +1,31 @@
+{
+  "num_classes": 13,
+  "class_names": [
+    "aloe_vera",
+    "amla",
+    "ashwagandha",
+    "ayapana",
+    "brahmi",
+    "gotu_kola",
+    "moringa",
+    "multi_vitamin_plant",
+    "neem",
+    "rosemary",
+    "sarpagandha",
+    "tulsi",
+    "wood_apple"
+  ],
+  "image_size": 224,
+  "normalization": {
+    "mean": [
+      0.485,
+      0.456,
+      0.406
+    ],
+    "std": [
+      0.229,
+      0.224,
+      0.225
+    ]
+  }
+}

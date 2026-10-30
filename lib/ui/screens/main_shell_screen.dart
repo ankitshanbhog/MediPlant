@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../widgets/app_bottom_nav.dart';
+import '../widgets/role_badge.dart';
 import 'about_screen.dart';
 import 'disease_search_screen.dart';
 import 'history_screen.dart';
@@ -72,6 +73,7 @@ class _MainShellScreenState extends State<MainShellScreen> {
           ],
         ),
         actions: [
+          const RoleBadgeWidget(),
           // History shortcut
           IconButton(
             icon: const Icon(Icons.history_rounded),
@@ -83,7 +85,7 @@ class _MainShellScreenState extends State<MainShellScreen> {
               );
             },
           ),
-          const SizedBox(width: 6),
+          const SizedBox(width: 4),
         ],
       ),
       body: IndexedStack(
