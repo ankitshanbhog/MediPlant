@@ -9,7 +9,6 @@ import '../widgets/plant_image.dart';
 import '../widgets/state_views.dart';
 import 'result_screen.dart';
 
-/// Plant Identification Screen with camera, gallery, preview, and multi-stage analysis
 class IdentifyScreen extends StatelessWidget {
   const IdentifyScreen({super.key});
 
@@ -18,14 +17,12 @@ class IdentifyScreen extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final recognitionVM = context.watch<RecognitionViewModel>();
 
-    // Loading / Analyzing State
     if (recognitionVM.isAnalyzing) {
       return Scaffold(
         body: PipelineLoadingView(stage: recognitionVM.currentStage),
       );
     }
 
-    // Result is available and failed Model 1 (Not A Plant)
     if (recognitionVM.result != null && recognitionVM.result!.isNotPlant) {
       return Scaffold(
         body: NotAPlantView(
@@ -41,7 +38,7 @@ class IdentifyScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Screen Header
+            
             const Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -70,7 +67,6 @@ class IdentifyScreen extends StatelessWidget {
             ),
             const SizedBox(height: 18),
 
-            // Error Banner if network/recognition fails
             if (recognitionVM.errorMessage != null) ...[
               Container(
                 margin: const EdgeInsets.only(bottom: 16),
@@ -99,7 +95,6 @@ class IdentifyScreen extends StatelessWidget {
               ),
             ],
 
-            // Main Preview Area or Empty Image Picker Placeholder
             if (recognitionVM.hasImage) ...[
               _ImagePreviewContainer(
                 imageUrlOrPath: recognitionVM.effectiveImageDisplayUrl,
@@ -110,7 +105,6 @@ class IdentifyScreen extends StatelessWidget {
               ),
               const SizedBox(height: 20),
 
-              // Identify Plant Primary Action Button
               ElevatedButton.icon(
                 onPressed: () async {
                   final result = await recognitionVM.startIdentification();
@@ -142,7 +136,7 @@ class IdentifyScreen extends StatelessWidget {
                 ),
               ),
             ] else ...[
-              // Image Picker Placeholder
+              
               Container(
                 width: double.infinity,
                 padding: const EdgeInsets.all(28),
@@ -225,7 +219,6 @@ class IdentifyScreen extends StatelessWidget {
 
             const SizedBox(height: 26),
 
-            // "Try Sample Images" Tray
             const Text(
               'Or Try Sample Photos',
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
@@ -302,7 +295,6 @@ class IdentifyScreen extends StatelessWidget {
             ),
             const SizedBox(height: 20),
 
-            // Botanical Photography Guidelines Card
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(

@@ -101,7 +101,7 @@ class SearchViewModel extends ChangeNotifier {
     if (query.isNotEmpty) {
       _matchingPlants = await _plantRepository.searchPlants(query);
       if (_matchingPlants.isEmpty && _filteredDiseases.isNotEmpty) {
-        // Collect plants linked to matched diseases
+        
         final plantIds = _filteredDiseases.expand((d) => d.relatedPlantIds).toSet();
         final List<Plant> linked = [];
         for (final id in plantIds) {
@@ -111,7 +111,7 @@ class SearchViewModel extends ChangeNotifier {
         _matchingPlants = linked;
       }
     } else {
-      // Filtered by category
+      
       final plantIds = _filteredDiseases.expand((d) => d.relatedPlantIds).toSet();
       final List<Plant> linked = [];
       for (final id in plantIds) {

@@ -119,7 +119,6 @@ class RecognitionViewModel extends ChangeNotifier {
       _isAnalyzing = false;
       _currentStage = PipelineStage.completed;
 
-      // Automatically save to scan history if it was a successful identification
       if (res.plant != null) {
         await _historyRepository.addHistoryItem(
           HistoryItem(

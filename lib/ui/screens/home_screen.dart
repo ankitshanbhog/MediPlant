@@ -13,11 +13,6 @@ import 'farmer/farmer_dashboard_screen.dart';
 import 'admin/admin_dashboard_screen.dart';
 import 'auth/login_screen.dart';
 
-
-/// Redesigned Vibrant Home Dashboard Screen
-///
-/// Fully connected to the local SQLite database for botanical plants & history,
-/// featuring a cloud backend server manager dialog and modern nature-inspired aesthetics.
 class HomeScreen extends StatefulWidget {
   final VoidCallback onNavigateToIdentify;
   final VoidCallback onNavigateToSearch;
@@ -63,7 +58,7 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // ── 1. Top Bar with Branding & Cloud Server Manager ─────────
+                
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -138,7 +133,6 @@ class _HomeScreenState extends State<HomeScreen> {
                       ],
                     ),
 
-                    // Cloud Server Settings Action
                     IconButton(
                       tooltip: 'Cloud Server Settings',
                       icon: Container(
@@ -158,7 +152,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 const SizedBox(height: 20),
 
-                // ── 2. Hero Plant Recognition Card ──────────────────────────
                 Container(
                   width: double.infinity,
                   decoration: BoxDecoration(
@@ -296,7 +289,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 const SizedBox(height: 26),
 
-                // ── 3. Search by Health Condition ───────────────────────────
                 Container(
                   width: double.infinity,
                   padding: const EdgeInsets.all(20),
@@ -324,7 +316,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 const SizedBox(height: 16),
 
-                // ── Role-Based Ecosystem Card ───────────────────────────────
                 Consumer<AuthViewModel>(
                   builder: (context, authVM, _) {
                     final user = authVM.currentUser;
@@ -409,7 +400,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             isAdmin
                                 ? 'Botanical Review & User Oversight'
                                 : isFarmer
-                                    ? 'Crop Batches & Harvest Management'
+                                    ? 'Crop Planning & Agronomy Dashboard'
                                     : 'Connect with Farmers & Botanical Reviewers',
                             style: const TextStyle(
                               color: Colors.white,
@@ -423,7 +414,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             isAdmin
                                 ? 'Verify farmer accounts, audit data, and manage botantical evidence.'
                                 : isFarmer
-                                    ? 'Log sowing dates, monitor harvest readiness, and receive weather advisories.'
+                                    ? 'Plan crop batches, consult agronomy guides, and track market benchmark prices.'
                                     : 'MediPlant bridges plant enthusiasts with verified farmers and botanical experts.',
                             style: TextStyle(
                               color: Colors.white.withOpacity(0.85),
@@ -493,7 +484,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 const SizedBox(height: 16),
 
-                // ── 4. Live Botanical Catalog (From SQLite Database) ────────
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -544,8 +534,6 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 }
-
-// ── Plant Card for Database Carousel ─────────────────────────────────────────
 
 class _PlantCard extends StatelessWidget {
   final Plant plant;
@@ -638,10 +626,6 @@ class _PlantCard extends StatelessWidget {
     );
   }
 }
-
-
-
-// ── Cloud Backend Server Manager Bottom Sheet ────────────────────────────────
 
 class _ServerSettingsSheet extends StatefulWidget {
   final VoidCallback onSaved;

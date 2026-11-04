@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../theme/app_colors.dart';
 
-/// About & Profile Screen with ML Architecture pipeline details and medical disclaimers
 class AboutScreen extends StatelessWidget {
   const AboutScreen({super.key});
 
@@ -15,7 +14,7 @@ class AboutScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Header Profile / App Identity
+            
             Center(
               child: Column(
                 children: [
@@ -75,7 +74,6 @@ class AboutScreen extends StatelessWidget {
             ),
             const SizedBox(height: 24),
 
-            // Project Objective Card
             _buildSectionCard(
               isDark: isDark,
               icon: Icons.flag_outlined,
@@ -85,7 +83,6 @@ class AboutScreen extends StatelessWidget {
             ),
             const SizedBox(height: 14),
 
-            // Machine Learning Architecture Pipeline Card
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
@@ -128,7 +125,6 @@ class AboutScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 14),
 
-                  // Stage 1
                   _buildMlStageItem(
                     number: '1',
                     title: 'Model 1: Plant / Not-Plant Classifier',
@@ -137,7 +133,6 @@ class AboutScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 10),
 
-                  // Stage 2
                   _buildMlStageItem(
                     number: '2',
                     title: 'Model 2: Medicinal Species Model',
@@ -146,7 +141,6 @@ class AboutScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 10),
 
-                  // Stage 3
                   _buildMlStageItem(
                     number: '3',
                     title: 'External Verification / Backup API',
@@ -158,7 +152,6 @@ class AboutScreen extends StatelessWidget {
             ),
             const SizedBox(height: 14),
 
-            // Features Checklist
             _buildSectionCard(
               isDark: isDark,
               icon: Icons.stars_rounded,
@@ -178,7 +171,6 @@ class AboutScreen extends StatelessWidget {
             ),
             const SizedBox(height: 14),
 
-            // Critical Medical Disclaimer
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(

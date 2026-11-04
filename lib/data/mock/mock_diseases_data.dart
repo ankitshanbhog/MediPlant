@@ -1,8 +1,5 @@
 import '../models/disease_model.dart';
 
-/// Disease and health conditions database for all 13 supported MediPlant species:
-///   aloe_vera, amla, ashwagandha, ayapana, brahmi, gotu_kola, moringa,
-///   multi_vitamin_plant, neem, rosemary, sarpagandha, tulsi, wood_apple
 final List<Disease> mockDiseases = [
   const Disease(
     id: 'cough',

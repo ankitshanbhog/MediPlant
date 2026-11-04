@@ -43,17 +43,17 @@ class RoleBadgeWidget extends StatelessWidget {
 
     switch (primaryRole) {
       case 'admin':
-        badgeBg = const Color(0xFFB71C1C); // Deep red
+        badgeBg = const Color(0xFFB71C1C);
         badgeIcon = Icons.shield_rounded;
         displayLabel = 'Admin';
         break;
       case 'farmer':
-        badgeBg = const Color(0xFF2E7D32); // Emerald green
+        badgeBg = const Color(0xFF2E7D32);
         badgeIcon = Icons.agriculture_rounded;
         displayLabel = user.isVerified ? 'Farmer ✓' : 'Farmer';
         break;
       default:
-        badgeBg = const Color(0xFF1565C0); // Deep Blue
+        badgeBg = const Color(0xFF1565C0);
         badgeIcon = Icons.eco_rounded;
         displayLabel = 'Enthusiast';
     }

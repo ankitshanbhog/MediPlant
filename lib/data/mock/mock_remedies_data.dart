@@ -1,13 +1,7 @@
 import '../models/remedy_model.dart';
 
-/// Comprehensive library of verified traditional home remedies for all 13 supported
-/// MediPlant species:
-///   aloe_vera, amla, ashwagandha, ayapana, brahmi, gotu_kola, moringa,
-///   multi_vitamin_plant, neem, rosemary, sarpagandha, tulsi, wood_apple
 final List<Remedy> mockRemedies = [
-  // ──────────────────────────────────────────────────────────────────────────
-  // 1. ALOE VERA
-  // ──────────────────────────────────────────────────────────────────────────
+  
   const Remedy(
     id: 'remedy_aloe_vera_burn_gel',
     condition: 'Sunburn, Burns & Skin Irritation',
@@ -71,9 +65,6 @@ final List<Remedy> mockRemedies = [
     isEducationalOnly: true,
   ),
 
-  // ──────────────────────────────────────────────────────────────────────────
-  // 2. AMLA
-  // ──────────────────────────────────────────────────────────────────────────
   const Remedy(
     id: 'remedy_amla_immunity_elixir',
     condition: 'Low Immunity, Fatigue & Seasonal Viral Defense',
@@ -140,9 +131,6 @@ final List<Remedy> mockRemedies = [
     isEducationalOnly: true,
   ),
 
-  // ──────────────────────────────────────────────────────────────────────────
-  // 3. ASHWAGANDHA
-  // ──────────────────────────────────────────────────────────────────────────
   const Remedy(
     id: 'remedy_ashwagandha_moon_milk',
     condition: 'Chronic Stress, Insomnia & Low Stamina',
@@ -178,9 +166,6 @@ final List<Remedy> mockRemedies = [
     isEducationalOnly: true,
   ),
 
-  // ──────────────────────────────────────────────────────────────────────────
-  // 4. AYAPANA
-  // ──────────────────────────────────────────────────────────────────────────
   const Remedy(
     id: 'remedy_ayapana_wound_poultice',
     condition: 'Cuts, Minor Wounds & Bleeding Hemorrhoids',
@@ -242,9 +227,6 @@ final List<Remedy> mockRemedies = [
     isEducationalOnly: true,
   ),
 
-  // ──────────────────────────────────────────────────────────────────────────
-  // 5. BRAHMI
-  // ──────────────────────────────────────────────────────────────────────────
   const Remedy(
     id: 'remedy_brahmi_memory_ghee',
     condition: 'Memory Loss, Brain Fog & Academic Concentration',
@@ -277,9 +259,6 @@ final List<Remedy> mockRemedies = [
     isEducationalOnly: true,
   ),
 
-  // ──────────────────────────────────────────────────────────────────────────
-  // 6. GOTU KOLA
-  // ──────────────────────────────────────────────────────────────────────────
   const Remedy(
     id: 'remedy_gotu_kola_memory_salad',
     condition: 'Mental Fatigue, Poor Microcirculation & Vein Health',
@@ -313,9 +292,6 @@ final List<Remedy> mockRemedies = [
     isEducationalOnly: true,
   ),
 
-  // ──────────────────────────────────────────────────────────────────────────
-  // 7. MORINGA
-  // ──────────────────────────────────────────────────────────────────────────
   const Remedy(
     id: 'remedy_moringa_green_soup',
     condition: 'Nutritional Anemia, General Weakness & Joint Pain',
@@ -351,9 +327,6 @@ final List<Remedy> mockRemedies = [
     isEducationalOnly: true,
   ),
 
-  // ──────────────────────────────────────────────────────────────────────────
-  // 8. MULTI VITAMIN PLANT
-  // ──────────────────────────────────────────────────────────────────────────
   const Remedy(
     id: 'remedy_multivitamin_daily_greens',
     condition: 'Micronutrient Deficiency, Eye Strain & Low Lactation',
@@ -387,9 +360,6 @@ final List<Remedy> mockRemedies = [
     isEducationalOnly: true,
   ),
 
-  // ──────────────────────────────────────────────────────────────────────────
-  // 9. NEEM
-  // ──────────────────────────────────────────────────────────────────────────
   const Remedy(
     id: 'remedy_neem_acne_paste',
     condition: 'Cystic Acne, Pimples & Skin Blemishes',
@@ -450,9 +420,6 @@ final List<Remedy> mockRemedies = [
     isEducationalOnly: true,
   ),
 
-  // ──────────────────────────────────────────────────────────────────────────
-  // 10. ROSEMARY
-  // ──────────────────────────────────────────────────────────────────────────
   const Remedy(
     id: 'remedy_rosemary_hair_growth_tonic',
     condition: 'Hair Thinning, Alopecia & Scalp Sluggishness',
@@ -513,9 +480,6 @@ final List<Remedy> mockRemedies = [
     isEducationalOnly: true,
   ),
 
-  // ──────────────────────────────────────────────────────────────────────────
-  // 11. SARPAGANDHA
-  // ──────────────────────────────────────────────────────────────────────────
   const Remedy(
     id: 'remedy_sarpagandha_bp_infusion',
     condition: 'Hypertension & Chronic Restless Insomnia',
@@ -547,9 +511,6 @@ final List<Remedy> mockRemedies = [
     isEducationalOnly: true,
   ),
 
-  // ──────────────────────────────────────────────────────────────────────────
-  // 12. TULSI
-  // ──────────────────────────────────────────────────────────────────────────
   const Remedy(
     id: 'remedy_tulsi_ginger_kadha',
     condition: 'Cough, Sore Throat, Cold & Fever',
@@ -612,9 +573,6 @@ final List<Remedy> mockRemedies = [
     isEducationalOnly: true,
   ),
 
-  // ──────────────────────────────────────────────────────────────────────────
-  // 13. WOOD APPLE
-  // ──────────────────────────────────────────────────────────────────────────
   const Remedy(
     id: 'remedy_wood_apple_sharbat',
     condition: 'Chronic Indigestion, Dysentery & Gut Inflammation',

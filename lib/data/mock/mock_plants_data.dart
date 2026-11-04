@@ -1,26 +1,7 @@
 import '../models/plant_model.dart';
 
-/// Verified botanical database of all 13 medicinal plant classes supported by the
-/// MediPlant dual-stage vision system (medicinal_plant_model.onnx + plant_gate_model.onnx).
-///
-/// 13 Supported Classes (alphabetical by model slug):
-///   1. aloe_vera
-///   2. amla
-///   3. ashwagandha
-///   4. ayapana
-///   5. brahmi
-///   6. gotu_kola
-///   7. moringa
-///   8. multi_vitamin_plant
-///   9. neem
-///   10. rosemary
-///   11. sarpagandha
-///   12. tulsi
-///   13. wood_apple
 final List<Plant> mockPlants = [
-  // ═══════════════════════════════════════════════════════════════════════════
-  // 1. ALOE VERA
-  // ═══════════════════════════════════════════════════════════════════════════
+  
   const Plant(
     id: 'aloe_vera',
     commonName: 'Aloe Vera (Ghritkumari)',
@@ -97,9 +78,6 @@ final List<Plant> mockPlants = [
     isSupportedInModel2: true,
   ),
 
-  // ═══════════════════════════════════════════════════════════════════════════
-  // 2. AMLA
-  // ═══════════════════════════════════════════════════════════════════════════
   const Plant(
     id: 'amla',
     commonName: 'Amla (Indian Gooseberry)',
@@ -172,9 +150,6 @@ final List<Plant> mockPlants = [
     isSupportedInModel2: true,
   ),
 
-  // ═══════════════════════════════════════════════════════════════════════════
-  // 3. ASHWAGANDHA
-  // ═══════════════════════════════════════════════════════════════════════════
   const Plant(
     id: 'ashwagandha',
     commonName: 'Ashwagandha (Indian Ginseng)',
@@ -250,9 +225,6 @@ final List<Plant> mockPlants = [
     isSupportedInModel2: true,
   ),
 
-  // ═══════════════════════════════════════════════════════════════════════════
-  // 4. AYAPANA
-  // ═══════════════════════════════════════════════════════════════════════════
   const Plant(
     id: 'ayapana',
     commonName: 'Ayapana (Water Hemp)',
@@ -324,9 +296,6 @@ final List<Plant> mockPlants = [
     isSupportedInModel2: true,
   ),
 
-  // ═══════════════════════════════════════════════════════════════════════════
-  // 5. BRAHMI
-  // ═══════════════════════════════════════════════════════════════════════════
   const Plant(
     id: 'brahmi',
     commonName: 'Brahmi (Water Hyssop)',
@@ -400,9 +369,6 @@ final List<Plant> mockPlants = [
     isSupportedInModel2: true,
   ),
 
-  // ═══════════════════════════════════════════════════════════════════════════
-  // 6. GOTU KOLA
-  // ═══════════════════════════════════════════════════════════════════════════
   const Plant(
     id: 'gotu_kola',
     commonName: 'Gotu Kola (Mandukaparni)',
@@ -475,9 +441,6 @@ final List<Plant> mockPlants = [
     isSupportedInModel2: true,
   ),
 
-  // ═══════════════════════════════════════════════════════════════════════════
-  // 7. MORINGA
-  // ═══════════════════════════════════════════════════════════════════════════
   const Plant(
     id: 'moringa',
     commonName: 'Moringa (Drumstick Tree)',
@@ -551,9 +514,6 @@ final List<Plant> mockPlants = [
     isSupportedInModel2: true,
   ),
 
-  // ═══════════════════════════════════════════════════════════════════════════
-  // 8. MULTI VITAMIN PLANT
-  // ═══════════════════════════════════════════════════════════════════════════
   const Plant(
     id: 'multi_vitamin_plant',
     commonName: 'Multi Vitamin Plant (Chakra Muni / Katuk)',
@@ -624,9 +584,6 @@ final List<Plant> mockPlants = [
     isSupportedInModel2: true,
   ),
 
-  // ═══════════════════════════════════════════════════════════════════════════
-  // 9. NEEM
-  // ═══════════════════════════════════════════════════════════════════════════
   const Plant(
     id: 'neem',
     commonName: 'Neem (Indian Lilac)',
@@ -700,9 +657,6 @@ final List<Plant> mockPlants = [
     isSupportedInModel2: true,
   ),
 
-  // ═══════════════════════════════════════════════════════════════════════════
-  // 10. ROSEMARY
-  // ═══════════════════════════════════════════════════════════════════════════
   const Plant(
     id: 'rosemary',
     commonName: 'Rosemary',
@@ -775,9 +729,6 @@ final List<Plant> mockPlants = [
     isSupportedInModel2: true,
   ),
 
-  // ═══════════════════════════════════════════════════════════════════════════
-  // 11. SARPAGANDHA
-  // ═══════════════════════════════════════════════════════════════════════════
   const Plant(
     id: 'sarpagandha',
     commonName: 'Sarpagandha (Indian Snakeroot)',
@@ -852,9 +803,6 @@ final List<Plant> mockPlants = [
     isSupportedInModel2: true,
   ),
 
-  // ═══════════════════════════════════════════════════════════════════════════
-  // 12. TULSI
-  // ═══════════════════════════════════════════════════════════════════════════
   const Plant(
     id: 'tulsi',
     commonName: 'Tulsi (Holy Basil)',
@@ -929,9 +877,6 @@ final List<Plant> mockPlants = [
     isSupportedInModel2: true,
   ),
 
-  // ═══════════════════════════════════════════════════════════════════════════
-  // 13. WOOD APPLE
-  // ═══════════════════════════════════════════════════════════════════════════
   const Plant(
     id: 'wood_apple',
     commonName: 'Wood Apple (Bael / Elephant Apple)',

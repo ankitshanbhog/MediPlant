@@ -6,7 +6,6 @@ import '../theme/app_colors.dart';
 import '../widgets/plant_card.dart';
 import 'plant_detail_screen.dart';
 
-/// Database-backed reference for every plant available to the application.
 class PlantEncyclopediaScreen extends StatefulWidget {
   const PlantEncyclopediaScreen({super.key});
 

@@ -42,13 +42,6 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
-  void _fillDemoCredentials(String email, String password) {
-    setState(() {
-      _emailController.text = email;
-      _passwordController.text = password;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     final authVM = context.watch<AuthViewModel>();
@@ -171,7 +164,6 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 const SizedBox(height: 16),
 
-                // Register redirect
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -189,54 +181,6 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ),
                   ],
-                ),
-                const SizedBox(height: 28),
-
-                // Quick Demo Account Shortcuts for Evaluation
-                Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: Colors.grey.shade100,
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: Colors.grey.shade300),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Row(
-                        children: [
-                          Icon(Icons.flash_on_rounded, size: 16, color: Colors.orange),
-                          SizedBox(width: 6),
-                          Text(
-                            'Quick Demo Sign-In (Preset Roles)',
-                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 10),
-                      Wrap(
-                        spacing: 8,
-                        runSpacing: 8,
-                        children: [
-                          OutlinedButton.icon(
-                            icon: const Icon(Icons.agriculture_rounded, size: 16, color: Color(0xFF2E7D32)),
-                            label: const Text('Farmer Mode', style: TextStyle(fontSize: 12)),
-                            onPressed: () => _fillDemoCredentials('farmer@mediplant.org', 'Farmer@123'),
-                          ),
-                          OutlinedButton.icon(
-                            icon: const Icon(Icons.shield_rounded, size: 16, color: Color(0xFFB71C1C)),
-                            label: const Text('Admin Console', style: TextStyle(fontSize: 12)),
-                            onPressed: () => _fillDemoCredentials('admin@mediplant.org', 'Admin@123'),
-                          ),
-                          OutlinedButton.icon(
-                            icon: const Icon(Icons.eco_rounded, size: 16, color: Color(0xFF1565C0)),
-                            label: const Text('General User', style: TextStyle(fontSize: 12)),
-                            onPressed: () => _fillDemoCredentials('user@mediplant.org', 'User@123'),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
                 ),
               ],
             ),

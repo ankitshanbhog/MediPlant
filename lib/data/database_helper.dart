@@ -156,14 +156,12 @@ class DatabaseHelper {
       await batch.commit(noResult: true);
     }
     if (oldVersion < 6) {
-      // Clean up legacy plants not part of the verified botanical species
+      
       final validIds = mockPlants.map((p) => "'${p.id}'").join(',');
       await db.execute('DELETE FROM plants WHERE id NOT IN ($validIds)');
     }
     if (oldVersion < 7) {
-      // Full reseed for the new MediPlant 10-class model.
-      // Remove all existing plants, diseases, and remedies, then re-insert
-      // the 10 supported classes with accurate, updated information.
+      
       await db.execute('DELETE FROM plants');
       await db.execute('DELETE FROM diseases');
       await db.execute('DELETE FROM remedies');
@@ -227,9 +225,7 @@ class DatabaseHelper {
       await batch.commit(noResult: true);
     }
     if (oldVersion < 8) {
-      // Full reseed for the 13-class MediPlant ONNX model.
-      // Remove all existing plants, diseases, and remedies, then re-insert
-      // all 13 supported classes with accurate, updated botanical information.
+      
       await db.execute('DELETE FROM plants');
       await db.execute('DELETE FROM diseases');
       await db.execute('DELETE FROM remedies');
@@ -295,7 +291,7 @@ class DatabaseHelper {
   }
 
   Future<void> _createDB(Database db, int version) async {
-    // 1. Plants Table
+    
     await db.execute('''
       CREATE TABLE plants (
         id TEXT PRIMARY KEY,
@@ -322,7 +318,6 @@ class DatabaseHelper {
       )
     ''');
 
-    // 2. Diseases Table
     await db.execute('''
       CREATE TABLE diseases (
         id TEXT PRIMARY KEY,
@@ -337,7 +332,6 @@ class DatabaseHelper {
       )
     ''');
 
-    // 3. Remedies Table
     await db.execute('''
       CREATE TABLE remedies (
         id TEXT PRIMARY KEY,
@@ -357,7 +351,6 @@ class DatabaseHelper {
       )
     ''');
 
-    // 4. Scan History Table
     await db.execute('''
       CREATE TABLE scan_history (
         id TEXT PRIMARY KEY,
@@ -373,7 +366,6 @@ class DatabaseHelper {
       )
     ''');
 
-    // 5. App Settings Table
     await db.execute('''
       CREATE TABLE app_settings (
         key TEXT PRIMARY KEY,
@@ -381,7 +373,6 @@ class DatabaseHelper {
       )
     ''');
 
-    // Initial Data Seeding
     await _seedDatabase(db);
   }
 
@@ -450,22 +441,50 @@ class DatabaseHelper {
     await batch.commit(noResult: true);
   }
 
-  // --- Plant Queries ---
   Future<List<Plant>> getAllPlants() async {
     final db = await database;
-    final validIds = mockPlants.map((p) => "'${p.id}'").join(',');
-    final result = await db.rawQuery('SELECT * FROM plants WHERE id IN ($validIds) ORDER BY commonName ASC');
+    final result = await db.rawQuery('SELECT * FROM plants ORDER BY commonName ASC');
     if (result.isEmpty) {
       return mockPlants;
     }
     return result.map((row) => _rowToPlant(row)).toList();
   }
 
+  Future<void> upsertPlant(Plant p) async {
+    final db = await database;
+    await db.insert(
+      'plants',
+      {
+        'id': p.id,
+        'commonName': p.commonName,
+        'scientificName': p.scientificName,
+        'family': p.family,
+        'vernacularNames': jsonEncode(p.vernacularNames),
+        'description': p.description,
+        'imageUrl': p.imageUrl,
+        'medicinalUses': jsonEncode(p.medicinalUses),
+        'healthBenefits': jsonEncode(p.healthBenefits),
+        'traditionalUses': jsonEncode(p.traditionalUses),
+        'activeConstituents': jsonEncode(p.activeConstituents),
+        'partsUsed': jsonEncode(p.partsUsed),
+        'sideEffects': jsonEncode(p.sideEffects),
+        'precautions': jsonEncode(p.precautions),
+        'contraindications': jsonEncode(p.contraindications),
+        'preparationMethods': p.preparationMethods,
+        'dosageGuidelines': p.dosageGuidelines,
+        'habitat': p.habitat,
+        'appearance': p.appearance,
+        'plantType': p.plantType,
+        'isSupportedInModel2': p.isSupportedInModel2 ? 1 : 0,
+      },
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+  }
+
   Future<Plant?> getPlantById(String id) async {
     final db = await database;
     final normalized = id.toLowerCase().trim();
 
-    // 1. Direct ID match
     final direct = await db.query(
       'plants',
       where: 'LOWER(id) = ?',
@@ -476,7 +495,6 @@ class DatabaseHelper {
       return _rowToPlant(direct.first);
     }
 
-    // 2. Alias variations for all 13 supported classes & synonyms
     final aliases = <String>[
       normalized.replaceAll('_plant', ''),
       '${normalized.replaceAll('_plant', '')}_plant',
@@ -508,7 +526,6 @@ class DatabaseHelper {
       }
     }
 
-    // 3. Fallback search by common name or scientific name containing normalized term
     final clean = normalized.replaceAll('_plant', '').replaceAll('_', ' ');
     final searchResult = await searchPlants(clean);
     if (searchResult.isNotEmpty) {
@@ -524,11 +541,11 @@ class DatabaseHelper {
     if (q.isEmpty) return getAllPlants();
 
     final result = await db.rawQuery('''
-      SELECT * FROM plants 
-      WHERE LOWER(commonName) LIKE ? 
-         OR LOWER(scientificName) LIKE ? 
-         OR LOWER(family) LIKE ? 
-         OR LOWER(medicinalUses) LIKE ? 
+      SELECT * FROM plants
+      WHERE LOWER(commonName) LIKE ?
+         OR LOWER(scientificName) LIKE ?
+         OR LOWER(family) LIKE ?
+         OR LOWER(medicinalUses) LIKE ?
          OR LOWER(vernacularNames) LIKE ?
     ''', ['%$q%', '%$q%', '%$q%', '%$q%', '%$q%']);
 
@@ -545,8 +562,8 @@ class DatabaseHelper {
     final db = await database;
     final d = diseaseId.toLowerCase();
     final result = await db.rawQuery('''
-      SELECT * FROM plants 
-      WHERE LOWER(medicinalUses) LIKE ? 
+      SELECT * FROM plants
+      WHERE LOWER(medicinalUses) LIKE ?
          OR LOWER(traditionalUses) LIKE ?
     ''', ['%$d%', '%$d%']);
     return result.map((row) => _rowToPlant(row)).toList();
@@ -578,7 +595,6 @@ class DatabaseHelper {
     );
   }
 
-  // --- Disease Queries ---
   Future<List<Disease>> getAllDiseases() async {
     final db = await database;
     final result = await db.query('diseases');
@@ -605,9 +621,9 @@ class DatabaseHelper {
     if (q.isEmpty) return getAllDiseases();
 
     final result = await db.rawQuery('''
-      SELECT * FROM diseases 
-      WHERE LOWER(name) LIKE ? 
-         OR LOWER(category) LIKE ? 
+      SELECT * FROM diseases
+      WHERE LOWER(name) LIKE ?
+         OR LOWER(category) LIKE ?
          OR LOWER(symptoms) LIKE ?
     ''', ['%$q%', '%$q%', '%$q%']);
 
@@ -638,7 +654,6 @@ class DatabaseHelper {
     );
   }
 
-  // --- Remedy Queries ---
   Future<List<Remedy>> getAllRemedies() async {
     final db = await database;
     final result = await db.query('remedies');
@@ -673,8 +688,8 @@ class DatabaseHelper {
     final db = await database;
     final q = condition.trim().toLowerCase();
     final result = await db.rawQuery('''
-      SELECT * FROM remedies 
-      WHERE LOWER(condition) LIKE ? 
+      SELECT * FROM remedies
+      WHERE LOWER(condition) LIKE ?
          OR LOWER(category) LIKE ?
     ''', ['%$q%', '%$q%']);
     return result.map((row) => _rowToRemedy(row)).toList();
@@ -686,11 +701,11 @@ class DatabaseHelper {
     if (q.isEmpty) return getAllRemedies();
 
     final result = await db.rawQuery('''
-      SELECT * FROM remedies 
-      WHERE LOWER(title) LIKE ? 
-         OR LOWER(condition) LIKE ? 
-         OR LOWER(primaryPlantName) LIKE ? 
-         OR LOWER(category) LIKE ? 
+      SELECT * FROM remedies
+      WHERE LOWER(title) LIKE ?
+         OR LOWER(condition) LIKE ?
+         OR LOWER(primaryPlantName) LIKE ?
+         OR LOWER(category) LIKE ?
          OR LOWER(ingredients) LIKE ?
     ''', ['%$q%', '%$q%', '%$q%', '%$q%', '%$q%']);
 
@@ -716,7 +731,6 @@ class DatabaseHelper {
     );
   }
 
-  // --- Scan History Queries ---
   Future<List<HistoryItem>> getHistory() async {
     final db = await database;
     final result = await db.query('scan_history', orderBy: 'timestamp DESC');
@@ -742,7 +756,6 @@ class DatabaseHelper {
     await db.delete('scan_history');
   }
 
-  // --- App Settings (Cloud Server URL, etc.) ---
   Future<String?> getSetting(String key) async {
     final db = await database;
     final result = await db.query('app_settings', where: 'key = ?', whereArgs: [key]);

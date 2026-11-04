@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../theme/app_colors.dart';
 
-/// Interactive chip for selecting disease/symptom filters
 class DiseaseChip extends StatelessWidget {
   final String label;
   final bool isSelected;

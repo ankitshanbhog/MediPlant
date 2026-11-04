@@ -2,7 +2,6 @@ import '../database_helper.dart';
 import '../mock/mock_plants_data.dart';
 import '../models/plant_model.dart';
 
-/// Repository interface and implementations for Medicinal Plants data
 abstract class PlantRepository {
   Future<List<Plant>> getAllPlants();
   Future<Plant?> getPlantById(String id);
@@ -11,7 +10,6 @@ abstract class PlantRepository {
   Future<List<Plant>> getPlantsByDisease(String diseaseId);
 }
 
-/// SQLite persistent Plant Repository
 class SqlitePlantRepository implements PlantRepository {
   final DatabaseHelper _db = DatabaseHelper.instance;
 
@@ -36,7 +34,7 @@ class MockPlantRepository implements PlantRepository {
 
   @override
   Future<List<Plant>> getAllPlants() async {
-    // Simulate brief network/disk latency
+    
     await Future.delayed(const Duration(milliseconds: 50));
     return _plants;
   }
@@ -72,7 +70,7 @@ class MockPlantRepository implements PlantRepository {
   @override
   Future<List<Plant>> getFeaturedPlants() async {
     await Future.delayed(const Duration(milliseconds: 20));
-    // Return first 5 iconic plants
+    
     return _plants.take(5).toList();
   }
 

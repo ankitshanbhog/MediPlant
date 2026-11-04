@@ -1,11 +1,10 @@
 
-
 class Plant {
   final String id;
   final String commonName;
   final String scientificName;
   final String family;
-  final Map<String, String> vernacularNames; 
+  final Map<String, String> vernacularNames;
   final String description;
   final String imageUrl;
   final List<String> medicinalUses;
@@ -21,7 +20,7 @@ class Plant {
   final String habitat;
   final String appearance;
   final String plantType;
-  final bool isSupportedInModel2; 
+  final bool isSupportedInModel2;
 
   const Plant({
     required this.id,

@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import '../theme/app_colors.dart';
 
-/// Interactive visual gauge displaying recognition confidence and model source
 class ConfidenceIndicator extends StatelessWidget {
-  final double confidence; // 0.0 to 1.0
+  final double confidence;
   final String sourceLabel;
   final bool isVerified;
   final bool isCompact;

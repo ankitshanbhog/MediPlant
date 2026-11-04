@@ -70,7 +70,6 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
   Widget build(BuildContext context) {
     final authVM = context.watch<AuthViewModel>();
 
-    // Route guard check: must be admin
     if (!authVM.isAdmin) {
       return Scaffold(
         appBar: AppBar(title: const Text('Admin Console')),
@@ -138,7 +137,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
               : ListView(
                   padding: const EdgeInsets.all(16),
                   children: [
-                    // Admin Stats Card
+                    
                     Card(
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                       color: Colors.grey.shade100,

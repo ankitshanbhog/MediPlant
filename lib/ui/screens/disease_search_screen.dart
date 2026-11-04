@@ -10,8 +10,6 @@ import '../widgets/plant_image.dart';
 import '../widgets/state_views.dart';
 import 'plant_detail_screen.dart';
 
-/// Redesigned Disease & Health Condition Search Screen
-/// Clean, visual, uncluttered layout with plant photo previews and compact cards.
 class DiseaseSearchScreen extends StatelessWidget {
   const DiseaseSearchScreen({super.key});
 
@@ -57,7 +55,7 @@ class DiseaseSearchScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // ── 1. Title & Subtitle ──────────────────────────────────
+              
               const Text(
                 'Health & Conditions',
                 style: TextStyle(
@@ -76,7 +74,6 @@ class DiseaseSearchScreen extends StatelessWidget {
               ),
               const SizedBox(height: 18),
 
-              // ── 2. Search Bar ────────────────────────────────────────
               TextField(
                 style: const TextStyle(fontSize: 14.5),
                 onChanged: (value) => searchVM.setSearchQuery(value),
@@ -110,7 +107,6 @@ class DiseaseSearchScreen extends StatelessWidget {
               ),
               const SizedBox(height: 14),
 
-              // ── 3. Category Filter Chips ─────────────────────────────
               SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: Row(
@@ -125,14 +121,13 @@ class DiseaseSearchScreen extends StatelessWidget {
               ),
               const SizedBox(height: 20),
 
-              // ── 4. Content Area ──────────────────────────────────────
               if (searchVM.hasNoResults) ...[
                 DoctorConsultationBanner(
                   query: searchVM.searchQuery,
                   onSearchOther: () => searchVM.clearSearch(),
                 ),
               ] else ...[
-                // Condition Cards
+                
                 if (searchVM.filteredDiseases.isNotEmpty) ...[
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -166,7 +161,7 @@ class DiseaseSearchScreen extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          // Header: Icon + Title + Category Badge
+                          
                           Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
@@ -234,7 +229,6 @@ class DiseaseSearchScreen extends StatelessWidget {
                           ),
                           const SizedBox(height: 10),
 
-                          // Concise summary (2 lines max)
                           Text(
                             d.description,
                             maxLines: 2,
@@ -247,7 +241,6 @@ class DiseaseSearchScreen extends StatelessWidget {
                           ),
                           const SizedBox(height: 10),
 
-                          // Symptoms Chips (compact, max 3)
                           Wrap(
                             spacing: 6,
                             runSpacing: 6,
@@ -287,7 +280,6 @@ class DiseaseSearchScreen extends StatelessWidget {
                             ],
                           ),
 
-                          // Recommended Plant Photos Strip
                           if (d.relatedPlantIds.isNotEmpty) ...[
                             const SizedBox(height: 12),
                             const Divider(height: 1, color: Color(0xFFEDF2EE)),
@@ -366,7 +358,6 @@ class DiseaseSearchScreen extends StatelessWidget {
                   const SizedBox(height: 16),
                 ],
 
-                // Recommended Medicinal Plants
                 if (searchVM.matchingPlants.isNotEmpty) ...[
                   Text(
                     'Botanical Species (${searchVM.matchingPlants.length})',

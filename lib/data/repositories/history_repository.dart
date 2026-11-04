@@ -1,7 +1,6 @@
 import '../database_helper.dart';
 import '../models/history_item_model.dart';
 
-/// Repository interface and implementations for Scan History
 abstract class HistoryRepository {
   Future<List<HistoryItem>> getHistory();
   Future<void> addHistoryItem(HistoryItem item);
@@ -9,7 +8,6 @@ abstract class HistoryRepository {
   Future<void> clearHistory();
 }
 
-/// SQLite persistent History Repository
 class SqliteHistoryRepository implements HistoryRepository {
   final DatabaseHelper _db = DatabaseHelper.instance;
 

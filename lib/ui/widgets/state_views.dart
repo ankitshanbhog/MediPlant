@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import '../../services/recognition_service.dart';
 import '../theme/app_colors.dart';
 
-/// Displayed when Model 1 determines the uploaded image is not a plant
 class NotAPlantView extends StatelessWidget {
   final String? reason;
   final VoidCallback onRetry;
@@ -73,7 +72,6 @@ class NotAPlantView extends StatelessWidget {
   }
 }
 
-/// Crucial Doctor Consultation Banner displayed when no suitable plant/remedy is found
 class DoctorConsultationBanner extends StatelessWidget {
   final String query;
   final VoidCallback? onSearchOther;
@@ -181,7 +179,6 @@ class DoctorConsultationBanner extends StatelessWidget {
   }
 }
 
-/// Loading / Recognition Stage View with stage-by-stage visual feedback
 class PipelineLoadingView extends StatelessWidget {
   final PipelineStage stage;
 
@@ -271,7 +268,7 @@ class _StageStepsIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Simple animated dots — no internal stage names exposed to user
+    
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: List.generate(3, (i) {
@@ -294,7 +291,6 @@ class _StageStepsIndicator extends StatelessWidget {
   }
 }
 
-/// Generic Empty State
 class EmptyStateView extends StatelessWidget {
   final IconData icon;
   final String title;

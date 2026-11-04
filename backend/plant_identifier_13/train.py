@@ -8,74 +8,86 @@ Usage:
 
 import os
 import sys
+import importlib
 import argparse
 import time
-import torch
-import torch.nn as nn
-from torch.optim import AdamW
-from torch.optim.lr_scheduler import CosineAnnealingLR
+import tensorflow as tf
 from tqdm import tqdm
 
-from config import (
-    TRAIN_DIR, VAL_DIR, CHECKPOINTS_DIR, NUM_CLASSES,
-    BATCH_SIZE, EPOCHS, LEARNING_RATE, WEIGHT_DECAY,
-    LABEL_SMOOTHING, IMAGE_SIZE, DEVICE
-)
+_cfg = importlib.util.spec_from_file_location("config", os.path.join(os.path.dirname(__file__), "config.py"))
+_mod = importlib.util.module_from_spec(_cfg)
+sys.modules.setdefault("torch", type(sys)("torch"))
+sys.modules["torch"].device = lambda *a, **k: None
+sys.modules["torch"].cuda = type(sys)("cuda")
+sys.modules["torch"].cuda.is_available = lambda: False
+_cfg.loader.exec_module(_mod)
+
+TRAIN_DIR = _mod.TRAIN_DIR
+VAL_DIR = _mod.VAL_DIR
+CHECKPOINTS_DIR = _mod.CHECKPOINTS_DIR
+NUM_CLASSES = _mod.NUM_CLASSES
+BATCH_SIZE = _mod.BATCH_SIZE
+EPOCHS = _mod.EPOCHS
+LEARNING_RATE = _mod.LEARNING_RATE
+WEIGHT_DECAY = _mod.WEIGHT_DECAY
+LABEL_SMOOTHING = _mod.LABEL_SMOOTHING
+IMAGE_SIZE = _mod.IMAGE_SIZE
+
 from model.network import build_model
-from model.dataset_loader import create_dataloaders
 
 
-def train_epoch(model, dataloader, criterion, optimizer, device):
-    model.train()
+def create_dataset(directory, batch_size, image_size, shuffle=True):
+    dataset = tf.keras.utils.image_dataset_from_directory(
+        directory,
+        image_size=(image_size, image_size),
+        batch_size=batch_size,
+        shuffle=shuffle,
+        label_mode="int",
+    )
+    rescale = tf.keras.layers.Rescaling(1.0 / 255)
+    dataset = dataset.map(lambda x, y: (rescale(x), y), num_parallel_calls=tf.data.AUTOTUNE)
+    dataset = dataset.prefetch(tf.data.AUTOTUNE)
+    return dataset
+
+
+def train_epoch(model, dataset, loss_fn, optimizer):
     running_loss = 0.0
     correct = 0
     total = 0
 
-    progress = tqdm(dataloader, desc="Training Batch", leave=False)
-    for images, labels in progress:
-        images = images.to(device, non_blocking=True)
-        labels = labels.to(device, non_blocking=True)
+    for images, labels in tqdm(dataset, desc="Training Batch", leave=False):
+        with tf.GradientTape() as tape:
+            outputs = model(images, training=True)
+            loss = loss_fn(labels, outputs)
 
-        optimizer.zero_grad()
-        outputs = model(images)
-        loss = criterion(outputs, labels)
-        loss.backward()
-        optimizer.step()
+        gradients = tape.gradient(loss, model.trainable_variables)
+        optimizer.apply_gradients(zip(gradients, model.trainable_variables))
 
-        running_loss += loss.item() * images.size(0)
-        _, preds = torch.max(outputs, 1)
-        correct += torch.sum(preds == labels.data).item()
-        total += labels.size(0)
-
-        progress.set_postfix({
-            "loss": f"{loss.item():.4f}",
-            "acc": f"{100.0 * correct / total:.2f}%"
-        })
+        batch_size = images.shape[0]
+        running_loss += loss.numpy() * batch_size
+        preds = tf.argmax(outputs, axis=1, output_type=tf.int32)
+        correct += tf.reduce_sum(tf.cast(preds == tf.cast(labels, tf.int32), tf.int32)).numpy()
+        total += batch_size
 
     epoch_loss = running_loss / total
     epoch_acc = 100.0 * correct / total
     return epoch_loss, epoch_acc
 
 
-def validate_epoch(model, dataloader, criterion, device):
-    model.eval()
+def validate_epoch(model, dataset, loss_fn):
     running_loss = 0.0
     correct = 0
     total = 0
 
-    with torch.no_grad():
-        progress = tqdm(dataloader, desc="Validation Batch", leave=False)
-        for images, labels in progress:
-            images = images.to(device, non_blocking=True)
-            labels = labels.to(device, non_blocking=True)
+    for images, labels in tqdm(dataset, desc="Validation Batch", leave=False):
+        outputs = model(images, training=False)
+        loss = loss_fn(labels, outputs)
 
-            outputs = model(images)
-            loss = criterion(outputs, labels)
-
-            running_loss += loss.item() * images.size(0)
-            _, preds = torch.max(outputs, 1)
-            correct += torch.sum(preds == labels.data).item()
-            total += labels.size(0)
+        batch_size = images.shape[0]
+        running_loss += loss.numpy() * batch_size
+        preds = tf.argmax(outputs, axis=1, output_type=tf.int32)
+        correct += tf.reduce_sum(tf.cast(preds == tf.cast(labels, tf.int32), tf.int32)).numpy()
+        total += batch_size
 
     epoch_loss = running_loss / total
     epoch_acc = 100.0 * correct / total
@@ -87,80 +99,73 @@ def main():
     parser.add_argument("--epochs", type=int, default=EPOCHS, help="Number of training epochs")
     parser.add_argument("--batch-size", type=int, default=BATCH_SIZE, help="Mini-batch size")
     parser.add_argument("--lr", type=float, default=LEARNING_RATE, help="Base learning rate")
-    parser.add_argument("--backbone", type=str, default="mobilenet_v3_large", choices=["mobilenet_v3_large", "efficientnet_b0"])
+    parser.add_argument("--backbone", type=str, default="mobilenet_v3_large",
+                        choices=["mobilenet_v3_large", "efficientnet_b0"])
     args = parser.parse_args()
+
+    gpus = tf.config.list_physical_devices("GPU")
+    device_info = gpus[0].name if gpus else "CPU"
 
     print("\n========================================================")
     print(" MediPlant 13-Class Medicinal Plant Model Trainer")
     print("========================================================")
-    print(f"Device:           {DEVICE} ({torch.cuda.get_device_name(0) if torch.cuda.is_available() else 'CPU'})")
-    print(f"Backbone:         {args.backbone}")
+    print(f"Device:            {device_info}")
+    print(f"Backbone:          {args.backbone}")
     print(f"Number of classes: {NUM_CLASSES}")
-    print(f"Epochs:           {args.epochs}")
-    print(f"Batch Size:       {args.batch_size}")
-    print(f"Learning Rate:    {args.lr}")
-    print(f"Checkpoints:      {CHECKPOINTS_DIR}\n")
+    print(f"Epochs:            {args.epochs}")
+    print(f"Batch Size:        {args.batch_size}")
+    print(f"Learning Rate:     {args.lr}")
+    print(f"Checkpoints:       {CHECKPOINTS_DIR}\n")
 
-    # 1. Prepare DataLoaders
     print("Loading datasets...")
     try:
-        train_loader, val_loader, class_names = create_dataloaders(
-            train_dir=TRAIN_DIR,
-            val_dir=VAL_DIR,
-            batch_size=args.batch_size,
-            image_size=IMAGE_SIZE
-        )
-    except FileNotFoundError as e:
+        train_dataset = create_dataset(TRAIN_DIR, args.batch_size, IMAGE_SIZE, shuffle=True)
+        val_dataset = create_dataset(VAL_DIR, args.batch_size, IMAGE_SIZE, shuffle=False)
+        class_names = train_dataset.class_names
+    except Exception as e:
         print(f"\n[ERROR] {e}")
         print("Please run `python scraper/download_plants.py` followed by `python scraper/organize_dataset.py` before training.")
         return
 
     print(f"Detected {len(class_names)} classes: {class_names}")
-    print(f"Training samples:   {len(train_loader.dataset)}")
-    print(f"Validation samples: {len(val_loader.dataset)}\n")
+    print(f"Training batches:   {len(train_dataset)}")
+    print(f"Validation batches: {len(val_dataset)}\n")
 
-    # 2. Build Model
     model = build_model(num_classes=NUM_CLASSES, backbone=args.backbone, pretrained=True)
-    model = model.to(DEVICE)
 
-    # 3. Loss, Optimizer & Scheduler
-    criterion = nn.CrossEntropyLoss(label_smoothing=LABEL_SMOOTHING)
-    optimizer = AdamW(model.parameters(), lr=args.lr, weight_decay=WEIGHT_DECAY)
-    scheduler = CosineAnnealingLR(optimizer, T_max=args.epochs, eta_min=1e-6)
+    lr_schedule = tf.keras.optimizers.schedules.CosineDecay(
+        initial_learning_rate=args.lr,
+        decay_steps=args.epochs,
+        alpha=1e-6 / args.lr,
+    )
+    optimizer = tf.keras.optimizers.AdamW(learning_rate=lr_schedule, weight_decay=WEIGHT_DECAY)
+    loss_fn = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True)
 
     best_val_acc = 0.0
-    best_model_path = os.path.join(CHECKPOINTS_DIR, "best_medicinal_model.pth")
-    latest_model_path = os.path.join(CHECKPOINTS_DIR, "latest_medicinal_model.pth")
+    os.makedirs(CHECKPOINTS_DIR, exist_ok=True)
+    best_model_path = os.path.join(CHECKPOINTS_DIR, "best_medicinal_model.weights.h5")
+    latest_model_path = os.path.join(CHECKPOINTS_DIR, "latest_medicinal_model.weights.h5")
 
     print("Beginning training loop...\n")
     start_time = time.time()
 
     for epoch in range(1, args.epochs + 1):
         epoch_start = time.time()
-        print(f"--- Epoch [{epoch:02d}/{args.epochs:02d}] (LR: {optimizer.param_groups[0]['lr']:.6f}) ---")
+        current_lr = float(lr_schedule(optimizer.iterations))
+        print(f"--- Epoch [{epoch:02d}/{args.epochs:02d}] (LR: {current_lr:.6f}) ---")
 
-        train_loss, train_acc = train_epoch(model, train_loader, criterion, optimizer, DEVICE)
-        val_loss, val_acc = validate_epoch(model, val_loader, criterion, DEVICE)
-        scheduler.step()
+        train_loss, train_acc = train_epoch(model, train_dataset, loss_fn, optimizer)
+        val_loss, val_acc = validate_epoch(model, val_dataset, loss_fn)
 
         elapsed = time.time() - epoch_start
         print(f"  Train Loss: {train_loss:.4f} | Train Acc: {train_acc:.2f}%")
         print(f"  Val   Loss: {val_loss:.4f} | Val   Acc: {val_acc:.2f}% | Time: {elapsed:.1f}s")
 
-        # Save checkpoint
-        checkpoint = {
-            "epoch": epoch,
-            "backbone": args.backbone,
-            "state_dict": model.state_dict(),
-            "best_acc": max(best_val_acc, val_acc),
-            "class_names": class_names,
-            "optimizer": optimizer.state_dict()
-        }
-        torch.save(checkpoint, latest_model_path)
+        model.save_weights(latest_model_path)
 
         if val_acc > best_val_acc:
             best_val_acc = val_acc
-            torch.save(checkpoint, best_model_path)
+            model.save_weights(best_model_path)
             print(f"  [+] New Best Model Saved! (Val Accuracy: {best_val_acc:.2f}%)")
 
         print()

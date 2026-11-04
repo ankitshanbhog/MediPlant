@@ -22,7 +22,6 @@ import 'viewmodels/voice_viewmodel.dart';
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Instantiate SQLite persistent repositories
   final plantRepository = SqlitePlantRepository();
   final diseaseRepository = SqliteDiseaseRepository();
   final remedyRepository = SqliteRemedyRepository();
@@ -81,7 +80,6 @@ void main() {
   );
 }
 
-/// MediPlant Root Application
 class MediPlantApp extends StatelessWidget {
   const MediPlantApp({super.key});
 

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../viewmodels/auth_viewmodel.dart';
 import '../../../viewmodels/farmer_viewmodel.dart';
+import '../../theme/app_colors.dart';
 
 class FarmerDashboardScreen extends StatefulWidget {
   const FarmerDashboardScreen({super.key});
@@ -24,7 +25,6 @@ class _FarmerDashboardScreenState extends State<FarmerDashboardScreen> {
     final authVM = context.watch<AuthViewModel>();
     final farmerVM = context.watch<FarmerViewModel>();
 
-    // Route guard check
     if (!authVM.isFarmer) {
       return Scaffold(
         appBar: AppBar(title: const Text('Farmer Workspace')),
@@ -56,22 +56,24 @@ class _FarmerDashboardScreenState extends State<FarmerDashboardScreen> {
       );
     }
 
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
-      backgroundColor: const Color(0xFFF8FAF8),
+      backgroundColor: isDark ? AppColors.backgroundDark : const Color(0xFFF8FAF8),
       appBar: AppBar(
-        title: const Text(
-          'Farmer & Grower Hub',
-          style: TextStyle(fontWeight: FontWeight.w800, fontSize: 19, letterSpacing: -0.3),
+        title: Text(
+          'Farmer Hub',
+          style: TextStyle(
+            fontWeight: FontWeight.w800,
+            fontSize: 19,
+            letterSpacing: -0.3,
+            color: isDark ? AppColors.mint : const Color(0xFF1B5E20),
+          ),
         ),
-        backgroundColor: Colors.white,
-        foregroundColor: const Color(0xFF1B5E20),
+        backgroundColor: isDark ? AppColors.surfaceDark : Colors.white,
+        foregroundColor: isDark ? AppColors.mint : const Color(0xFF1B5E20),
         elevation: 0,
         actions: [
-          IconButton(
-            icon: const Icon(Icons.edit_note_rounded),
-            tooltip: 'Edit Grower Profile',
-            onPressed: () => _showEditProfileSheet(context, farmerVM),
-          ),
           IconButton(
             icon: const Icon(Icons.refresh_rounded),
             tooltip: 'Refresh',
@@ -90,11 +92,11 @@ class _FarmerDashboardScreenState extends State<FarmerDashboardScreen> {
                 physics: const AlwaysScrollableScrollPhysics(),
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 children: [
-                  _buildGrowerHeroHeader(context, farmerVM),
+                  _buildFarmerHeroBanner(context, farmerVM),
                   const SizedBox(height: 14),
-                  _buildStatsRow(farmerVM),
+                  _buildStatsRow(farmerVM, isDark),
                   const SizedBox(height: 16),
-                  _buildCategoryTabs(farmerVM),
+                  _buildCategoryTabs(farmerVM, isDark),
                   const SizedBox(height: 14),
                   _buildActiveTabView(context, farmerVM),
                   const SizedBox(height: 80),
@@ -104,14 +106,7 @@ class _FarmerDashboardScreenState extends State<FarmerDashboardScreen> {
     );
   }
 
-  // ── 1. Hero Header & Trust Verification ───────────────────────────────────
-  Widget _buildGrowerHeroHeader(BuildContext context, FarmerViewModel farmerVM) {
-    final profile = farmerVM.profile ?? {};
-    final isVerified = farmerVM.overview?['is_verified'] == true;
-    final farmName = profile['farm_name'] ?? 'Medicinal Herbal Estate';
-    final region = profile['region'] ?? 'Western Ghats Foothills';
-    final method = profile['farming_method'] ?? 'Natural Farming';
-
+  Widget _buildFarmerHeroBanner(BuildContext context, FarmerViewModel farmerVM) {
     return Container(
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
@@ -129,90 +124,36 @@ class _FarmerDashboardScreenState extends State<FarmerDashboardScreen> {
           ),
         ],
       ),
-      child: Column(
+      child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                width: 44,
-                height: 44,
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.18),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: const Icon(Icons.nature_people_rounded, color: Colors.white, size: 26),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      farmName,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                        fontWeight: FontWeight.w800,
-                        letterSpacing: -0.2,
-                      ),
-                    ),
-                    const SizedBox(height: 3),
-                    Row(
-                      children: [
-                        const Icon(Icons.location_on_outlined, color: Colors.white70, size: 14),
-                        const SizedBox(width: 4),
-                        Expanded(
-                          child: Text(
-                            region,
-                            style: const TextStyle(color: Colors.white70, fontSize: 12),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-              GestureDetector(
-                onTap: () => _showVerificationInfo(context, isVerified),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                  decoration: BoxDecoration(
-                    color: isVerified ? const Color(0xFF10B981) : Colors.amber.shade700,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(isVerified ? Icons.verified_rounded : Icons.pending_rounded, size: 13, color: Colors.white),
-                      const SizedBox(width: 4),
-                      Text(
-                        isVerified ? 'VERIFIED' : 'PENDING',
-                        style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.w800),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+            width: 44,
+            height: 44,
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.12),
-              borderRadius: BorderRadius.circular(8),
+              color: Colors.white.withOpacity(0.18),
+              borderRadius: BorderRadius.circular(12),
             ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
+            child: const Icon(Icons.agriculture_rounded, color: Colors.white, size: 26),
+          ),
+          const SizedBox(width: 12),
+          const Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Icon(Icons.eco_rounded, size: 13, color: Color(0xFF86EFAC)),
-                const SizedBox(width: 6),
                 Text(
-                  method,
-                  style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.w600),
+                  'Medicinal Crop Management',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 17,
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: -0.2,
+                  ),
+                ),
+                SizedBox(height: 3),
+                Text(
+                  'Crop calendar, agronomic cultivation guides & market benchmark signals',
+                  style: TextStyle(color: Colors.white70, fontSize: 12, height: 1.3),
                 ),
               ],
             ),
@@ -222,45 +163,45 @@ class _FarmerDashboardScreenState extends State<FarmerDashboardScreen> {
     );
   }
 
-  // ── 2. Metric Stat Cards ──────────────────────────────────────────────────
-  Widget _buildStatsRow(FarmerViewModel farmerVM) {
-    final stats = farmerVM.overview?['stats'] ?? {};
-    final activeCrops = stats['active_crops'] ?? farmerVM.crops.length;
-    final inStockBatches = stats['in_stock_batches'] ?? farmerVM.stockBatches.length;
-    final totalStockKg = stats['total_stock_kg'] ?? 0;
-    final pendingInquiries = stats['pending_inquiries'] ?? farmerVM.inquiries.where((i) => i['status'] == 'pending').length;
+  Widget _buildStatsRow(FarmerViewModel farmerVM, bool isDark) {
+    final activeCrops = farmerVM.crops.length;
+    final totalGuides = farmerVM.cultivationGuides.length;
+    final totalSignals = ((farmerVM.marketInfo?['benchmarks'] as List?) ?? []).length;
 
     return Row(
       children: [
         Expanded(
           child: _buildMetricTile(
-            label: 'Crops in Field',
+            label: 'Crops Sown',
             value: '$activeCrops',
             unit: 'batches',
-            icon: Icons.grass_rounded,
+            icon: Icons.calendar_today_rounded,
             color: const Color(0xFF047857),
+            isDark: isDark,
             onTap: () => farmerVM.setTabIndex(0),
           ),
         ),
         const SizedBox(width: 10),
         Expanded(
           child: _buildMetricTile(
-            label: 'Stock Ready',
-            value: '$inStockBatches',
-            unit: '$totalStockKg kg',
-            icon: Icons.inventory_2_rounded,
+            label: 'Agronomy Guides',
+            value: '$totalGuides',
+            unit: 'species',
+            icon: Icons.menu_book_rounded,
             color: const Color(0xFF1D4ED8),
+            isDark: isDark,
             onTap: () => farmerVM.setTabIndex(1),
           ),
         ),
         const SizedBox(width: 10),
         Expanded(
           child: _buildMetricTile(
-            label: 'Inquiries',
-            value: '$pendingInquiries',
-            unit: 'pending',
-            icon: Icons.mark_chat_unread_rounded,
+            label: 'Market Signals',
+            value: '$totalSignals',
+            unit: 'benchmarks',
+            icon: Icons.trending_up_rounded,
             color: const Color(0xFFD97706),
+            isDark: isDark,
             onTap: () => farmerVM.setTabIndex(2),
           ),
         ),
@@ -274,6 +215,7 @@ class _FarmerDashboardScreenState extends State<FarmerDashboardScreen> {
     required String unit,
     required IconData icon,
     required Color color,
+    required bool isDark,
     required VoidCallback onTap,
   }) {
     return InkWell(
@@ -282,9 +224,9 @@ class _FarmerDashboardScreenState extends State<FarmerDashboardScreen> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: isDark ? AppColors.surfaceDark : Colors.white,
           borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: Colors.grey.shade200),
+          border: Border.all(color: isDark ? AppColors.borderDark : Colors.grey.shade200),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -293,14 +235,22 @@ class _FarmerDashboardScreenState extends State<FarmerDashboardScreen> {
             const SizedBox(height: 8),
             Text(
               value,
-              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w900, color: Color(0xFF0F172A)),
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.w900,
+                color: isDark ? Colors.white : const Color(0xFF0F172A),
+              ),
             ),
             Row(
               children: [
                 Flexible(
                   child: Text(
                     label,
-                    style: TextStyle(fontSize: 10, color: Colors.grey.shade600, fontWeight: FontWeight.w600),
+                    style: TextStyle(
+                      fontSize: 10,
+                      color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
+                      fontWeight: FontWeight.w600,
+                    ),
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
@@ -316,15 +266,11 @@ class _FarmerDashboardScreenState extends State<FarmerDashboardScreen> {
     );
   }
 
-  // ── 3. Segmented Horizontal Category Tabs ─────────────────────────────────
-  Widget _buildCategoryTabs(FarmerViewModel farmerVM) {
+  Widget _buildCategoryTabs(FarmerViewModel farmerVM, bool isDark) {
     final tabs = [
-      {'title': 'Crop Calendar', 'icon': Icons.calendar_today_rounded},
-      {'title': 'Stock & Batches', 'icon': Icons.all_inbox_rounded},
-      {'title': 'Buyer Inquiries', 'icon': Icons.chat_bubble_outline_rounded},
-      {'title': 'Cultivation Guide', 'icon': Icons.menu_book_rounded},
-      {'title': 'Market Signals', 'icon': Icons.trending_up_rounded},
-      {'title': 'Govt Schemes', 'icon': Icons.account_balance_rounded},
+      {'title': 'Crop Planning & Calendar', 'icon': Icons.calendar_today_rounded},
+      {'title': 'Agronomy Guides', 'icon': Icons.menu_book_rounded},
+      {'title': 'Market Signals & Benchmarks', 'icon': Icons.trending_up_rounded},
     ];
 
     return SingleChildScrollView(
@@ -339,21 +285,27 @@ class _FarmerDashboardScreenState extends State<FarmerDashboardScreen> {
               avatar: Icon(
                 tab['icon'] as IconData,
                 size: 15,
-                color: isSelected ? Colors.white : const Color(0xFF166534),
+                color: isSelected
+                    ? Colors.white
+                    : (isDark ? AppColors.mint : const Color(0xFF166534)),
               ),
               label: Text(
                 tab['title'] as String,
                 style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.w700,
-                  color: isSelected ? Colors.white : const Color(0xFF166534),
+                  color: isSelected
+                      ? Colors.white
+                      : (isDark ? AppColors.mint : const Color(0xFF166534)),
                 ),
               ),
               selected: isSelected,
               selectedColor: const Color(0xFF15803D),
-              backgroundColor: Colors.white,
+              backgroundColor: isDark ? AppColors.surfaceDark : Colors.white,
               side: BorderSide(
-                color: isSelected ? const Color(0xFF15803D) : Colors.grey.shade300,
+                color: isSelected
+                    ? const Color(0xFF15803D)
+                    : (isDark ? AppColors.borderDark : Colors.grey.shade300),
               ),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
               onSelected: (_) => farmerVM.setTabIndex(idx),
@@ -364,28 +316,22 @@ class _FarmerDashboardScreenState extends State<FarmerDashboardScreen> {
     );
   }
 
-  // ── 4. Active Tab Content Dispatcher ──────────────────────────────────────
   Widget _buildActiveTabView(BuildContext context, FarmerViewModel farmerVM) {
     switch (farmerVM.selectedTabIndex) {
       case 0:
         return _buildCropCalendarView(context, farmerVM);
       case 1:
-        return _buildStockBatchesView(context, farmerVM);
-      case 2:
-        return _buildInquiriesView(context, farmerVM);
-      case 3:
         return _buildCultivationGuideView(farmerVM);
-      case 4:
+      case 2:
         return _buildMarketSignalsView(farmerVM);
-      case 5:
-        return _buildGovtSchemesView(farmerVM);
       default:
         return _buildCropCalendarView(context, farmerVM);
     }
   }
 
-  // ── TAB 1: Crop Planning & Harvest Calendar ───────────────────────────────
   Widget _buildCropCalendarView(BuildContext context, FarmerViewModel farmerVM) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     if (farmerVM.crops.isEmpty) {
       return _buildEmptyState(
         icon: Icons.grass_rounded,
@@ -402,8 +348,18 @@ class _FarmerDashboardScreenState extends State<FarmerDashboardScreen> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Text('Active Crop Batches', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
-            Text('${farmerVM.crops.length} species', style: TextStyle(fontSize: 12, color: Colors.grey.shade600)),
+            Text(
+              'Active Crop Batches',
+              style: TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.bold,
+                color: isDark ? Colors.white : Colors.black87,
+              ),
+            ),
+            Text(
+              '${farmerVM.crops.length} species',
+              style: TextStyle(fontSize: 12, color: isDark ? Colors.grey.shade400 : Colors.grey.shade600),
+            ),
           ],
         ),
         const SizedBox(height: 8),
@@ -416,22 +372,23 @@ class _FarmerDashboardScreenState extends State<FarmerDashboardScreen> {
           final qty = c['quantity'];
           final notes = c['notes'];
 
-          Color stageBg = const Color(0xFFE8F5E9);
-          Color stageColor = const Color(0xFF2E7D32);
+          Color stageBg = isDark ? const Color(0xFF064E3B) : const Color(0xFFE8F5E9);
+          Color stageColor = isDark ? const Color(0xFF34D399) : const Color(0xFF2E7D32);
           if (stage.contains('Harvest')) {
-            stageBg = const Color(0xFFFEF3C7);
-            stageColor = const Color(0xFFB45309);
+            stageBg = isDark ? const Color(0xFF78350F) : const Color(0xFFFEF3C7);
+            stageColor = isDark ? const Color(0xFFFBBF24) : const Color(0xFFB45309);
           } else if (stage.contains('Flowering')) {
-            stageBg = const Color(0xFFEDE9FE);
-            stageColor = const Color(0xFF6D28D9);
+            stageBg = isDark ? const Color(0xFF4C1D95) : const Color(0xFFEDE9FE);
+            stageColor = isDark ? const Color(0xFFA78BFA) : const Color(0xFF6D28D9);
           }
 
           return Card(
             margin: const EdgeInsets.only(bottom: 10),
             elevation: 0,
+            color: isDark ? AppColors.surfaceDark : Colors.white,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(16),
-              side: BorderSide(color: Colors.grey.shade200),
+              side: BorderSide(color: isDark ? AppColors.borderDark : Colors.grey.shade200),
             ),
             child: Padding(
               padding: const EdgeInsets.all(14),
@@ -441,9 +398,16 @@ class _FarmerDashboardScreenState extends State<FarmerDashboardScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(plantName, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                      Text(
+                        plantName,
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: isDark ? Colors.white : Colors.black87,
+                        ),
+                      ),
                       PopupMenuButton<String>(
-                        icon: const Icon(Icons.more_vert, size: 18),
+                        icon: Icon(Icons.more_vert, size: 18, color: isDark ? Colors.grey.shade400 : Colors.black54),
                         onSelected: (val) {
                           if (val == 'delete') {
                             farmerVM.deleteCrop(id);
@@ -473,7 +437,7 @@ class _FarmerDashboardScreenState extends State<FarmerDashboardScreen> {
                       ),
                       if (qty != null && qty.isNotEmpty) ...[
                         const SizedBox(width: 8),
-                        Text(qty, style: TextStyle(fontSize: 12, color: Colors.grey.shade700)),
+                        Text(qty, style: TextStyle(fontSize: 12, color: isDark ? Colors.grey.shade300 : Colors.grey.shade700)),
                       ],
                     ],
                   ),
@@ -481,15 +445,22 @@ class _FarmerDashboardScreenState extends State<FarmerDashboardScreen> {
                   Row(
                     children: [
                       if (sowing != null && sowing.isNotEmpty) ...[
-                        const Icon(Icons.calendar_today_rounded, size: 12, color: Colors.grey),
+                        Icon(Icons.calendar_today_rounded, size: 12, color: isDark ? Colors.grey.shade400 : Colors.grey),
                         const SizedBox(width: 4),
-                        Text('Sown: $sowing', style: TextStyle(fontSize: 11, color: Colors.grey.shade700)),
+                        Text('Sown: $sowing', style: TextStyle(fontSize: 11, color: isDark ? Colors.grey.shade300 : Colors.grey.shade700)),
                         const SizedBox(width: 14),
                       ],
                       if (harvest != null && harvest.isNotEmpty) ...[
-                        const Icon(Icons.event_available_rounded, size: 13, color: Color(0xFF047857)),
+                        Icon(Icons.event_available_rounded, size: 13, color: isDark ? const Color(0xFF34D399) : const Color(0xFF047857)),
                         const SizedBox(width: 4),
-                        Text('Harvest: $harvest', style: const TextStyle(fontSize: 11, color: Color(0xFF047857), fontWeight: FontWeight.bold)),
+                        Text(
+                          'Harvest: $harvest',
+                          style: TextStyle(
+                            fontSize: 11,
+                            color: isDark ? const Color(0xFF34D399) : const Color(0xFF047857),
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                       ],
                     ],
                   ),
@@ -498,8 +469,11 @@ class _FarmerDashboardScreenState extends State<FarmerDashboardScreen> {
                     Container(
                       width: double.infinity,
                       padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(color: const Color(0xFFF1F5F9), borderRadius: BorderRadius.circular(8)),
-                      child: Text(notes, style: TextStyle(fontSize: 11, color: Colors.grey.shade800)),
+                      decoration: BoxDecoration(
+                        color: isDark ? const Color(0xFF1E293B) : const Color(0xFFF1F5F9),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(notes, style: TextStyle(fontSize: 11, color: isDark ? Colors.grey.shade300 : Colors.grey.shade800)),
                     ),
                   ],
                 ],
@@ -511,265 +485,26 @@ class _FarmerDashboardScreenState extends State<FarmerDashboardScreen> {
     );
   }
 
-  // ── TAB 2: Stock & Batch Management ───────────────────────────────────────
-  Widget _buildStockBatchesView(BuildContext context, FarmerViewModel farmerVM) {
-    if (farmerVM.stockBatches.isEmpty) {
-      return _buildEmptyState(
-        icon: Icons.all_inbox_rounded,
-        title: 'No inventory batches',
-        subtitle: 'Log harvested planting materials, dried roots, and available quantities.',
-        buttonLabel: 'Add Stock Batch',
-        onTap: () => _showAddStockDialog(context, farmerVM),
-      );
-    }
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            const Text('Harvest Batches in Storage', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
-            Text('${farmerVM.stockBatches.length} items', style: TextStyle(fontSize: 12, color: Colors.grey.shade600)),
-          ],
-        ),
-        const SizedBox(height: 8),
-        ...farmerVM.stockBatches.map((b) {
-          final id = b['id'] as int;
-          final plantName = b['plant_name'] ?? 'Botanical Batch';
-          final state = b['state'] ?? 'Fresh';
-          final qty = b['quantity'] ?? 0;
-          final unit = b['unit'] ?? 'kg';
-          final qNotes = b['quality_notes'];
-          final status = b['status'] ?? 'In Stock';
-          final price = b['price_per_unit'];
-
-          Color statusColor;
-          switch (status) {
-            case 'In Stock':
-              statusColor = const Color(0xFF047857);
-              break;
-            case 'Reserved':
-              statusColor = const Color(0xFFD97706);
-              break;
-            default:
-              statusColor = Colors.grey;
-          }
-
-          return Card(
-            margin: const EdgeInsets.only(bottom: 10),
-            elevation: 0,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
-              side: BorderSide(color: Colors.grey.shade200),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(14),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(plantName, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                      PopupMenuButton<String>(
-                        icon: const Icon(Icons.more_vert, size: 18),
-                        onSelected: (val) {
-                          if (val == 'delete') {
-                            farmerVM.deleteStockBatch(id);
-                          } else {
-                            farmerVM.updateStockStatus(id, val);
-                          }
-                        },
-                        itemBuilder: (ctx) => [
-                          const PopupMenuItem(value: 'In Stock', child: Text('Status: In Stock')),
-                          const PopupMenuItem(value: 'Reserved', child: Text('Status: Reserved')),
-                          const PopupMenuItem(value: 'Sold Out', child: Text('Status: Sold Out')),
-                          const PopupMenuDivider(),
-                          const PopupMenuItem(value: 'delete', child: Text('Delete Batch', style: TextStyle(color: Colors.red))),
-                        ],
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 6),
-                  Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                        decoration: BoxDecoration(color: const Color(0xFFE0F2FE), borderRadius: BorderRadius.circular(6)),
-                        child: Text(state, style: const TextStyle(color: Color(0xFF0284C7), fontSize: 11, fontWeight: FontWeight.bold)),
-                      ),
-                      const SizedBox(width: 8),
-                      Text('$qty $unit', style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w800)),
-                      if (price != null && price.isNotEmpty) ...[
-                        const Spacer(),
-                        Text(price, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Color(0xFF15803D))),
-                      ],
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  Row(
-                    children: [
-                      Container(
-                        width: 8,
-                        height: 8,
-                        decoration: BoxDecoration(color: statusColor, shape: BoxShape.circle),
-                      ),
-                      const SizedBox(width: 6),
-                      Text(status, style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: statusColor)),
-                      if (qNotes != null && qNotes.isNotEmpty) ...[
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Text(
-                            '• $qNotes',
-                            style: TextStyle(fontSize: 11, color: Colors.grey.shade600),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                      ],
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          );
-        }),
-      ],
-    );
-  }
-
-  // ── TAB 3: Buyer Inquiries ────────────────────────────────────────────────
-  Widget _buildInquiriesView(BuildContext context, FarmerViewModel farmerVM) {
-    if (farmerVM.inquiries.isEmpty) {
-      return _buildEmptyState(
-        icon: Icons.chat_bubble_outline_rounded,
-        title: 'No buyer inquiries yet',
-        subtitle: 'Inbound requests from laboratories, buyers, and nurseries appear here.',
-      );
-    }
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            const Text('Procurement Inquiries', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
-            Text('${farmerVM.inquiries.length} total', style: TextStyle(fontSize: 12, color: Colors.grey.shade600)),
-          ],
-        ),
-        const SizedBox(height: 8),
-        ...farmerVM.inquiries.map((inq) {
-          final id = inq['id'] as int;
-          final buyerName = inq['buyer_name'] ?? 'Buyer';
-          final buyerContact = inq['buyer_contact'] ?? '';
-          final plantName = inq['plant_name'] ?? '';
-          final qty = inq['requested_qty'] ?? '';
-          final message = inq['message'] ?? '';
-          final status = inq['status'] ?? 'pending';
-
-          Color statusBg = Colors.grey.shade100;
-          Color statusText = Colors.grey.shade700;
-          if (status == 'accepted') {
-            statusBg = const Color(0xFFE8F5E9);
-            statusText = const Color(0xFF2E7D32);
-          } else if (status == 'declined') {
-            statusBg = const Color(0xFFFFEBEE);
-            statusText = Colors.red;
-          }
-
-          return Card(
-            margin: const EdgeInsets.only(bottom: 10),
-            elevation: 0,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
-              side: BorderSide(color: Colors.grey.shade200),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(14),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(buyerName, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                        decoration: BoxDecoration(color: statusBg, borderRadius: BorderRadius.circular(6)),
-                        child: Text(status.toUpperCase(), style: TextStyle(color: statusText, fontSize: 10, fontWeight: FontWeight.bold)),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 4),
-                  Row(
-                    children: [
-                      const Icon(Icons.phone_outlined, size: 12, color: Colors.grey),
-                      const SizedBox(width: 4),
-                      Text(buyerContact, style: TextStyle(fontSize: 11, color: Colors.grey.shade600)),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(color: const Color(0xFFF8FAF8), borderRadius: BorderRadius.circular(8)),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('Requested: $qty of $plantName', style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Color(0xFF1B5E20))),
-                        if (message.isNotEmpty) ...[
-                          const SizedBox(height: 4),
-                          Text(message, style: TextStyle(fontSize: 11, color: Colors.grey.shade800)),
-                        ],
-                      ],
-                    ),
-                  ),
-                  if (status == 'pending') ...[
-                    const SizedBox(height: 10),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        OutlinedButton(
-                          style: OutlinedButton.styleFrom(
-                            foregroundColor: Colors.red,
-                            side: const BorderSide(color: Colors.red),
-                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                          ),
-                          onPressed: () => farmerVM.respondToInquiry(id, 'declined'),
-                          child: const Text('Decline', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
-                        ),
-                        const SizedBox(width: 8),
-                        ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF166534),
-                            foregroundColor: Colors.white,
-                            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-                          ),
-                          onPressed: () => farmerVM.respondToInquiry(id, 'accepted'),
-                          child: const Text('Accept Inquiry', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
-                        ),
-                      ],
-                    ),
-                  ],
-                ],
-              ),
-            ),
-          );
-        }),
-      ],
-    );
-  }
-
-  // ── TAB 4: Cultivation Assistant (Documented Agronomy) ─────────────────────
   Widget _buildCultivationGuideView(FarmerViewModel farmerVM) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final guides = farmerVM.cultivationGuides;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('Botanical Agronomy Guides', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
+        Text(
+          'Botanical Agronomy Guides',
+          style: TextStyle(
+            fontSize: 15,
+            fontWeight: FontWeight.bold,
+            color: isDark ? Colors.white : Colors.black87,
+          ),
+        ),
         const SizedBox(height: 4),
-        Text('Documented guidance on soil, climate, spacing, and post-harvest handling.', style: TextStyle(fontSize: 12, color: Colors.grey.shade600)),
+        Text(
+          'Documented guidance on soil, climate, spacing, and post-harvest handling.',
+          style: TextStyle(fontSize: 12, color: isDark ? Colors.grey.shade400 : Colors.grey.shade600),
+        ),
         const SizedBox(height: 10),
         ...guides.map((g) {
           final species = g['species'] ?? 'Botanical Species';
@@ -778,25 +513,36 @@ class _FarmerDashboardScreenState extends State<FarmerDashboardScreen> {
           return Card(
             margin: const EdgeInsets.only(bottom: 10),
             elevation: 0,
+            color: isDark ? AppColors.surfaceDark : Colors.white,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(16),
-              side: BorderSide(color: Colors.grey.shade200),
+              side: BorderSide(color: isDark ? AppColors.borderDark : Colors.grey.shade200),
             ),
             child: ExpansionTile(
               tilePadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
-              leading: const Icon(Icons.eco_rounded, color: Color(0xFF166534)),
-              title: Text(species, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
-              subtitle: Text('Primary Harvest: $part', style: TextStyle(fontSize: 11, color: Colors.grey.shade600)),
+              leading: Icon(Icons.eco_rounded, color: isDark ? const Color(0xFF34D399) : const Color(0xFF166534)),
+              title: Text(
+                species,
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 14,
+                  color: isDark ? Colors.white : Colors.black87,
+                ),
+              ),
+              subtitle: Text(
+                'Primary Harvest: $part',
+                style: TextStyle(fontSize: 11, color: isDark ? Colors.grey.shade400 : Colors.grey.shade600),
+              ),
               childrenPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               children: [
-                _buildGuideRow(Icons.landscape_rounded, 'Soil & pH', g['soil']),
-                _buildGuideRow(Icons.wb_sunny_rounded, 'Sunlight', g['sunlight']),
-                _buildGuideRow(Icons.thermostat_rounded, 'Climate', g['climate']),
-                _buildGuideRow(Icons.water_drop_rounded, 'Irrigation', g['irrigation']),
-                _buildGuideRow(Icons.grid_4x4_rounded, 'Spacing', g['spacing']),
-                _buildGuideRow(Icons.bug_report_rounded, 'Pests & Management', g['pests']),
-                _buildGuideRow(Icons.agriculture_rounded, 'Harvesting Time', g['harvesting']),
-                _buildGuideRow(Icons.inventory_2_rounded, 'Post-Harvest Curing', g['post_harvest']),
+                _buildGuideRow(Icons.landscape_rounded, 'Soil & pH', g['soil'], isDark),
+                _buildGuideRow(Icons.wb_sunny_rounded, 'Sunlight', g['sunlight'], isDark),
+                _buildGuideRow(Icons.thermostat_rounded, 'Climate', g['climate'], isDark),
+                _buildGuideRow(Icons.water_drop_rounded, 'Irrigation', g['irrigation'], isDark),
+                _buildGuideRow(Icons.grid_4x4_rounded, 'Spacing', g['spacing'], isDark),
+                _buildGuideRow(Icons.bug_report_rounded, 'Pests & Management', g['pests'], isDark),
+                _buildGuideRow(Icons.agriculture_rounded, 'Harvesting Time', g['harvesting'], isDark),
+                _buildGuideRow(Icons.inventory_2_rounded, 'Post-Harvest Curing', g['post_harvest'], isDark),
               ],
             ),
           );
@@ -805,21 +551,31 @@ class _FarmerDashboardScreenState extends State<FarmerDashboardScreen> {
     );
   }
 
-  Widget _buildGuideRow(IconData icon, String title, String? desc) {
+  Widget _buildGuideRow(IconData icon, String title, String? desc, bool isDark) {
     if (desc == null || desc.isEmpty) return const SizedBox.shrink();
     return Padding(
       padding: const EdgeInsets.only(bottom: 8.0),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icon, size: 14, color: const Color(0xFF166534)),
+          Icon(icon, size: 14, color: isDark ? const Color(0xFF34D399) : const Color(0xFF166534)),
           const SizedBox(width: 8),
           Expanded(
             child: RichText(
               text: TextSpan(
-                style: const TextStyle(fontSize: 11, color: Color(0xFF334155), height: 1.4),
+                style: TextStyle(
+                  fontSize: 11,
+                  color: isDark ? Colors.grey.shade300 : const Color(0xFF334155),
+                  height: 1.4,
+                ),
                 children: [
-                  TextSpan(text: '$title: ', style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF0F172A))),
+                  TextSpan(
+                    text: '$title: ',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: isDark ? Colors.white : const Color(0xFF0F172A),
+                    ),
+                  ),
                   TextSpan(text: desc),
                 ],
               ),
@@ -830,8 +586,8 @@ class _FarmerDashboardScreenState extends State<FarmerDashboardScreen> {
     );
   }
 
-  // ── TAB 5: Market Signals & Price Benchmarks ───────────────────────────────
   Widget _buildMarketSignalsView(FarmerViewModel farmerVM) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final benchmarks = (farmerVM.marketInfo?['benchmarks'] as List?) ?? [];
     final disclaimer = farmerVM.marketInfo?['disclaimer_notice'] ?? 'Benchmark reference only.';
 
@@ -841,19 +597,23 @@ class _FarmerDashboardScreenState extends State<FarmerDashboardScreen> {
         Container(
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: const Color(0xFFEFF6FF),
+            color: isDark ? const Color(0xFF1E293B) : const Color(0xFFEFF6FF),
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: const Color(0xFFBFDBFE)),
+            border: Border.all(color: isDark ? const Color(0xFF334155) : const Color(0xFFBFDBFE)),
           ),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Icon(Icons.info_outline_rounded, size: 16, color: Color(0xFF1D4ED8)),
+              Icon(Icons.info_outline_rounded, size: 16, color: isDark ? const Color(0xFF60A5FA) : const Color(0xFF1D4ED8)),
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
                   disclaimer,
-                  style: const TextStyle(fontSize: 11, color: Color(0xFF1E40AF), height: 1.4),
+                  style: TextStyle(
+                    fontSize: 11,
+                    color: isDark ? const Color(0xFF93C5FD) : const Color(0xFF1E40AF),
+                    height: 1.4,
+                  ),
                 ),
               ),
             ],
@@ -871,9 +631,10 @@ class _FarmerDashboardScreenState extends State<FarmerDashboardScreen> {
           return Card(
             margin: const EdgeInsets.only(bottom: 10),
             elevation: 0,
+            color: isDark ? AppColors.surfaceDark : Colors.white,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(16),
-              side: BorderSide(color: Colors.grey.shade200),
+              side: BorderSide(color: isDark ? AppColors.borderDark : Colors.grey.shade200),
             ),
             child: Padding(
               padding: const EdgeInsets.all(14),
@@ -883,116 +644,61 @@ class _FarmerDashboardScreenState extends State<FarmerDashboardScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(crop, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
+                      Text(
+                        crop,
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold,
+                          color: isDark ? Colors.white : Colors.black87,
+                        ),
+                      ),
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                        decoration: BoxDecoration(color: const Color(0xFFDCFCE7), borderRadius: BorderRadius.circular(6)),
-                        child: Text(trend, style: const TextStyle(color: Color(0xFF15803D), fontSize: 10, fontWeight: FontWeight.bold)),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 6),
-                  Text(price, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w900, color: Color(0xFF047857))),
-                  const SizedBox(height: 6),
-                  Text(signal, style: TextStyle(fontSize: 12, color: Colors.grey.shade800, height: 1.3)),
-                  const SizedBox(height: 8),
-                  Row(
-                    children: [
-                      const Icon(Icons.verified_outlined, size: 12, color: Colors.grey),
-                      const SizedBox(width: 4),
-                      Expanded(
-                        child: Text('Source: $source • $lastUp', style: TextStyle(fontSize: 10, color: Colors.grey.shade600), overflow: TextOverflow.ellipsis),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          );
-        }),
-      ],
-    );
-  }
-
-  // ── TAB 6: Government Schemes & Directory ──────────────────────────────────
-  Widget _buildGovtSchemesView(FarmerViewModel farmerVM) {
-    final schemes = farmerVM.agriculturalResources;
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text('Government Schemes & Agronomy Helplines', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
-        const SizedBox(height: 4),
-        Text('Verified subsidies, cultivation support, and official institutional contacts.', style: TextStyle(fontSize: 12, color: Colors.grey.shade600)),
-        const SizedBox(height: 10),
-        ...schemes.map((s) {
-          final title = s['title'] ?? '';
-          final agency = s['agency'] ?? '';
-          final summary = s['scheme_summary'] ?? '';
-          final eligibility = s['eligibility'] ?? '';
-          final contact = s['contact'] ?? '';
-          final checked = s['last_checked'] ?? '';
-
-          return Card(
-            margin: const EdgeInsets.only(bottom: 12),
-            elevation: 0,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
-              side: BorderSide(color: Colors.grey.shade200),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(14),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(color: const Color(0xFFF0FDF4), borderRadius: BorderRadius.circular(10)),
-                        child: const Icon(Icons.account_balance_rounded, size: 20, color: Color(0xFF166534)),
-                      ),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(title, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
-                            Text(agency, style: TextStyle(fontSize: 11, color: Colors.grey.shade600)),
-                          ],
+                        decoration: BoxDecoration(
+                          color: isDark ? const Color(0xFF064E3B) : const Color(0xFFDCFCE7),
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: Text(
+                          trend,
+                          style: TextStyle(
+                            color: isDark ? const Color(0xFF34D399) : const Color(0xFF15803D),
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 10),
-                  Text(summary, style: TextStyle(fontSize: 12, color: Colors.grey.shade800, height: 1.4)),
-                  const SizedBox(height: 8),
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(color: const Color(0xFFF8FAFC), borderRadius: BorderRadius.circular(8)),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text('Eligibility:', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Color(0xFF0F172A))),
-                        const SizedBox(height: 2),
-                        Text(eligibility, style: TextStyle(fontSize: 11, color: Colors.grey.shade700)),
-                      ],
+                  const SizedBox(height: 6),
+                  Text(
+                    price,
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w900,
+                      color: isDark ? const Color(0xFF34D399) : const Color(0xFF047857),
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    signal,
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: isDark ? Colors.grey.shade300 : Colors.grey.shade800,
+                      height: 1.3,
                     ),
                   ),
                   const SizedBox(height: 8),
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Row(
-                        children: [
-                          const Icon(Icons.phone_in_talk_rounded, size: 12, color: Color(0xFF166534)),
-                          const SizedBox(width: 4),
-                          Text(contact, style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Color(0xFF166534))),
-                        ],
+                      Icon(Icons.verified_outlined, size: 12, color: isDark ? Colors.grey.shade400 : Colors.grey),
+                      const SizedBox(width: 4),
+                      Expanded(
+                        child: Text(
+                          'Source: $source • $lastUp',
+                          style: TextStyle(fontSize: 10, color: isDark ? Colors.grey.shade400 : Colors.grey.shade600),
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ),
-                      Text('Verified: $checked', style: TextStyle(fontSize: 10, color: Colors.grey.shade500)),
                     ],
                   ),
                 ],
@@ -1004,7 +710,6 @@ class _FarmerDashboardScreenState extends State<FarmerDashboardScreen> {
     );
   }
 
-  // ── Modals & Dialogs ──────────────────────────────────────────────────────
   Widget? _buildContextualFAB(FarmerViewModel farmerVM) {
     if (farmerVM.selectedTabIndex == 0) {
       return FloatingActionButton.extended(
@@ -1013,14 +718,6 @@ class _FarmerDashboardScreenState extends State<FarmerDashboardScreen> {
         foregroundColor: Colors.white,
         icon: const Icon(Icons.add_rounded),
         label: const Text('New Crop Batch', style: TextStyle(fontWeight: FontWeight.bold)),
-      );
-    } else if (farmerVM.selectedTabIndex == 1) {
-      return FloatingActionButton.extended(
-        onPressed: () => _showAddStockDialog(context, farmerVM),
-        backgroundColor: const Color(0xFF15803D),
-        foregroundColor: Colors.white,
-        icon: const Icon(Icons.post_add_rounded),
-        label: const Text('Add Harvest Stock', style: TextStyle(fontWeight: FontWeight.bold)),
       );
     }
     return null;
@@ -1118,195 +815,6 @@ class _FarmerDashboardScreenState extends State<FarmerDashboardScreen> {
     );
   }
 
-  void _showAddStockDialog(BuildContext context, FarmerViewModel farmerVM) {
-    final plantCtrl = TextEditingController();
-    final stateCtrl = TextEditingController(text: 'Sun-Dried');
-    final qtyCtrl = TextEditingController();
-    final unitCtrl = TextEditingController(text: 'kg');
-    final priceCtrl = TextEditingController(text: '₹');
-    final qNotesCtrl = TextEditingController(text: 'Grade A Certified Organic');
-
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
-      builder: (ctx) {
-        return Padding(
-          padding: EdgeInsets.only(
-            left: 20,
-            right: 20,
-            top: 20,
-            bottom: MediaQuery.of(ctx).viewInsets.bottom + 20,
-          ),
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text('Log Harvest Stock Batch', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                const SizedBox(height: 14),
-                TextField(
-                  controller: plantCtrl,
-                  decoration: const InputDecoration(labelText: 'Plant Name (e.g. Ashwagandha Roots)', border: OutlineInputBorder()),
-                ),
-                const SizedBox(height: 10),
-                TextField(
-                  controller: stateCtrl,
-                  decoration: const InputDecoration(labelText: 'Physical State (Fresh / Sun-Dried / Powder)', border: OutlineInputBorder()),
-                ),
-                const SizedBox(height: 10),
-                Row(
-                  children: [
-                    Expanded(
-                      child: TextField(
-                        controller: qtyCtrl,
-                        keyboardType: TextInputType.number,
-                        decoration: const InputDecoration(labelText: 'Quantity', border: OutlineInputBorder()),
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: TextField(
-                        controller: unitCtrl,
-                        decoration: const InputDecoration(labelText: 'Unit (kg / bundles)', border: OutlineInputBorder()),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 10),
-                TextField(
-                  controller: priceCtrl,
-                  decoration: const InputDecoration(labelText: 'Price per Unit (e.g. ₹450/kg)', border: OutlineInputBorder()),
-                ),
-                const SizedBox(height: 10),
-                TextField(
-                  controller: qNotesCtrl,
-                  decoration: const InputDecoration(labelText: 'Quality Notes & Curing Method', border: OutlineInputBorder()),
-                ),
-                const SizedBox(height: 16),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF15803D), foregroundColor: Colors.white, padding: const EdgeInsets.symmetric(vertical: 14)),
-                    onPressed: () async {
-                      final q = double.tryParse(qtyCtrl.text.trim()) ?? 0.0;
-                      if (plantCtrl.text.trim().isEmpty || q <= 0) return;
-                      Navigator.pop(ctx);
-                      await farmerVM.addStockBatch(
-                        plantName: plantCtrl.text.trim(),
-                        state: stateCtrl.text.trim(),
-                        quantity: q,
-                        unit: unitCtrl.text.trim(),
-                        pricePerUnit: priceCtrl.text.trim(),
-                        qualityNotes: qNotesCtrl.text.trim(),
-                      );
-                    },
-                    child: const Text('Add to Stock', style: TextStyle(fontWeight: FontWeight.bold)),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  void _showEditProfileSheet(BuildContext context, FarmerViewModel farmerVM) {
-    final prof = farmerVM.profile ?? {};
-    final farmCtrl = TextEditingController(text: prof['farm_name'] ?? '');
-    final regionCtrl = TextEditingController(text: prof['region'] ?? '');
-    final methodCtrl = TextEditingController(text: prof['farming_method'] ?? 'Certified Organic');
-    final expCtrl = TextEditingController(text: (prof['experience_years'] ?? 3).toString());
-    final phoneCtrl = TextEditingController(text: prof['contact_phone'] ?? '');
-    final bioCtrl = TextEditingController(text: prof['bio'] ?? '');
-
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
-      builder: (ctx) {
-        return Padding(
-          padding: EdgeInsets.only(
-            left: 20,
-            right: 20,
-            top: 20,
-            bottom: MediaQuery.of(ctx).viewInsets.bottom + 20,
-          ),
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text('Update Grower Profile', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                const SizedBox(height: 14),
-                TextField(controller: farmCtrl, decoration: const InputDecoration(labelText: 'Farm / Estate Name', border: OutlineInputBorder())),
-                const SizedBox(height: 10),
-                TextField(controller: regionCtrl, decoration: const InputDecoration(labelText: 'Geographic Region / District', border: OutlineInputBorder())),
-                const SizedBox(height: 10),
-                TextField(controller: methodCtrl, decoration: const InputDecoration(labelText: 'Farming Method (e.g. Certified Organic, Natural Farming)', border: OutlineInputBorder())),
-                const SizedBox(height: 10),
-                Row(
-                  children: [
-                    Expanded(child: TextField(controller: expCtrl, keyboardType: TextInputType.number, decoration: const InputDecoration(labelText: 'Years of Experience', border: OutlineInputBorder()))),
-                    const SizedBox(width: 8),
-                    Expanded(child: TextField(controller: phoneCtrl, decoration: const InputDecoration(labelText: 'Contact Phone', border: OutlineInputBorder()))),
-                  ],
-                ),
-                const SizedBox(height: 10),
-                TextField(controller: bioCtrl, maxLines: 2, decoration: const InputDecoration(labelText: 'About Farm & Crop Varieties', border: OutlineInputBorder())),
-                const SizedBox(height: 16),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF166534), foregroundColor: Colors.white, padding: const EdgeInsets.symmetric(vertical: 14)),
-                    onPressed: () async {
-                      Navigator.pop(ctx);
-                      await farmerVM.updateProfile(
-                        farmName: farmCtrl.text.trim(),
-                        region: regionCtrl.text.trim(),
-                        farmingMethod: methodCtrl.text.trim(),
-                        experienceYears: int.tryParse(expCtrl.text.trim()) ?? 1,
-                        bio: bioCtrl.text.trim(),
-                        contactPhone: phoneCtrl.text.trim(),
-                      );
-                    },
-                    child: const Text('Save Grower Profile', style: TextStyle(fontWeight: FontWeight.bold)),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  void _showVerificationInfo(BuildContext context, bool isVerified) {
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: Row(
-          children: [
-            Icon(isVerified ? Icons.verified_rounded : Icons.pending_rounded, color: isVerified ? const Color(0xFF10B981) : Colors.amber.shade700),
-            const SizedBox(width: 8),
-            Text(isVerified ? 'Verified Grower' : 'Pending Verification'),
-          ],
-        ),
-        content: Text(
-          isVerified
-              ? 'Your grower profile is botanically authenticated by MediPlant botanical reviewers. Buyers and herbal pharmacists see your verified credentials on stock listings.'
-              : 'Your verification request is currently under review by our botanical team. You can continue managing crops and stock in the meantime.',
-          style: const TextStyle(fontSize: 13, height: 1.4),
-        ),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('OK')),
-        ],
-      ),
-    );
-  }
-
   Widget _buildEmptyState({
     required IconData icon,
     required String title,
@@ -1314,29 +822,49 @@ class _FarmerDashboardScreenState extends State<FarmerDashboardScreen> {
     String? buttonLabel,
     VoidCallback? onTap,
   }) {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 36, horizontal: 20),
-      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16), border: Border.all(color: Colors.grey.shade200)),
-      child: Center(
-        child: Column(
-          children: [
-            Icon(icon, size: 44, color: Colors.grey.shade400),
-            const SizedBox(height: 12),
-            Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-            const SizedBox(height: 6),
-            Text(subtitle, textAlign: TextAlign.center, style: TextStyle(fontSize: 12, color: Colors.grey.shade600)),
-            if (buttonLabel != null && onTap != null) ...[
-              const SizedBox(height: 16),
-              ElevatedButton.icon(
-                onPressed: onTap,
-                style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF166534), foregroundColor: Colors.white),
-                icon: const Icon(Icons.add, size: 16),
-                label: Text(buttonLabel),
-              ),
-            ],
-          ],
-        ),
-      ),
+    return Builder(
+      builder: (context) {
+        final isDark = Theme.of(context).brightness == Brightness.dark;
+        return Container(
+          padding: const EdgeInsets.symmetric(vertical: 36, horizontal: 20),
+          decoration: BoxDecoration(
+            color: isDark ? AppColors.surfaceDark : Colors.white,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: isDark ? AppColors.borderDark : Colors.grey.shade200),
+          ),
+          child: Center(
+            child: Column(
+              children: [
+                Icon(icon, size: 44, color: isDark ? Colors.grey.shade600 : Colors.grey.shade400),
+                const SizedBox(height: 12),
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                    color: isDark ? Colors.white : Colors.black87,
+                  ),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  subtitle,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 12, color: isDark ? Colors.grey.shade400 : Colors.grey.shade600),
+                ),
+                if (buttonLabel != null && onTap != null) ...[
+                  const SizedBox(height: 16),
+                  ElevatedButton.icon(
+                    onPressed: onTap,
+                    style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF166534), foregroundColor: Colors.white),
+                    icon: const Icon(Icons.add, size: 16),
+                    label: Text(buttonLabel),
+                  ),
+                ],
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }

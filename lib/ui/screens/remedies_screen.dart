@@ -8,7 +8,6 @@ import '../widgets/remedy_card.dart';
 import '../widgets/state_views.dart';
 import 'plant_detail_screen.dart';
 
-/// Redesigned Home Remedies Screen: Clean, Visual, and Uncluttered
 class RemediesScreen extends StatefulWidget {
   const RemediesScreen({super.key});
 
@@ -36,7 +35,7 @@ class _RemediesScreenState extends State<RemediesScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // ── 1. Screen Title & Subtitle ──────────────────────────────
+              
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -86,7 +85,6 @@ class _RemediesScreenState extends State<RemediesScreen> {
               ),
               const SizedBox(height: 18),
 
-              // ── 2. Search Bar ───────────────────────────────────────────
               TextField(
                 onChanged: (value) => remediesVM.setSearchQuery(value),
                 style: const TextStyle(fontSize: 14.5),
@@ -120,12 +118,11 @@ class _RemediesScreenState extends State<RemediesScreen> {
               ),
               const SizedBox(height: 14),
 
-              // ── 3. Quick Category & Bookmark Filter Chips ───────────────
               SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: Row(
                   children: [
-                    // Saved Filter Chip
+                    
                     Padding(
                       padding: const EdgeInsets.only(right: 8),
                       child: FilterChip(
@@ -176,7 +173,6 @@ class _RemediesScreenState extends State<RemediesScreen> {
               ),
               const SizedBox(height: 14),
 
-              // ── 4. Compact Educational Note ──────────────────────────────
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
                 decoration: BoxDecoration(
@@ -201,7 +197,6 @@ class _RemediesScreenState extends State<RemediesScreen> {
               ),
               const SizedBox(height: 18),
 
-              // ── 5. Remedy List ──────────────────────────────────────────
               if (displayedRemedies.isEmpty) ...[
                 EmptyStateView(
                   icon: _showOnlyBookmarked ? Icons.bookmark_border_rounded : Icons.healing_outlined,

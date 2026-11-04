@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import '../../viewmodels/voice_viewmodel.dart';
 import '../theme/app_colors.dart';
 
-/// Voice Bot audio player widget with equalizer waveforms and TTS speech controls
 class VoiceBotPlayer extends StatelessWidget {
   final String title;
   final String speechText;
@@ -146,7 +145,7 @@ class VoiceBotPlayer extends StatelessWidget {
                   ],
                 ),
               ),
-              // Speed selector button
+              
               _SpeedSelector(
                 currentSpeed: voiceVM.speechRate,
                 onSelected: (speed) => voiceVM.setRate(speed),
@@ -155,7 +154,6 @@ class VoiceBotPlayer extends StatelessWidget {
           ),
           const SizedBox(height: 14),
 
-          // Equalizer waveform visualizer
           Container(
             height: 36,
             padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -205,7 +203,6 @@ class VoiceBotPlayer extends StatelessWidget {
             ),
           ),
 
-          // Subtitle / spoken word stream display
           if (isThisPlaying && voiceVM.activeWord.isNotEmpty) ...[
             const SizedBox(height: 10),
             Container(
@@ -238,7 +235,6 @@ class VoiceBotPlayer extends StatelessWidget {
 
           const SizedBox(height: 14),
 
-          // Player controls
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [

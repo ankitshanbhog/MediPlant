@@ -1,4 +1,3 @@
-// Data model for Home Remedies in MediPlant
 
 class Remedy {
   final String id;
@@ -12,8 +11,8 @@ class Remedy {
   final String howToUse;
   final String dosage;
   final List<String> precautions;
-  final String category; // Cough, Cold, Sore throat, Mild indigestion, Headache, Skin, Immunity
-  final String timeToPrepare; // e.g. "10 mins"
+  final String category;
+  final String timeToPrepare;
   final bool isEducationalOnly;
 
   const Remedy({

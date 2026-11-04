@@ -1,9 +1,8 @@
-// Data model for Disease and Health Conditions in MediPlant
 
 class Disease {
   final String id;
   final String name;
-  final String category; // Respiratory, Digestion, Skin, Immunity, Pain & Fever, Stress, etc.
+  final String category;
   final String description;
   final List<String> symptoms;
   final String iconName;

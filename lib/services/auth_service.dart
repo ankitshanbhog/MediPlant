@@ -38,7 +38,6 @@ class AuthService {
     return list;
   }
 
-  /// Initialize and restore existing session from local SQLite cache
   Future<UserModel?> initializeSession() async {
     try {
       final savedUrl = await DatabaseHelper.instance.getSetting('custom_backend_url');
@@ -54,7 +53,6 @@ class AuthService {
         final Map<String, dynamic> data = jsonDecode(cachedUserJson);
         _currentUser = UserModel.fromJson(data, activeRole: savedActiveRole);
 
-        // Verify/refresh user profile from server in background
         _refreshUserProfile();
         return _currentUser;
       }
@@ -86,7 +84,6 @@ class AuthService {
     }
   }
 
-  /// Login with email and password (tries candidate URLs automatically)
   Future<UserModel> login({required String email, required String password}) async {
     final candidates = await _getCandidateUrls();
     String? lastError;
@@ -112,7 +109,7 @@ class AuthService {
           return _currentUser!;
         } else {
           lastError = _parseErrorMessage(response);
-          // If server responded with 401 Unauthorized or 400 Bad Request, that's the real server responding!
+          
           if (response.statusCode == 401 || response.statusCode == 400) {
             _baseUrl = candidate;
             throw Exception(lastError);
@@ -127,15 +124,33 @@ class AuthService {
     throw Exception(lastError ?? 'Could not connect to backend server. Make sure "python app.py" is running.');
   }
 
-  /// Register new user or farmer (tries candidate URLs automatically)
   Future<UserModel> register({
     required String name,
     required String email,
     required String password,
-    required String role, // 'user' or 'farmer'
+    required String role,
+    String? farmName,
+    String? region,
+    String? contactPhone,
   }) async {
     final candidates = await _getCandidateUrls();
     String? lastError;
+
+    final Map<String, dynamic> requestPayload = {
+      'name': name.trim(),
+      'email': email.trim(),
+      'password': password,
+      'role': role,
+    };
+    if (farmName != null && farmName.trim().isNotEmpty) {
+      requestPayload['farm_name'] = farmName.trim();
+    }
+    if (region != null && region.trim().isNotEmpty) {
+      requestPayload['region'] = region.trim();
+    }
+    if (contactPhone != null && contactPhone.trim().isNotEmpty) {
+      requestPayload['contact_phone'] = contactPhone.trim();
+    }
 
     for (final candidate in candidates) {
       try {
@@ -143,12 +158,7 @@ class AuthService {
         final response = await http.post(
           url,
           headers: {'Content-Type': 'application/json'},
-          body: jsonEncode({
-            'name': name.trim(),
-            'email': email.trim(),
-            'password': password,
-            'role': role,
-          }),
+          body: jsonEncode(requestPayload),
         ).timeout(const Duration(seconds: 6));
 
         if (response.statusCode == 200) {
@@ -177,14 +187,12 @@ class AuthService {
     throw Exception(lastError ?? 'Could not connect to backend server. Make sure "python app.py" is running.');
   }
 
-  /// Set the user's active role context (e.g. switch between Farmer and User views)
   Future<void> setActiveRole(String role) async {
     if (_currentUser == null) return;
     _currentUser = _currentUser!.copyWith(activeRole: role);
     await DatabaseHelper.instance.setSetting(_activeRoleKey, role);
   }
 
-  /// Logout and clear saved tokens
   Future<void> logout() async {
     _token = null;
     _currentUser = null;
@@ -194,7 +202,6 @@ class AuthService {
     } catch (_) {}
   }
 
-  /// Fetch Farmer Dashboard Data (Protected by RBAC)
   Future<Map<String, dynamic>> getFarmerDashboard() async {
     if (_token == null) throw Exception('Authentication required.');
     final url = Uri.parse('$_baseUrl/farmer/dashboard');
@@ -212,7 +219,6 @@ class AuthService {
     }
   }
 
-  /// Add Farmer Crop Record (Protected by RBAC)
   Future<Map<String, dynamic>> addCropRecord({
     required String plantName,
     required String stage,
@@ -242,7 +248,6 @@ class AuthService {
     }
   }
 
-  /// Admin: Fetch user directory (Protected by RBAC)
   Future<List<Map<String, dynamic>>> getAdminUsers() async {
     if (_token == null) throw Exception('Authentication required.');
     final url = Uri.parse('$_baseUrl/admin/users');
@@ -262,7 +267,6 @@ class AuthService {
     }
   }
 
-  /// Admin: Verify or toggle farmer verification (Protected by RBAC)
   Future<void> toggleUserVerification(int userId, bool isVerified) async {
     if (_token == null) throw Exception('Authentication required.');
     final url = Uri.parse('$_baseUrl/admin/verify-user');

@@ -1,46 +1,35 @@
 import 'plant_model.dart';
 
-/// The recognition status enum reflecting all machine-learning stages
 enum RecognitionStatus {
-  /// Image passed Model 1 (is a plant) and Model 2 identified it with high confidence
+  
   ownModelSuccess,
 
-  /// Image is a plant, but Model 2 has borderline/low confidence (triggers external verification recommendation)
   lowConfidence,
 
-  /// External verification/backup API verified the plant or resolved low confidence
   verificationSuccess,
 
-  /// Plant was identified by external verification API because it is outside Model 2's supported classes
   outsideSupportedClasses,
 
-  /// Image failed Model 1 plant/not-plant classifier (Object, Animal, Scene, etc.)
   notAPlant,
 
-  /// Identification process failed or plant cannot be recognized
   identificationFailed,
 }
 
-/// Source that provided the recognition result
 enum RecognitionSource {
-  /// Internal trained Model 2 (On-device/Edge model)
+  
   internalModel,
 
-  /// External Backup / Verification Botanical API
   externalVerificationApi,
 
-  /// Combined / Ensemble consensus
   ensemble,
 
-  /// None (e.g. not a plant)
   none,
 }
 
-/// Alternative predictions returned by recognition models
 class PlantAlternative {
   final String commonName;
   final String scientificName;
-  final double confidence; // 0.0 to 1.0
+  final double confidence;
   final String? plantId;
 
   const PlantAlternative({
@@ -69,17 +58,16 @@ class PlantAlternative {
   }
 }
 
-/// Detailed result of the multi-stage recognition pipeline
 class RecognitionResult {
   final RecognitionStatus status;
   final Plant? plant;
-  final double confidence; // 0.0 to 1.0 (e.g. 0.94 for 94%)
+  final double confidence;
   final RecognitionSource source;
   final String? verificationNote;
   final List<PlantAlternative> alternatives;
   final DateTime timestamp;
   final String? imagePath;
-  final bool isModel1Passed; // True if classified as plant by Model 1
+  final bool isModel1Passed;
   final String? nonPlantReason;
 
   const RecognitionResult({

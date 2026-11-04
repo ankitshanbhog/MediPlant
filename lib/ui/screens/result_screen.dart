@@ -9,15 +9,6 @@ import '../widgets/plant_details_sections.dart';
 import '../widgets/voice_bot_player.dart';
 import 'main_shell_screen.dart';
 
-/// Redesigned Plant Identification Result Screen
-///
-/// Features a clear, un-cluttered 5-section layout:
-///   1. Overview
-///   2. Medicinal Uses
-///   3. Remedies
-///   4. Safety & Precautions
-///   5. Scientific Information
-/// Identical layout and navigation consistency with Plant Encyclopedia.
 class ResultScreen extends StatefulWidget {
   final RecognitionResult result;
 
@@ -104,7 +95,6 @@ class _ResultScreenState extends State<ResultScreen> {
       );
     }
 
-    // Natural punctuated speech summary for natural TTS pacing
     final speechSummary =
         'Identified ${plant.commonName}. '
         'Scientific botanical name: ${plant.scientificName}. '
@@ -123,7 +113,7 @@ class _ResultScreenState extends State<ResultScreen> {
       body: CustomScrollView(
         controller: _scrollController,
         slivers: [
-          // ── 1. Hero Botanical Image Header ───────────────────────────────
+          
           SliverAppBar(
             expandedHeight: 300,
             pinned: true,
@@ -161,7 +151,7 @@ class _ResultScreenState extends State<ResultScreen> {
                 fit: StackFit.expand,
                 children: [
                   _buildHeaderImage(widget.result.imagePath, plant.imageUrl, plantId: plant.id),
-                  // Gradient vignette for high readability
+                  
                   DecoratedBox(
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
@@ -246,14 +236,13 @@ class _ResultScreenState extends State<ResultScreen> {
             ),
           ),
 
-          // ── 2. Content Body ───────────────────────────────────────────────
           SliverToBoxAdapter(
             child: Padding(
               padding: const EdgeInsets.fromLTRB(18, 18, 18, 40),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Confidence & AI Verification Banner
+                  
                   _buildConfidenceBanner(
                     confidencePercent: confidencePercent,
                     confidenceValue: widget.result.confidence,
@@ -262,24 +251,20 @@ class _ResultScreenState extends State<ResultScreen> {
                   ),
                   const SizedBox(height: 18),
 
-                  // AI Voice Companion Card
                   VoiceBotPlayer(
                     title: plant.commonName,
                     speechText: speechSummary,
                   ),
                   const SizedBox(height: 22),
 
-                  // ── Clean 5-Section Botanical Information Display ──
                   PlantDetailsSections(plant: plant),
                   const SizedBox(height: 24),
 
-                  // ── Secondary Model Predictions (if any alternatives) ─────
                   if (widget.result.alternatives.isNotEmpty) ...[
                     _buildAlternativesCard(isDark),
                     const SizedBox(height: 24),
                   ],
 
-                  // ── Quick Action Buttons ──────────────────────────────────
                   Row(
                     children: [
                       Expanded(
@@ -326,8 +311,6 @@ class _ResultScreenState extends State<ResultScreen> {
       ),
     );
   }
-
-  // ── Helper Widgets ─────────────────────────────────────────────────────────
 
   Widget _buildHeaderImage(String? localPath, String fallbackUrl, {String? plantId}) {
     if (localPath != null && localPath.isNotEmpty && !localPath.startsWith('http')) {

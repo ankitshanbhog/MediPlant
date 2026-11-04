@@ -2,7 +2,6 @@ import '../database_helper.dart';
 import '../mock/mock_remedies_data.dart';
 import '../models/remedy_model.dart';
 
-/// Repository interface and implementations for Home Remedies
 abstract class RemedyRepository {
   Future<List<Remedy>> getAllRemedies();
   Future<Remedy?> getRemedyById(String id);
@@ -13,7 +12,6 @@ abstract class RemedyRepository {
   Future<List<String>> getCategories();
 }
 
-/// SQLite persistent Remedy Repository
 class SqliteRemedyRepository implements RemedyRepository {
   final DatabaseHelper _db = DatabaseHelper.instance;
 

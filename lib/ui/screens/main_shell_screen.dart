@@ -8,7 +8,6 @@ import 'home_screen.dart';
 import 'identify_screen.dart';
 import 'remedies_screen.dart';
 
-/// Main scaffold container hosting the 5 bottom navigation tabs
 class MainShellScreen extends StatefulWidget {
   final int initialIndex;
 
@@ -74,7 +73,7 @@ class _MainShellScreenState extends State<MainShellScreen> {
         ),
         actions: [
           const RoleBadgeWidget(),
-          // History shortcut
+          
           IconButton(
             icon: const Icon(Icons.history_rounded),
             tooltip: 'Scan History',

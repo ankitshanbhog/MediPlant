@@ -1,4 +1,3 @@
-// Data model for Previously Identified Plant Scans
 
 import 'recognition_result_model.dart';
 

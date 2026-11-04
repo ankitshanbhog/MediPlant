@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../theme/app_colors.dart';
 
-/// Floating / docked 5-tab responsive bottom navigation bar
 class AppBottomNav extends StatelessWidget {
   final int currentIndex;
   final ValueChanged<int> onIndexChanged;

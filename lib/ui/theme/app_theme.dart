@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'app_colors.dart';
 import 'app_typography.dart';
 
-/// Theme data for Light and Dark modes
 class AppTheme {
   AppTheme._();
 

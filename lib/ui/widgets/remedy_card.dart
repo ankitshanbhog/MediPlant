@@ -5,7 +5,6 @@ import '../../viewmodels/voice_viewmodel.dart';
 import '../theme/app_colors.dart';
 import 'plant_image.dart';
 
-/// Expandable Remedy Card with preparation steps, dosage, and voice read-aloud
 class RemedyCard extends StatefulWidget {
   final Remedy remedy;
   final bool isBookmarked;
@@ -63,7 +62,7 @@ class _RemedyCardState extends State<RemedyCard> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Header
+          
           Padding(
             padding: const EdgeInsets.all(16),
             child: Column(
@@ -90,23 +89,31 @@ class _RemedyCardState extends State<RemedyCard> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                                decoration: BoxDecoration(
-                                  color: AppColors.primary.withOpacity(0.1),
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: Text(
-                                  r.condition,
-                                  style: const TextStyle(
-                                    fontSize: 11,
-                                    fontWeight: FontWeight.w700,
-                                    color: AppColors.primary,
+                              Expanded(
+                                child: Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                                    decoration: BoxDecoration(
+                                      color: AppColors.primary.withOpacity(0.1),
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: Text(
+                                      r.condition,
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: const TextStyle(
+                                        fontSize: 11,
+                                        fontWeight: FontWeight.w700,
+                                        color: AppColors.primary,
+                                      ),
+                                    ),
                                   ),
                                 ),
                               ),
+                              const SizedBox(width: 8),
                               Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
@@ -154,11 +161,10 @@ class _RemedyCardState extends State<RemedyCard> {
                           GestureDetector(
                             onTap: widget.onPlantTap,
                             child: Row(
-                              mainAxisSize: MainAxisSize.min,
                               children: [
                                 const Icon(Icons.eco_rounded, size: 13, color: AppColors.primaryLight),
                                 const SizedBox(width: 4),
-                                Flexible(
+                                Expanded(
                                   child: Text(
                                     '${r.primaryPlantName} (${r.primaryPlantScientific})',
                                     style: TextStyle(
@@ -248,7 +254,6 @@ class _RemedyCardState extends State<RemedyCard> {
             ),
           ),
 
-          // Expandable section
           if (_isExpanded) ...[
             const Divider(height: 1, color: AppColors.borderLight),
             Padding(
@@ -384,7 +389,6 @@ class _RemedyCardState extends State<RemedyCard> {
             ),
           ],
 
-          // Expand / Collapse Footer Button
           InkWell(
             onTap: () {
               setState(() {

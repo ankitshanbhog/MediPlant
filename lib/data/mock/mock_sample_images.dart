@@ -1,4 +1,4 @@
-/// Test botanical sample images for demonstration and quality testing
+
 class RecognitionTestSample {
   final String id;
   final String label;
@@ -19,9 +19,6 @@ class RecognitionTestSample {
   });
 }
 
-/// Pre-configured curated botanical samples matching the 13-class MediPlant vision system.
-/// Classes: aloe_vera, amla, ashwagandha, ayapana, brahmi, gotu_kola, moringa,
-///          multi_vitamin_plant, neem, rosemary, sarpagandha, tulsi, wood_apple
 final List<RecognitionTestSample> mockTestSamples = [
   const RecognitionTestSample(
     id: 'sample_aloe_vera',

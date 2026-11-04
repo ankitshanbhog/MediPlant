@@ -3,15 +3,11 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'voice_service.dart';
 
-/// Enhanced TTS voice service with slower, clearer, louder speech settings
-/// optimized for medicinal plant information delivery and accessibility.
 class FlutterTtsVoiceService implements VoiceTtsService {
   final FlutterTts _tts = FlutterTts();
 
   VoiceState _state = VoiceState.stopped;
 
-  /// Slower speech rate for clear, easy-to-understand narration.
-  /// 0.38 maps to approximately 0.35 on the TTS engine (very clear & deliberate).
   double _speechRate = 0.38;
 
   final _stateController = StreamController<VoiceState>.broadcast();
@@ -34,20 +30,19 @@ class FlutterTtsVoiceService implements VoiceTtsService {
 
     try {
       await _tts.setLanguage('en-US');
-      // Slightly slower speech rate for maximum clarity and comprehension
+      
       await _tts.setSpeechRate(_speechRate);
-      // Maximum volume for clearest audio output
+      
       await _tts.setVolume(1.0);
-      // Slightly lower pitch (0.9) for a warmer, more authoritative voice quality
+      
       await _tts.setPitch(0.9);
 
       if (defaultTargetPlatform == TargetPlatform.android) {
         final engines = await _tts.getEngines;
         debugPrint('[TTS] Available engines: $engines');
 
-        // Try to set a high-quality voice engine for better clarity
         try {
-          // Prefer Google TTS engine for Android if available
+          
           if (engines is List && engines.contains('com.google.android.tts')) {
             await _tts.setEngine('com.google.android.tts');
             debugPrint('[TTS] Set Google TTS engine for high quality audio');
@@ -55,14 +50,12 @@ class FlutterTtsVoiceService implements VoiceTtsService {
         } catch (_) {}
       }
 
-      // Sentence completion callback: natural pause between sentences
       _tts.setCompletionHandler(() async {
         if (_state != VoiceState.playing) return;
 
         if (_currentSentenceIndex + 1 < _sentences.length) {
           _currentSentenceIndex++;
 
-          // Slightly longer natural breathing pause for better comprehension
           await Future.delayed(const Duration(milliseconds: 480));
 
           if (_state == VoiceState.playing) {
@@ -76,19 +69,16 @@ class FlutterTtsVoiceService implements VoiceTtsService {
         }
       });
 
-      // Error callback
       _tts.setErrorHandler((message) {
         debugPrint('[TTS] Error: $message');
         _stopWaveform();
         _setState(VoiceState.stopped);
       });
 
-      // Word boundary / progress highlighting
       _tts.setProgressHandler((text, start, end, word) {
         _wordController.add(word);
       });
 
-      // Cancel callback
       _tts.setCancelHandler(() {
         _stopWaveform();
         _setState(VoiceState.stopped);
@@ -126,10 +116,6 @@ class FlutterTtsVoiceService implements VoiceTtsService {
     _stateController.add(s);
   }
 
-  // ──────────────────────────────────────────────────────────────────────────
-  // VoiceTtsService interface
-  // ──────────────────────────────────────────────────────────────────────────
-
   @override
   VoiceState get state => _state;
 
@@ -151,8 +137,6 @@ class FlutterTtsVoiceService implements VoiceTtsService {
     await _tts.stop();
     _wordController.add('');
 
-    // Segment text into discrete sentences or punctuated clauses for natural pauses.
-    // Splitting on sentence boundaries creates a more comfortable listening pace.
     _sentences = text
         .split(RegExp(r'(?<=[.!?;\n])\s+'))
         .map((s) => s.trim())
@@ -169,7 +153,6 @@ class FlutterTtsVoiceService implements VoiceTtsService {
     _setState(VoiceState.playing);
     _startWaveform();
 
-    // Ensure volume and rate are freshly set before each speak session
     await _tts.setVolume(1.0);
     await _tts.setSpeechRate(_speechRate);
     await _tts.setPitch(0.9);
@@ -215,9 +198,7 @@ class FlutterTtsVoiceService implements VoiceTtsService {
   @override
   Future<void> setSpeechRate(double rate) async {
     _speechRate = rate;
-    // Map the slider rate (0.0-1.0 user input) to engine range (0.1-0.55)
-    // This deliberately caps at 0.55 to prevent the voice from becoming too fast
-    // and losing clarity for medical/botanical information.
+    
     final mapped = (rate * 0.55).clamp(0.1, 0.55);
     await _tts.setSpeechRate(mapped);
   }

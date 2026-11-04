@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import '../theme/app_colors.dart';
 
-/// Clean, robust widget to display verified botanical plant images from assets/plants/
-/// with graceful fallback to network URLs and botanical placeholders.
 class PlantImage extends StatelessWidget {
   final String plantId;
   final String? fallbackUrl;
@@ -52,7 +50,7 @@ class PlantImage extends StatelessWidget {
       height: height,
       fit: fit,
       errorBuilder: (context, error, stackTrace) {
-        // Try alternate asset file if initial fails (e.g. pirandai_plant.jpg or malabar_nut.jpg)
+        
         final fallbackAsset = _assetPath.endsWith('.webp')
             ? _assetPath.replaceAll('.webp', '.jpg')
             : (_assetPath.contains('_plant')

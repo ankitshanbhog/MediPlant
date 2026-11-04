@@ -9,8 +9,6 @@ import '../widgets/plant_image.dart';
 import '../widgets/voice_bot_player.dart';
 import 'main_shell_screen.dart';
 
-/// Reusable Detailed Plant Information Screen (Botanical Encyclopedia)
-/// Clean, organized 5-section presentation of botanical knowledge.
 class PlantDetailScreen extends StatelessWidget {
   final Plant plant;
 
@@ -29,7 +27,7 @@ class PlantDetailScreen extends StatelessWidget {
     return Scaffold(
       body: CustomScrollView(
         slivers: [
-          // Header Botanical Image Sliver
+          
           SliverAppBar(
             expandedHeight: 280,
             pinned: true,
@@ -151,26 +149,23 @@ class PlantDetailScreen extends StatelessWidget {
             ),
           ),
 
-          // Detail Content Sections
           SliverToBoxAdapter(
             child: Padding(
               padding: const EdgeInsets.fromLTRB(18, 18, 18, 36),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Voice Assistant Player
+                  
                   VoiceBotPlayer(
                     title: plant.commonName,
                     speechText: speechSummary,
                   ),
                   const SizedBox(height: 20),
 
-                  // ── Clean 5-Section Botanical Information Display ──
                   PlantDetailsSections(plant: plant),
 
                   const SizedBox(height: 24),
 
-                  // Button to search related remedies across app
                   ElevatedButton.icon(
                     onPressed: () {
                       final remediesVM = context.read<RemediesViewModel>();

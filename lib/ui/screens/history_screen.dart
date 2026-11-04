@@ -8,7 +8,6 @@ import '../widgets/confidence_indicator.dart';
 import '../widgets/state_views.dart';
 import 'plant_detail_screen.dart';
 
-/// Screen displaying previously identified plant scans
 class HistoryScreen extends StatelessWidget {
   const HistoryScreen({super.key});
 
@@ -53,7 +52,7 @@ class HistoryScreen extends StatelessWidget {
       ),
       body: Column(
         children: [
-          // Filter search bar
+          
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
             child: TextField(

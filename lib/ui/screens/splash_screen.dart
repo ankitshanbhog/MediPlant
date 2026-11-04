@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import '../theme/app_colors.dart';
 import 'main_shell_screen.dart';
 
-/// Splash screen with botanical animation, logo, tagline, and smooth transition
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
@@ -71,7 +70,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
         child: SafeArea(
           child: Stack(
             children: [
-              // Ambient botanical background circles
+              
               Positioned(
                 top: -80,
                 right: -80,
@@ -97,7 +96,6 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                 ),
               ),
 
-              // Center Logo & Tagline
               Center(
                 child: FadeTransition(
                   opacity: _fadeAnimation,
@@ -106,7 +104,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        // Botanical Icon Badge
+                        
                         Container(
                           width: 110,
                           height: 110,
@@ -174,7 +172,6 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                 ),
               ),
 
-              // Bottom version and loading indicator
               Positioned(
                 bottom: 24,
                 left: 0,

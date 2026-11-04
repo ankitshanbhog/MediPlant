@@ -22,7 +22,6 @@ class AuthViewModel extends ChangeNotifier {
   String? get errorMessage => _errorMessage;
   bool get isAuthenticated => _status == AuthStatus.authenticated && _currentUser != null;
 
-  // Active role capabilities
   bool get isFarmer => _currentUser?.isFarmer ?? false;
   bool get isAdmin => _currentUser?.isAdmin ?? false;
   bool get isGeneralUser => _currentUser?.isGeneralUser ?? true;
@@ -73,6 +72,9 @@ class AuthViewModel extends ChangeNotifier {
     required String email,
     required String password,
     required String role,
+    String? farmName,
+    String? region,
+    String? contactPhone,
   }) async {
     _isLoading = true;
     _errorMessage = null;
@@ -84,6 +86,9 @@ class AuthViewModel extends ChangeNotifier {
         email: email,
         password: password,
         role: role,
+        farmName: farmName,
+        region: region,
+        contactPhone: contactPhone,
       );
       _currentUser = user;
       _status = AuthStatus.authenticated;

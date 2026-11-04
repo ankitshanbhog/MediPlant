@@ -31,7 +31,6 @@ class FarmerService {
     'Authorization': 'Bearer $token',
   };
 
-  /// 1. Overview & Stats
   Future<Map<String, dynamic>> getOverview() async {
     await _checkBaseUrl();
     final token = await _getToken();
@@ -42,7 +41,6 @@ class FarmerService {
     throw Exception(_parseError(res));
   }
 
-  /// 2. Grower Profile
   Future<Map<String, dynamic>> getProfile() async {
     await _checkBaseUrl();
     final token = await _getToken();
@@ -80,7 +78,6 @@ class FarmerService {
     if (res.statusCode != 200) throw Exception(_parseError(res));
   }
 
-  /// 3. Crops & Harvest Calendar
   Future<List<Map<String, dynamic>>> getCrops() async {
     await _checkBaseUrl();
     final token = await _getToken();
@@ -143,7 +140,6 @@ class FarmerService {
     if (res.statusCode != 200) throw Exception(_parseError(res));
   }
 
-  /// 4. Stock & Batch Management
   Future<List<Map<String, dynamic>>> getStockBatches() async {
     await _checkBaseUrl();
     final token = await _getToken();
@@ -210,7 +206,6 @@ class FarmerService {
     if (res.statusCode != 200) throw Exception(_parseError(res));
   }
 
-  /// 5. Buyer Inquiries
   Future<List<Map<String, dynamic>>> getInquiries() async {
     await _checkBaseUrl();
     final token = await _getToken();
@@ -237,7 +232,6 @@ class FarmerService {
     if (res.statusCode != 200) throw Exception(_parseError(res));
   }
 
-  /// 6. Cultivation Guides (Public / Agronomy)
   Future<List<Map<String, dynamic>>> getCultivationGuides() async {
     await _checkBaseUrl();
     final res = await http.get(Uri.parse('$_baseUrl/farmer/cultivation-guides')).timeout(const Duration(seconds: 8));
@@ -248,7 +242,6 @@ class FarmerService {
     throw Exception(_parseError(res));
   }
 
-  /// 7. Market Information
   Future<Map<String, dynamic>> getMarketInfo() async {
     await _checkBaseUrl();
     final res = await http.get(Uri.parse('$_baseUrl/farmer/market-info')).timeout(const Duration(seconds: 8));
@@ -256,7 +249,6 @@ class FarmerService {
     throw Exception(_parseError(res));
   }
 
-  /// 8. Agricultural Resources & Government Schemes
   Future<List<Map<String, dynamic>>> getAgriculturalResources() async {
     await _checkBaseUrl();
     final res = await http.get(Uri.parse('$_baseUrl/farmer/agricultural-resources')).timeout(const Duration(seconds: 8));

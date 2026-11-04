@@ -2,7 +2,6 @@ import '../database_helper.dart';
 import '../mock/mock_diseases_data.dart';
 import '../models/disease_model.dart';
 
-
 abstract class DiseaseRepository {
   Future<List<Disease>> getAllDiseases();
   Future<Disease?> getDiseaseById(String id);
@@ -10,7 +9,6 @@ abstract class DiseaseRepository {
   Future<List<String>> getCategories();
   Future<List<Disease>> getDiseasesByCategory(String category);
 }
-
 
 class SqliteDiseaseRepository implements DiseaseRepository {
   final DatabaseHelper _db = DatabaseHelper.instance;

@@ -1,14 +1,12 @@
 import 'dart:async';
 import 'dart:math';
 
-/// Voice playback states
 enum VoiceState {
   stopped,
   playing,
   paused,
 }
 
-/// Abstract contract for Voice / Text-to-Speech service
 abstract class VoiceTtsService {
   VoiceState get state;
   Stream<VoiceState> get stateStream;
@@ -24,12 +22,6 @@ abstract class VoiceTtsService {
   void dispose();
 }
 
-/// Rich Mock Implementation of Voice Assistant
-///
-/// NOTE FOR DEVELOPERS:
-/// This mock service provides interactive real-time waveforms and simulated
-/// word-by-word audio streaming for the UI. When integrating native voice APIs,
-/// connect `flutter_tts` or native platform speech synthesizers here.
 class MockVoiceTtsService implements VoiceTtsService {
   VoiceState _state = VoiceState.stopped;
   double _speechRate = 1.0;
@@ -67,17 +59,6 @@ class MockVoiceTtsService implements VoiceTtsService {
     _currentWordIndex = 0;
     _setState(VoiceState.playing);
 
-    // =========================================================================
-    // TODO: [VOICE_API - TTS INTEGRATION]
-    // Connect device Text-To-Speech engine (e.g. FlutterTts, AVFoundation, Android TextToSpeech)
-    //
-    // Example:
-    // await _flutterTts.setLanguage("en-US");
-    // await _flutterTts.setSpeechRate(_speechRate);
-    // await _flutterTts.setPitch(1.0);
-    // await _flutterTts.speak(text);
-    // =========================================================================
-
     _startSimulatedPlayback();
     _startWaveformTimer();
   }
@@ -100,7 +81,7 @@ class MockVoiceTtsService implements VoiceTtsService {
     _waveformTimer?.cancel();
     _waveformTimer = Timer.periodic(const Duration(milliseconds: 100), (timer) {
       if (_state == VoiceState.playing) {
-        // Generate 12 dynamic audio visualizer bar heights (0.1 to 1.0)
+        
         final waves = List.generate(12, (index) {
           return 0.15 + (_random.nextDouble() * 0.85);
         });

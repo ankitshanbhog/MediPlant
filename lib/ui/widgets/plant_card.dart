@@ -3,7 +3,6 @@ import '../../data/models/plant_model.dart';
 import '../theme/app_colors.dart';
 import 'plant_image.dart';
 
-/// Card widget to display a medicinal plant item with image, names, and tags
 class PlantCard extends StatelessWidget {
   final Plant plant;
   final VoidCallback onTap;

@@ -4,7 +4,6 @@ import '../../data/mock/mock_sample_images.dart';
 import '../../viewmodels/recognition_viewmodel.dart';
 import '../theme/app_colors.dart';
 
-/// Modal bottom sheet allowing tester/evaluators to simulate all ML backend pipeline scenarios
 class SimulationSheet extends StatelessWidget {
   const SimulationSheet({super.key});
 

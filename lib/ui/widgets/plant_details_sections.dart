@@ -8,14 +8,6 @@ import '../../viewmodels/remedies_viewmodel.dart';
 import '../theme/app_colors.dart';
 import 'remedy_card.dart';
 
-/// Reusable, clean, and organized plant information display component.
-///
-/// Divides plant knowledge into 5 distinct, uncluttered sections:
-///   1. Overview (Botanical Description, Habitat, Appearance, Vernacular Names)
-///   2. Medicinal Uses (Therapeutic Applications, Health Benefits, Traditional Uses)
-///   3. Remedies (Herbal Preparation, Dosage, and Matching Home Remedy Recipes)
-///   4. Safety & Precautions (Contraindications, Precautions, Side Effects, Disclaimer)
-///   5. Scientific Information (Taxonomy, Phytochemicals, Medicinal Parts Used)
 class PlantDetailsSections extends StatefulWidget {
   final Plant plant;
   final int initialSectionIndex;
@@ -107,7 +99,7 @@ class _PlantDetailsSectionsState extends State<PlantDetailsSections> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // ── 1. Clean Segmented Navigation Bar ──────────────────────────────
+        
         Container(
           margin: const EdgeInsets.only(bottom: 18),
           child: SingleChildScrollView(
@@ -178,7 +170,6 @@ class _PlantDetailsSectionsState extends State<PlantDetailsSections> {
           ),
         ),
 
-        // ── 2. Active Section Card View ───────────────────────────────────
         AnimatedSwitcher(
           duration: const Duration(milliseconds: 240),
           transitionBuilder: (child, animation) {
@@ -195,7 +186,6 @@ class _PlantDetailsSectionsState extends State<PlantDetailsSections> {
 
         const SizedBox(height: 18),
 
-        // ── 3. Quick Section Step Footer ──────────────────────────────────
         _buildSectionFooterNav(isDark),
       ],
     );
@@ -218,14 +208,11 @@ class _PlantDetailsSectionsState extends State<PlantDetailsSections> {
     }
   }
 
-  // ═══════════════════════════════════════════════════════════════════════════
-  // SECTION 1: OVERVIEW
-  // ═══════════════════════════════════════════════════════════════════════════
   Widget _buildOverviewSection(bool isDark, Plant plant) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Botanical Description Card
+        
         _buildSectionCard(
           isDark: isDark,
           icon: Icons.eco_rounded,
@@ -272,7 +259,6 @@ class _PlantDetailsSectionsState extends State<PlantDetailsSections> {
         ),
         const SizedBox(height: 14),
 
-        // Regional & Vernacular Names Card
         if (plant.vernacularNames.isNotEmpty) ...[
           _buildSectionCard(
             isDark: isDark,
@@ -323,14 +309,11 @@ class _PlantDetailsSectionsState extends State<PlantDetailsSections> {
     );
   }
 
-  // ═══════════════════════════════════════════════════════════════════════════
-  // SECTION 2: MEDICINAL USES
-  // ═══════════════════════════════════════════════════════════════════════════
   Widget _buildMedicinalSection(bool isDark, Plant plant) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Therapeutic Indications
+        
         _buildSectionCard(
           isDark: isDark,
           icon: Icons.healing_rounded,
@@ -346,7 +329,6 @@ class _PlantDetailsSectionsState extends State<PlantDetailsSections> {
         ),
         const SizedBox(height: 14),
 
-        // Key Health Benefits
         if (plant.healthBenefits.isNotEmpty) ...[
           _buildSectionCard(
             isDark: isDark,
@@ -364,7 +346,6 @@ class _PlantDetailsSectionsState extends State<PlantDetailsSections> {
           const SizedBox(height: 14),
         ],
 
-        // Traditional & Ayurvedic Heritage
         if (plant.traditionalUses.isNotEmpty) ...[
           _buildSectionCard(
             isDark: isDark,
@@ -384,16 +365,13 @@ class _PlantDetailsSectionsState extends State<PlantDetailsSections> {
     );
   }
 
-  // ═══════════════════════════════════════════════════════════════════════════
-  // SECTION 3: REMEDIES
-  // ═══════════════════════════════════════════════════════════════════════════
   Widget _buildRemediesSection(bool isDark, Plant plant) {
     final matchingRemedies = _getMatchingRemedies();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Preparation Methods Card
+        
         if (plant.preparationMethods.isNotEmpty) ...[
           _buildSectionCard(
             isDark: isDark,
@@ -423,7 +401,6 @@ class _PlantDetailsSectionsState extends State<PlantDetailsSections> {
           const SizedBox(height: 14),
         ],
 
-        // Dosage Guidelines Card
         if (plant.dosageGuidelines.isNotEmpty) ...[
           _buildSectionCard(
             isDark: isDark,
@@ -453,7 +430,6 @@ class _PlantDetailsSectionsState extends State<PlantDetailsSections> {
           const SizedBox(height: 14),
         ],
 
-        // Ready-to-use Home Remedy Recipes
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -529,14 +505,11 @@ class _PlantDetailsSectionsState extends State<PlantDetailsSections> {
     );
   }
 
-  // ═══════════════════════════════════════════════════════════════════════════
-  // SECTION 4: SAFETY & PRECAUTIONS
-  // ═══════════════════════════════════════════════════════════════════════════
   Widget _buildSafetySection(bool isDark, Plant plant) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Contraindications Alert Card
+        
         if (plant.contraindications.isNotEmpty) ...[
           Container(
             padding: const EdgeInsets.all(16),
@@ -596,7 +569,6 @@ class _PlantDetailsSectionsState extends State<PlantDetailsSections> {
           const SizedBox(height: 14),
         ],
 
-        // General Precautions Card
         if (plant.precautions.isNotEmpty) ...[
           _buildSectionCard(
             isDark: isDark,
@@ -619,7 +591,6 @@ class _PlantDetailsSectionsState extends State<PlantDetailsSections> {
           const SizedBox(height: 14),
         ],
 
-        // Possible Side Effects Card
         if (plant.sideEffects.isNotEmpty) ...[
           _buildSectionCard(
             isDark: isDark,
@@ -642,7 +613,6 @@ class _PlantDetailsSectionsState extends State<PlantDetailsSections> {
           const SizedBox(height: 14),
         ],
 
-        // Medical Safeguard Note
         Container(
           padding: const EdgeInsets.all(14),
           decoration: BoxDecoration(
@@ -673,14 +643,11 @@ class _PlantDetailsSectionsState extends State<PlantDetailsSections> {
     );
   }
 
-  // ═══════════════════════════════════════════════════════════════════════════
-  // SECTION 5: SCIENTIFIC INFORMATION
-  // ═══════════════════════════════════════════════════════════════════════════
   Widget _buildScientificSection(bool isDark, Plant plant) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Botanical Taxonomy Card
+        
         _buildSectionCard(
           isDark: isDark,
           icon: Icons.science_rounded,
@@ -704,7 +671,6 @@ class _PlantDetailsSectionsState extends State<PlantDetailsSections> {
         ),
         const SizedBox(height: 14),
 
-        // Active Phytochemical Constituents
         if (plant.activeConstituents.isNotEmpty) ...[
           _buildSectionCard(
             isDark: isDark,
@@ -740,7 +706,6 @@ class _PlantDetailsSectionsState extends State<PlantDetailsSections> {
           const SizedBox(height: 14),
         ],
 
-        // Harvested Medicinal Parts
         if (plant.partsUsed.isNotEmpty) ...[
           _buildSectionCard(
             isDark: isDark,
@@ -777,10 +742,6 @@ class _PlantDetailsSectionsState extends State<PlantDetailsSections> {
       ],
     );
   }
-
-  // ═══════════════════════════════════════════════════════════════════════════
-  // SHARED CARD BUILDERS & HELPERS
-  // ═══════════════════════════════════════════════════════════════════════════
 
   Widget _buildSectionCard({
     required bool isDark,

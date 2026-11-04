@@ -10,39 +10,35 @@ import '../data/models/plant_model.dart';
 import '../data/models/recognition_result_model.dart';
 import 'recognition_service.dart';
 
-/// Real Backend Recognition Service connecting Flutter with the FastAPI ML backend
 class BackendRecognitionService implements RecognitionService {
-  /// Base API URL (can be customized for physical devices or custom networks)
+  
   String _baseUrl;
 
   BackendRecognitionService({String? customBaseUrl})
       : _baseUrl = customBaseUrl ?? defaultBaseUrl;
 
-  /// Automatically select optimal backend URL based on execution platform
   static String get defaultBaseUrl {
     if (kIsWeb) {
       return 'http://127.0.0.1:8000';
     }
     try {
       if (Platform.isAndroid) {
-        // http://127.0.0.1:8000 is supported directly via USB with 'adb reverse tcp:8000 tcp:8000'
-        // This is 100% immune to Wi-Fi firewalls, router client-isolation, and IP changes.
+        
         return 'http://127.0.0.1:8000';
       }
     } catch (_) {}
-    // Windows desktop, macOS desktop, iOS Simulator, Linux
+    
     return 'http://127.0.0.1:8000';
   }
 
-  /// List of candidate backend URLs to try on Android in order of reliability
   static List<String> get candidateUrls {
     if (kIsWeb) return ['http://127.0.0.1:8000'];
     try {
       if (Platform.isAndroid) {
         return [
-          'http://127.0.0.1:8000',     // Works via USB cable (adb reverse tcp:8000 tcp:8000)
-          'http://192.168.0.103:8000', // Wi-Fi LAN IP fallback
-          'http://10.0.2.2:8000',      // Android Studio Emulator fallback
+          'http://127.0.0.1:8000',
+          'http://192.168.0.103:8000',
+          'http://10.0.2.2:8000',
         ];
       }
     } catch (_) {}
@@ -55,7 +51,6 @@ class BackendRecognitionService implements RecognitionService {
     _baseUrl = url.endsWith('/') ? url.substring(0, url.length - 1) : url;
   }
 
-  /// Load custom cloud URL stored in local SQLite settings if set
   Future<void> loadCustomBaseUrl() async {
     try {
       final savedUrl = await DatabaseHelper.instance.getSetting('custom_backend_url');
@@ -67,7 +62,6 @@ class BackendRecognitionService implements RecognitionService {
     } catch (_) {}
   }
 
-  /// Save custom cloud backend URL persistently to SQLite
   Future<void> saveCustomBaseUrl(String url) async {
     final clean = url.trim().endsWith('/') ? url.trim().substring(0, url.trim().length - 1) : url.trim();
     _baseUrl = clean;
@@ -76,7 +70,6 @@ class BackendRecognitionService implements RecognitionService {
     } catch (_) {}
   }
 
-  /// List of candidate backend URLs to try, with active/custom cloud URL prioritized
   List<String> get allCandidateUrls {
     final list = <String>[];
     if (_baseUrl.isNotEmpty) list.add(_baseUrl);
@@ -86,7 +79,6 @@ class BackendRecognitionService implements RecognitionService {
     return list;
   }
 
-  /// Check if the backend server is reachable
   Future<bool> checkHealth() async {
     await loadCustomBaseUrl();
     for (final candidate in allCandidateUrls) {
@@ -103,6 +95,31 @@ class BackendRecognitionService implements RecognitionService {
     return false;
   }
 
+  Future<int> syncCatalogFromCloud() async {
+    await loadCustomBaseUrl();
+    for (final candidate in allCandidateUrls) {
+      try {
+        final url = Uri.parse('$candidate/botany/plants');
+        final response = await http.get(url).timeout(const Duration(seconds: 4));
+        if (response.statusCode == 200) {
+          final data = jsonDecode(response.body);
+          final plantsList = data['plants'] as List?;
+          if (plantsList == null) continue;
+          int synced = 0;
+          for (final pJson in plantsList) {
+            try {
+              final plant = Plant.fromJson(pJson);
+              await DatabaseHelper.instance.upsertPlant(plant);
+              synced++;
+            } catch (_) {}
+          }
+          return synced;
+        }
+      } catch (_) {}
+    }
+    return 0;
+  }
+
   @override
   Future<RecognitionResult> recognizePlant({
     required String imageSource,
@@ -110,12 +127,9 @@ class BackendRecognitionService implements RecognitionService {
     void Function(PipelineStage stage)? onStageChanged,
   }) async {
     await loadCustomBaseUrl();
-    // -------------------------------------------------------------------------
-    // STAGE 1: Checking Plant Characteristics
-    // -------------------------------------------------------------------------
+    
     onStageChanged?.call(PipelineStage.checkingPlantModel1);
 
-    // Read image bytes once so they can be sent or retried across candidates
     List<int> imageBytes;
     try {
       if (imageSource.startsWith('http://') || imageSource.startsWith('https://')) {
@@ -139,7 +153,6 @@ class BackendRecognitionService implements RecognitionService {
 
     http.Response? response;
 
-    // Try candidate endpoints (Custom Cloud URL -> USB adb reverse -> Wi-Fi IP -> fallback)
     final urlsToTry = allCandidateUrls;
     for (final candidate in urlsToTry) {
       try {
@@ -157,7 +170,7 @@ class BackendRecognitionService implements RecognitionService {
         final res = await http.Response.fromStream(streamedResponse);
         if (res.statusCode == 200) {
           response = res;
-          _baseUrl = candidate; // Pin active working endpoint
+          _baseUrl = candidate;
           break;
         }
       } catch (_) {}
@@ -182,9 +195,6 @@ class BackendRecognitionService implements RecognitionService {
       final double normalizedConfidence = (confidencePercent / 100.0).clamp(0.0, 1.0);
       final bool verificationApplied = data['verification_applied'] == true;
 
-      // -----------------------------------------------------------------------
-      // Case 1: Image failed Stage 1 (Not A Plant)
-      // -----------------------------------------------------------------------
       if (!isPlant) {
         onStageChanged?.call(PipelineStage.completed);
         return RecognitionResult(
@@ -199,13 +209,9 @@ class BackendRecognitionService implements RecognitionService {
         );
       }
 
-      // -----------------------------------------------------------------------
-      // Case 2: Plant identified -> Retrieve from local SQLite database
-      // -----------------------------------------------------------------------
       final rawPlantName = data['plant_name'] as String? ?? '';
       final plant = await _lookupPlantInDatabase(rawPlantName);
 
-      // Parse alternatives from backend predictions
       final List<PlantAlternative> alternatives = [];
       if (data['predictions'] is List) {
         for (final item in data['predictions']) {
@@ -228,7 +234,6 @@ class BackendRecognitionService implements RecognitionService {
         }
       }
 
-      // Determine Recognition Status based on confidence & verification
       final RecognitionStatus status = normalizedConfidence >= 0.60
           ? (verificationApplied ? RecognitionStatus.verificationSuccess : RecognitionStatus.ownModelSuccess)
           : RecognitionStatus.lowConfidence;
@@ -258,13 +263,11 @@ class BackendRecognitionService implements RecognitionService {
     }
   }
 
-  /// Retrieve full detailed plant model from real SQLite database with memory fallback
   Future<Plant?> _lookupPlantInDatabase(String className) async {
     if (className.isEmpty) return null;
 
     final normalized = className.toLowerCase().trim();
 
-    // 1. Try SQLite Database lookup
     try {
       final db = DatabaseHelper.instance;
       var plant = await db.getPlantById(normalized);
@@ -278,7 +281,6 @@ class BackendRecognitionService implements RecognitionService {
       debugPrint('[DatabaseLookup Warning] SQLite query failed: $e');
     }
 
-    // 2. In-Memory fallback: Instant resolution from the verified 10-class MediPlant catalog
     try {
       final cleanQuery = normalized.replaceAll('_plant', '').replaceAll('_', ' ');
       for (final p in mockPlants) {
