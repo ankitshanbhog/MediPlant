@@ -8,6 +8,7 @@ class VoiceViewModel extends ChangeNotifier {
   StreamSubscription<VoiceState>? _stateSub;
   StreamSubscription<String>? _wordSub;
   StreamSubscription<List<double>>? _waveSub;
+  StreamSubscription<int>? _sentenceSub;
 
   VoiceViewModel({required VoiceTtsService voiceService})
       : _voiceService = voiceService {
@@ -18,6 +19,8 @@ class VoiceViewModel extends ChangeNotifier {
   String _activeWord = '';
   List<double> _waveforms = List.filled(12, 0.1);
   String _currentNarrationTitle = '';
+  int _currentSentenceIndex = 0;
+  List<Map<String, String>> _availableVoices = [];
 
   VoiceState get state => _state;
   bool get isPlaying => _state == VoiceState.playing;
@@ -26,7 +29,13 @@ class VoiceViewModel extends ChangeNotifier {
   String get activeWord => _activeWord;
   List<double> get waveforms => _waveforms;
   double get speechRate => _voiceService.speechRate;
+  double get pitch => _voiceService.pitch;
+  String get currentVoiceName => _voiceService.voiceName;
   String get currentNarrationTitle => _currentNarrationTitle;
+  int get currentSentenceIndex => _currentSentenceIndex;
+  int get totalSentences => _voiceService.totalSentences;
+  List<String> get sentences => _voiceService.sentences;
+  List<Map<String, String>> get availableVoices => _availableVoices;
 
   void _initSubscriptions() {
     _stateSub = _voiceService.stateStream.listen((newState) {
@@ -43,6 +52,18 @@ class VoiceViewModel extends ChangeNotifier {
       _waveforms = waves;
       notifyListeners();
     });
+
+    _sentenceSub = _voiceService.currentSentenceIndexStream.listen((idx) {
+      _currentSentenceIndex = idx;
+      notifyListeners();
+    });
+
+    _loadVoices();
+  }
+
+  Future<void> _loadVoices() async {
+    _availableVoices = await _voiceService.getAvailableVoices();
+    notifyListeners();
   }
 
   Future<void> readAloud({
@@ -67,6 +88,14 @@ class VoiceViewModel extends ChangeNotifier {
     await _voiceService.stop();
   }
 
+  Future<void> nextSentence() async {
+    await _voiceService.nextSentence();
+  }
+
+  Future<void> previousSentence() async {
+    await _voiceService.previousSentence();
+  }
+
   Future<void> togglePlayPause({
     required String title,
     required String text,
@@ -85,11 +114,22 @@ class VoiceViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> setPitch(double pitch) async {
+    await _voiceService.setPitch(pitch);
+    notifyListeners();
+  }
+
+  Future<void> setVoice(String voiceName) async {
+    await _voiceService.setVoice(voiceName);
+    notifyListeners();
+  }
+
   @override
   void dispose() {
     _stateSub?.cancel();
     _wordSub?.cancel();
     _waveSub?.cancel();
+    _sentenceSub?.cancel();
     super.dispose();
   }
 }

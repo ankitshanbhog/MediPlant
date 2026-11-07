@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-
-import '../../data/mock/mock_remedies_data.dart';
 import '../../data/models/plant_model.dart';
+import '../../data/mock/mock_remedies_data.dart';
 import '../../data/models/remedy_model.dart';
-import '../../viewmodels/remedies_viewmodel.dart';
 import '../theme/app_colors.dart';
 import 'remedy_card.dart';
 
@@ -41,15 +38,15 @@ class _PlantDetailsSectionsState extends State<PlantDetailsSections> {
     _SectionMeta(
       title: 'Remedies',
       icon: Icons.soup_kitchen_rounded,
-      color: Color(0xFFD84315),
+      color: Color(0xFFE65100),
     ),
     _SectionMeta(
-      title: 'Safety & Warnings',
+      title: 'Safety & Dosage',
       icon: Icons.shield_rounded,
       color: Color(0xFFC62828),
     ),
     _SectionMeta(
-      title: 'Scientific Info',
+      title: 'Botanical Science',
       icon: Icons.science_rounded,
       color: Color(0xFF5E35B1),
     ),
@@ -99,9 +96,9 @@ class _PlantDetailsSectionsState extends State<PlantDetailsSections> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        
+        // Horizontal Segmented Navigation Bar
         Container(
-          margin: const EdgeInsets.only(bottom: 18),
+          margin: const EdgeInsets.only(bottom: 22),
           child: SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             physics: const BouncingScrollPhysics(),
@@ -111,13 +108,13 @@ class _PlantDetailsSectionsState extends State<PlantDetailsSections> {
                 final isSelected = _currentIndex == index;
 
                 return Padding(
-                  padding: const EdgeInsets.only(right: 8.0),
+                  padding: const EdgeInsets.only(right: 10.0),
                   child: InkWell(
                     onTap: () => _switchSection(index),
                     borderRadius: BorderRadius.circular(24),
                     child: AnimatedContainer(
-                      duration: const Duration(milliseconds: 220),
-                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                      duration: const Duration(milliseconds: 200),
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                       decoration: BoxDecoration(
                         color: isSelected
                             ? section.color
@@ -126,15 +123,15 @@ class _PlantDetailsSectionsState extends State<PlantDetailsSections> {
                         border: Border.all(
                           color: isSelected
                               ? section.color
-                              : (isDark ? AppColors.borderDark : AppColors.borderLight),
-                          width: isSelected ? 1.5 : 1.0,
+                              : (isDark ? AppColors.borderDark : const Color(0xFFE2EBE5)),
+                          width: isSelected ? 1.8 : 1.0,
                         ),
                         boxShadow: isSelected
                             ? [
                                 BoxShadow(
                                   color: section.color.withOpacity(0.35),
-                                  blurRadius: 8,
-                                  offset: const Offset(0, 3),
+                                  blurRadius: 10,
+                                  offset: const Offset(0, 4),
                                 ),
                               ]
                             : null,
@@ -144,7 +141,7 @@ class _PlantDetailsSectionsState extends State<PlantDetailsSections> {
                         children: [
                           Icon(
                             section.icon,
-                            size: 16,
+                            size: 18,
                             color: isSelected
                                 ? Colors.white
                                 : (isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight),
@@ -153,7 +150,7 @@ class _PlantDetailsSectionsState extends State<PlantDetailsSections> {
                           Text(
                             section.title,
                             style: TextStyle(
-                              fontSize: 13,
+                              fontSize: 14.5,
                               fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
                               color: isSelected
                                   ? Colors.white
@@ -170,22 +167,18 @@ class _PlantDetailsSectionsState extends State<PlantDetailsSections> {
           ),
         ),
 
+        // Section Content
         AnimatedSwitcher(
           duration: const Duration(milliseconds: 240),
-          transitionBuilder: (child, animation) {
-            return FadeTransition(
-              opacity: animation,
-              child: child,
-            );
-          },
           child: KeyedSubtree(
             key: ValueKey<int>(_currentIndex),
             child: _buildCurrentSection(isDark, plant),
           ),
         ),
 
-        const SizedBox(height: 18),
+        const SizedBox(height: 24),
 
+        // Bottom Navigation Next/Previous bar
         _buildSectionFooterNav(isDark),
       ],
     );
@@ -208,11 +201,11 @@ class _PlantDetailsSectionsState extends State<PlantDetailsSections> {
     }
   }
 
+  // ── MODULE 1: OVERVIEW ──
   Widget _buildOverviewSection(bool isDark, Plant plant) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        
         _buildSectionCard(
           isDark: isDark,
           icon: Icons.eco_rounded,
@@ -225,31 +218,31 @@ class _PlantDetailsSectionsState extends State<PlantDetailsSections> {
               Text(
                 plant.description,
                 style: TextStyle(
-                  fontSize: 14.5,
+                  fontSize: 16,
                   height: 1.6,
                   color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
                 ),
               ),
               if (plant.appearance.isNotEmpty || plant.habitat.isNotEmpty) ...[
-                const SizedBox(height: 16),
-                const Divider(height: 1),
+                const SizedBox(height: 18),
+                Divider(color: isDark ? AppColors.borderDark : const Color(0xFFEDF2EE)),
                 const SizedBox(height: 14),
               ],
               if (plant.appearance.isNotEmpty) ...[
                 _buildInfoRow(
                   icon: Icons.visibility_outlined,
                   iconColor: AppColors.primary,
-                  label: 'Botanical Appearance',
+                  label: 'Physical Appearance',
                   value: plant.appearance,
                   isDark: isDark,
                 ),
-                if (plant.habitat.isNotEmpty) const SizedBox(height: 12),
+                if (plant.habitat.isNotEmpty) const SizedBox(height: 14),
               ],
               if (plant.habitat.isNotEmpty) ...[
                 _buildInfoRow(
                   icon: Icons.terrain_rounded,
-                  iconColor: const Color(0xFF2E7D32),
-                  label: 'Natural Habitat & Ecology',
+                  iconColor: AppColors.primary,
+                  label: 'Natural Habitat & Climate',
                   value: plant.habitat,
                   isDark: isDark,
                 ),
@@ -257,45 +250,39 @@ class _PlantDetailsSectionsState extends State<PlantDetailsSections> {
             ],
           ),
         ),
-        const SizedBox(height: 14),
+        const SizedBox(height: 18),
 
-        if (plant.vernacularNames.isNotEmpty) ...[
+        if (plant.partsUsed.isNotEmpty)
           _buildSectionCard(
             isDark: isDark,
-            icon: Icons.translate_rounded,
+            icon: Icons.spa_rounded,
             iconColor: const Color(0xFF00897B),
-            title: 'Regional & Vernacular Names',
-            subtitle: 'Traditional botanical naming across languages',
+            title: 'Medicinal Plant Parts Used',
+            subtitle: 'Harvested components possessing therapeutic actions',
             content: Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children: plant.vernacularNames.entries.map((entry) {
+              spacing: 10,
+              runSpacing: 10,
+              children: plant.partsUsed.map((part) {
                 return Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                   decoration: BoxDecoration(
                     color: isDark ? AppColors.surfaceSubtleDark : AppColors.lightMint,
-                    borderRadius: BorderRadius.circular(10),
+                    borderRadius: BorderRadius.circular(12),
                     border: Border.all(
-                      color: isDark ? AppColors.borderDark : const Color(0xFFC8E6C9),
+                      color: isDark ? AppColors.borderDark : AppColors.primarySubtle,
                     ),
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
+                      const Icon(Icons.check_circle_rounded, size: 16, color: AppColors.primary),
+                      const SizedBox(width: 8),
                       Text(
-                        '${entry.key}: ',
-                        style: TextStyle(
-                          fontSize: 12.5,
-                          fontWeight: FontWeight.w800,
-                          color: isDark ? AppColors.mint : AppColors.primaryDark,
-                        ),
-                      ),
-                      Text(
-                        entry.value,
-                        style: TextStyle(
-                          fontSize: 12.5,
-                          fontWeight: FontWeight.w600,
-                          color: isDark ? Colors.white : Colors.black87,
+                        part,
+                        style: const TextStyle(
+                          fontSize: 14.5,
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.primary,
                         ),
                       ),
                     ],
@@ -304,467 +291,456 @@ class _PlantDetailsSectionsState extends State<PlantDetailsSections> {
               }).toList(),
             ),
           ),
-        ],
       ],
     );
   }
 
+  // ── MODULE 2: MEDICINAL USES ──
   Widget _buildMedicinalSection(bool isDark, Plant plant) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        
-        _buildSectionCard(
-          isDark: isDark,
-          icon: Icons.healing_rounded,
-          iconColor: const Color(0xFF00897B),
-          title: 'Documented Therapeutic Actions',
-          subtitle: 'Primary physiological and health conditions targeted',
-          content: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: plant.medicinalUses
-                .map((use) => _buildCheckItem(use, isDark, AppColors.primary))
-                .toList(),
-          ),
-        ),
-        const SizedBox(height: 14),
-
-        if (plant.healthBenefits.isNotEmpty) ...[
+        if (plant.medicinalUses.isNotEmpty)
           _buildSectionCard(
             isDark: isDark,
-            icon: Icons.favorite_rounded,
-            iconColor: const Color(0xFF2E7D32),
-            title: 'Key Physiological Benefits',
-            subtitle: 'Targeted biochemical mechanisms and clinical wellness support',
+            icon: Icons.healing_rounded,
+            iconColor: const Color(0xFF00897B),
+            title: 'Primary Health Conditions Treated',
+            subtitle: 'Clinically noted therapeutic applications',
             content: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: plant.healthBenefits
-                  .map((benefit) => _buildCheckItem(benefit, isDark, const Color(0xFF2E7D32)))
-                  .toList(),
+              children: plant.medicinalUses.map((use) {
+                return Container(
+                  margin: const EdgeInsets.only(bottom: 12),
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: isDark ? AppColors.surfaceSubtleDark : const Color(0xFFF3F9F5),
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(
+                      color: isDark ? AppColors.borderDark : const Color(0xFFD6EAE0),
+                    ),
+                  ),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(6),
+                        decoration: BoxDecoration(
+                          color: AppColors.primary.withOpacity(0.12),
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(Icons.check_rounded, color: AppColors.primary, size: 18),
+                      ),
+                      const SizedBox(width: 14),
+                      Expanded(
+                        child: Text(
+                          use,
+                          style: TextStyle(
+                            fontSize: 15.5,
+                            fontWeight: FontWeight.w600,
+                            height: 1.45,
+                            color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }).toList(),
             ),
           ),
-          const SizedBox(height: 14),
-        ],
+        const SizedBox(height: 18),
 
-        if (plant.traditionalUses.isNotEmpty) ...[
+        if (plant.healthBenefits.isNotEmpty)
           _buildSectionCard(
             isDark: isDark,
-            icon: Icons.auto_stories_rounded,
-            iconColor: const Color(0xFFE65100),
-            title: 'Ayurvedic & Classical Heritage',
-            subtitle: 'Historical rasayana preparations and centuries-old practices',
+            icon: Icons.verified_rounded,
+            iconColor: AppColors.primary,
+            title: 'Key Health Benefits',
+            subtitle: 'Holistic wellness impacts on human physiology',
             content: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: plant.traditionalUses
-                  .map((trad) => _buildCheckItem(trad, isDark, const Color(0xFFE65100)))
-                  .toList(),
+              children: plant.healthBenefits.map((benefit) {
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 10),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Padding(
+                        padding: EdgeInsets.only(top: 2),
+                        child: Icon(Icons.star_rounded, size: 18, color: AppColors.amberHoney),
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: Text(
+                          benefit,
+                          style: TextStyle(
+                            fontSize: 15.5,
+                            height: 1.45,
+                            color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }).toList(),
             ),
           ),
-        ],
       ],
     );
   }
 
+  // ── MODULE 3: HOME REMEDIES ──
   Widget _buildRemediesSection(bool isDark, Plant plant) {
     final matchingRemedies = _getMatchingRemedies();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        
-        if (plant.preparationMethods.isNotEmpty) ...[
+        if (matchingRemedies.isNotEmpty) ...[
+          Text(
+            'Traditional Recipes for ${plant.commonName}',
+            style: const TextStyle(
+              fontSize: 19,
+              fontWeight: FontWeight.w900,
+              letterSpacing: -0.3,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            'Tap any recipe below to open the step-by-step preparation dossier',
+            style: TextStyle(
+              fontSize: 14,
+              color: isDark ? AppColors.textSecondaryDark : AppColors.textMutedLight,
+            ),
+          ),
+          const SizedBox(height: 16),
+          ...matchingRemedies.map((remedy) {
+            return RemedyCard(
+              remedy: remedy,
+              isBookmarked: false,
+              onToggleBookmark: () {},
+            );
+          }),
+        ] else ...[
           _buildSectionCard(
             isDark: isDark,
             icon: Icons.soup_kitchen_rounded,
-            iconColor: const Color(0xFFD84315),
-            title: 'Herbal Preparation Methods',
-            subtitle: 'Traditional culinary and medicinal processing',
-            content: Container(
-              padding: const EdgeInsets.all(14),
-              decoration: BoxDecoration(
-                color: isDark ? AppColors.surfaceSubtleDark : const Color(0xFFFBE9E7),
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(
-                  color: isDark ? AppColors.borderDark : const Color(0xFFFFCCBC),
-                ),
-              ),
-              child: Text(
-                plant.preparationMethods,
-                style: TextStyle(
-                  fontSize: 14,
-                  height: 1.5,
-                  color: isDark ? AppColors.textPrimaryDark : Colors.black87,
-                ),
-              ),
+            iconColor: const Color(0xFFE65100),
+            title: 'Traditional Preparation Methods',
+            subtitle: 'Classical decoctions, teas, and topical poultices',
+            content: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if (plant.traditionalUses.isNotEmpty) ...[
+                  ...plant.traditionalUses.map((trad) {
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 10),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Padding(
+                            padding: EdgeInsets.only(top: 2),
+                            child: Icon(Icons.emoji_objects_outlined, size: 18, color: Color(0xFFE65100)),
+                          ),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: Text(
+                              trad,
+                              style: TextStyle(
+                                fontSize: 15.5,
+                                height: 1.45,
+                                color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  }),
+                  const SizedBox(height: 14),
+                ],
+                if (plant.preparationMethods.isNotEmpty) ...[
+                  Text(
+                    plant.preparationMethods,
+                    style: TextStyle(
+                      fontSize: 15.5,
+                      height: 1.5,
+                      color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
+                    ),
+                  ),
+                ],
+              ],
             ),
           ),
-          const SizedBox(height: 14),
         ],
+      ],
+    );
+  }
 
-        if (plant.dosageGuidelines.isNotEmpty) ...[
+  // ── MODULE 4: SAFETY & DOSAGE ──
+  Widget _buildSafetySection(bool isDark, Plant plant) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (plant.dosageGuidelines.isNotEmpty)
           _buildSectionCard(
             isDark: isDark,
-            icon: Icons.medication_liquid_rounded,
-            iconColor: const Color(0xFF00838F),
-            title: 'Standard Dosage Guidelines',
-            subtitle: 'Recommended intake, timing, and administration',
+            icon: Icons.access_time_filled_rounded,
+            iconColor: AppColors.primary,
+            title: 'Dosage & Consumption Guidelines',
+            subtitle: 'Recommended herbal quantities and frequencies',
             content: Container(
-              padding: const EdgeInsets.all(14),
+              padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: isDark ? AppColors.surfaceSubtleDark : const Color(0xFFE0F7FA),
-                borderRadius: BorderRadius.circular(12),
+                color: isDark ? AppColors.surfaceSubtleDark : const Color(0xFFF3F9F5),
+                borderRadius: BorderRadius.circular(16),
                 border: Border.all(
-                  color: isDark ? AppColors.borderDark : const Color(0xFFB2EBF2),
+                  color: isDark ? AppColors.borderDark : const Color(0xFFD6EAE0),
                 ),
               ),
               child: Text(
                 plant.dosageGuidelines,
                 style: TextStyle(
-                  fontSize: 14,
+                  fontSize: 15.5,
                   height: 1.5,
-                  color: isDark ? AppColors.textPrimaryDark : Colors.black87,
+                  fontWeight: FontWeight.w600,
+                  color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
                 ),
               ),
             ),
           ),
-          const SizedBox(height: 14),
-        ],
+        const SizedBox(height: 18),
 
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            const Text(
-              'Verified Home Remedies',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
-            ),
-            if (matchingRemedies.isNotEmpty)
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                decoration: BoxDecoration(
-                  color: const Color(0xFFE8F5E9),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Text(
-                  '${matchingRemedies.length} Available',
-                  style: const TextStyle(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w800,
-                    color: Color(0xFF2E7D32),
-                  ),
-                ),
-              ),
-          ],
-        ),
-        const SizedBox(height: 10),
-
-        if (matchingRemedies.isNotEmpty) ...[
-          Consumer<RemediesViewModel>(
-            builder: (context, remediesVM, _) {
-              return Column(
-                children: matchingRemedies.map((remedy) {
-                  final isBookmarked = remediesVM.isBookmarked(remedy.id);
-                  return RemedyCard(
-                    remedy: remedy,
-                    isBookmarked: isBookmarked,
-                    onToggleBookmark: () => remediesVM.toggleBookmark(remedy.id),
-                  );
-                }).toList(),
-              );
-            },
-          ),
-        ] else ...[
-          Container(
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              color: isDark ? AppColors.surfaceDark : Colors.white,
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(
-                color: isDark ? AppColors.borderDark : AppColors.borderLight,
-              ),
-            ),
-            child: Center(
-              child: Column(
-                children: [
-                  const Icon(Icons.healing_outlined, size: 36, color: AppColors.primary),
-                  const SizedBox(height: 8),
-                  Text(
-                    'Direct formulations for ${plant.commonName} are described in the preparation guidelines above.',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 13,
-                      height: 1.4,
-                      color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ],
-    );
-  }
-
-  Widget _buildSafetySection(bool isDark, Plant plant) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        
-        if (plant.contraindications.isNotEmpty) ...[
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF2E1212) : const Color(0xFFFFEBEE),
-              borderRadius: BorderRadius.circular(18),
-              border: Border.all(
-                color: const Color(0xFFEF9A9A),
-                width: 1.2,
-              ),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(6),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFC62828).withOpacity(0.15),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: const Icon(Icons.block_rounded, color: Color(0xFFC62828), size: 20),
-                    ),
-                    const SizedBox(width: 10),
-                    const Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Contraindications (Do Not Use If)',
-                            style: TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.w800,
-                              color: Color(0xFFC62828),
-                            ),
-                          ),
-                          Text(
-                            'Strict conditions where this botanical should be avoided',
-                            style: TextStyle(fontSize: 11.5, color: Color(0xFFB71C1C)),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 12),
-                ...plant.contraindications.map((c) => _buildWarningTile(
-                      c,
-                      isDark,
-                      const Color(0xFFC62828),
-                      Icons.cancel_outlined,
-                    )),
-              ],
-            ),
-          ),
-          const SizedBox(height: 14),
-        ],
-
-        if (plant.precautions.isNotEmpty) ...[
-          _buildSectionCard(
-            isDark: isDark,
-            icon: Icons.info_outline_rounded,
-            iconColor: const Color(0xFFEF6C00),
-            title: 'General Safety Precautions',
-            subtitle: 'Guidance for pregnant women, children, and medication interactions',
-            content: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: plant.precautions
-                  .map((p) => _buildWarningTile(
-                        p,
-                        isDark,
-                        const Color(0xFFEF6C00),
-                        Icons.info_outline_rounded,
-                      ))
-                  .toList(),
-            ),
-          ),
-          const SizedBox(height: 14),
-        ],
-
-        if (plant.sideEffects.isNotEmpty) ...[
+        if (plant.precautions.isNotEmpty)
           _buildSectionCard(
             isDark: isDark,
             icon: Icons.warning_amber_rounded,
-            iconColor: const Color(0xFFAD1457),
-            title: 'Potential Side Effects',
-            subtitle: 'Observed reactions under excessive dosage or prolonged use',
+            iconColor: AppColors.warning,
+            title: 'Precautions & Contraindications',
+            subtitle: 'Safety guidance for pregnant women, children, and medications',
             content: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: plant.sideEffects
-                  .map((s) => _buildWarningTile(
-                        s,
-                        isDark,
-                        const Color(0xFFAD1457),
-                        Icons.warning_amber_rounded,
-                      ))
-                  .toList(),
+              children: plant.precautions.map((prec) {
+                return Container(
+                  margin: const EdgeInsets.only(bottom: 10),
+                  padding: const EdgeInsets.all(14),
+                  decoration: BoxDecoration(
+                    color: AppColors.warning.withOpacity(0.08),
+                    borderRadius: BorderRadius.circular(14),
+                    border: Border.all(color: AppColors.warning.withOpacity(0.3)),
+                  ),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text('⚠️ ', style: TextStyle(fontSize: 14)),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          prec,
+                          style: TextStyle(
+                            fontSize: 15,
+                            height: 1.45,
+                            color: isDark ? AppColors.textPrimaryDark : const Color(0xFF5A4000),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }).toList(),
             ),
           ),
-          const SizedBox(height: 14),
-        ],
+        const SizedBox(height: 18),
 
-        Container(
-          padding: const EdgeInsets.all(14),
-          decoration: BoxDecoration(
-            color: isDark ? Colors.amber.withOpacity(0.08) : const Color(0xFFFFF8E1),
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: const Color(0xFFFFD54F)),
-          ),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Icon(Icons.health_and_safety_outlined, color: Color(0xFFF57F17), size: 22),
-              const SizedBox(width: 10),
-              Expanded(
-                child: Text(
-                  'Educational botanical guidance only. Always consult a qualified medical doctor or certified Ayurvedic practitioner prior to therapeutic administration.',
-                  style: TextStyle(
-                    fontSize: 12.5,
-                    height: 1.45,
-                    fontWeight: FontWeight.w600,
-                    color: isDark ? const Color(0xFFFFD54F) : const Color(0xFF5D4037),
+        if (plant.sideEffects.isNotEmpty)
+          _buildSectionCard(
+            isDark: isDark,
+            icon: Icons.info_outline_rounded,
+            iconColor: const Color(0xFFC62828),
+            title: 'Possible Side Effects',
+            subtitle: 'Reported adverse reactions upon overdose',
+            content: Column(
+              children: plant.sideEffects.map((side) {
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 8),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Padding(
+                        padding: EdgeInsets.only(top: 3),
+                        child: Icon(Icons.circle, size: 7, color: Color(0xFFC62828)),
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: Text(
+                          side,
+                          style: TextStyle(
+                            fontSize: 15,
+                            height: 1.4,
+                            color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-              ),
-            ],
+                );
+              }).toList(),
+            ),
           ),
-        ),
       ],
     );
   }
 
+  // ── MODULE 5: BOTANICAL SCIENCE ──
   Widget _buildScientificSection(bool isDark, Plant plant) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        
         _buildSectionCard(
           isDark: isDark,
           icon: Icons.science_rounded,
           iconColor: const Color(0xFF5E35B1),
-          title: 'Botanical Taxonomy & Classification',
-          subtitle: 'Scientific identification and taxonomic lineage',
+          title: 'Botanical Classification',
+          subtitle: 'Formal scientific taxonomy and vernacular naming',
           content: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildTaxonomyRow('Binomial Name', plant.scientificName, isItalic: true, isDark: isDark),
-              const Divider(height: 16),
-              _buildTaxonomyRow('Botanical Family', plant.family, isDark: isDark),
-              const Divider(height: 16),
-              _buildTaxonomyRow('Plant Classification', plant.plantType, isDark: isDark),
-              const Divider(height: 16),
-              _buildTaxonomyRow('Model Classification ID', plant.id, isDark: isDark),
-              const Divider(height: 16),
-              _buildTaxonomyRow('ML Validation Status', 'Verified Botanical Flora', isDark: isDark),
+              _buildInfoRow(
+                icon: Icons.title_rounded,
+                iconColor: const Color(0xFF5E35B1),
+                label: 'Botanical Binomial Name',
+                value: plant.scientificName,
+                isDark: isDark,
+              ),
+              const SizedBox(height: 12),
+              _buildInfoRow(
+                icon: Icons.category_rounded,
+                iconColor: const Color(0xFF5E35B1),
+                label: 'Botanical Plant Family',
+                value: plant.family,
+                isDark: isDark,
+              ),
+              const SizedBox(height: 12),
+              _buildInfoRow(
+                icon: Icons.grass_rounded,
+                iconColor: const Color(0xFF5E35B1),
+                label: 'Plant Type / Habit',
+                value: plant.plantType,
+                isDark: isDark,
+              ),
             ],
           ),
         ),
-        const SizedBox(height: 14),
+        const SizedBox(height: 18),
 
-        if (plant.activeConstituents.isNotEmpty) ...[
+        if (plant.vernacularNames.isNotEmpty)
           _buildSectionCard(
             isDark: isDark,
-            icon: Icons.bubble_chart_rounded,
-            iconColor: const Color(0xFF7B1FA2),
-            title: 'Active Phytochemicals',
-            subtitle: 'Bio-active molecules driving pharmacological action',
+            icon: Icons.translate_rounded,
+            iconColor: const Color(0xFF5E35B1),
+            title: 'Regional & Vernacular Names',
+            subtitle: 'Names across traditional Indian languages and dialects',
+            content: Wrap(
+              spacing: 10,
+              runSpacing: 10,
+              children: plant.vernacularNames.entries.map((entry) {
+                return Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                  decoration: BoxDecoration(
+                    color: isDark ? AppColors.surfaceSubtleDark : const Color(0xFFF3EDF9),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: isDark ? AppColors.borderDark : const Color(0xFFDED1EE),
+                    ),
+                  ),
+                  child: Text.rich(
+                    TextSpan(
+                      children: [
+                        TextSpan(
+                          text: '${entry.key}: ',
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w800,
+                            color: isDark ? AppColors.mint : const Color(0xFF5E35B1),
+                          ),
+                        ),
+                        TextSpan(
+                          text: entry.value,
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              }).toList(),
+            ),
+          ),
+        const SizedBox(height: 18),
+
+        if (plant.activeConstituents.isNotEmpty)
+          _buildSectionCard(
+            isDark: isDark,
+            icon: Icons.biotech_rounded,
+            iconColor: const Color(0xFF5E35B1),
+            title: 'Phytochemical Compounds',
+            subtitle: 'Active bioactive molecules responsible for efficacy',
             content: Wrap(
               spacing: 8,
               runSpacing: 8,
               children: plant.activeConstituents.map((c) {
-                return Chip(
-                  avatar: const Icon(Icons.bubble_chart_rounded, size: 16, color: Color(0xFF7B1FA2)),
-                  label: Text(
-                    c,
-                    style: TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 12.5,
-                      color: isDark ? Colors.white : Colors.black87,
+                return Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
+                  decoration: BoxDecoration(
+                    color: isDark ? AppColors.surfaceSubtleDark : AppColors.surfaceSubtleLight,
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(
+                      color: isDark ? AppColors.borderDark : AppColors.borderLight,
                     ),
                   ),
-                  backgroundColor: isDark ? AppColors.surfaceSubtleDark : const Color(0xFFF3E5F5),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                    side: BorderSide(
-                      color: isDark ? AppColors.borderDark : const Color(0xFFE1BEE7),
-                    ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(Icons.circle, size: 6, color: Color(0xFF5E35B1)),
+                      const SizedBox(width: 8),
+                      Text(
+                        c,
+                        style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+                      ),
+                    ],
                   ),
                 );
               }).toList(),
             ),
           ),
-          const SizedBox(height: 14),
-        ],
-
-        if (plant.partsUsed.isNotEmpty) ...[
-          _buildSectionCard(
-            isDark: isDark,
-            icon: Icons.grass_rounded,
-            iconColor: AppColors.primary,
-            title: 'Medicinal Plant Parts Used',
-            subtitle: 'Botanical organs harvested for formulations',
-            content: Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children: plant.partsUsed.map((part) {
-                return Chip(
-                  avatar: const Icon(Icons.grass_rounded, size: 16, color: AppColors.primary),
-                  label: Text(
-                    part,
-                    style: TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 12.5,
-                      color: isDark ? Colors.white : Colors.black87,
-                    ),
-                  ),
-                  backgroundColor: isDark ? AppColors.surfaceSubtleDark : AppColors.lightMint,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                    side: BorderSide(
-                      color: isDark ? AppColors.borderDark : const Color(0xFFC8E6C9),
-                    ),
-                  ),
-                );
-              }).toList(),
-            ),
-          ),
-        ],
       ],
     );
   }
 
+  // ── REUSABLE CARD BUILDER ──
   Widget _buildSectionCard({
     required bool isDark,
     required IconData icon,
     required Color iconColor,
     required String title,
-    String? subtitle,
+    required String subtitle,
     required Widget content,
   }) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: isDark ? AppColors.surfaceDark : Colors.white,
-        borderRadius: BorderRadius.circular(18),
+        borderRadius: BorderRadius.circular(22),
         border: Border.all(
-          color: isDark ? AppColors.borderDark : AppColors.borderLight,
+          color: isDark ? AppColors.borderDark : const Color(0xFFE5ECE7),
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.03),
-            blurRadius: 10,
-            offset: const Offset(0, 3),
+            color: Colors.black.withOpacity(0.035),
+            blurRadius: 14,
+            offset: const Offset(0, 4),
           ),
         ],
       ),
@@ -772,17 +748,18 @@ class _PlantDetailsSectionsState extends State<PlantDetailsSections> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
-                padding: const EdgeInsets.all(8),
+                width: 46,
+                height: 46,
                 decoration: BoxDecoration(
-                  color: iconColor.withOpacity(0.12),
-                  borderRadius: BorderRadius.circular(12),
+                  color: iconColor.withOpacity(0.14),
+                  borderRadius: BorderRadius.circular(14),
                 ),
-                child: Icon(icon, color: iconColor, size: 20),
+                child: Icon(icon, color: iconColor, size: 24),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: 14),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -790,82 +767,26 @@ class _PlantDetailsSectionsState extends State<PlantDetailsSections> {
                     Text(
                       title,
                       style: const TextStyle(
-                        fontSize: 15.5,
-                        fontWeight: FontWeight.w800,
-                        letterSpacing: -0.2,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: -0.3,
                       ),
                     ),
-                    if (subtitle != null) ...[
-                      const SizedBox(height: 1),
-                      Text(
-                        subtitle,
-                        style: TextStyle(
-                          fontSize: 11.5,
-                          color: isDark ? AppColors.textSecondaryDark : AppColors.textMutedLight,
-                        ),
+                    const SizedBox(height: 3),
+                    Text(
+                      subtitle,
+                      style: TextStyle(
+                        fontSize: 13,
+                        color: isDark ? AppColors.textSecondaryDark : AppColors.textMutedLight,
                       ),
-                    ],
+                    ),
                   ],
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 14),
+          const SizedBox(height: 18),
           content,
-        ],
-      ),
-    );
-  }
-
-  Widget _buildCheckItem(String text, bool isDark, Color checkColor) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 10),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            margin: const EdgeInsets.only(top: 2),
-            padding: const EdgeInsets.all(3),
-            decoration: BoxDecoration(
-              color: checkColor.withOpacity(0.15),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(Icons.check, size: 12, color: checkColor),
-          ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Text(
-              text,
-              style: TextStyle(
-                fontSize: 13.5,
-                height: 1.45,
-                color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildWarningTile(String text, bool isDark, Color accentColor, IconData icon) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Icon(icon, size: 16, color: accentColor),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Text(
-              text,
-              style: TextStyle(
-                fontSize: 13,
-                height: 1.4,
-                color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
-              ),
-            ),
-          ),
         ],
       ),
     );
@@ -882,22 +803,27 @@ class _PlantDetailsSectionsState extends State<PlantDetailsSections> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Icon(icon, size: 18, color: iconColor),
-        const SizedBox(width: 8),
+        const SizedBox(width: 10),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 label,
-                style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700),
+                style: TextStyle(
+                  fontSize: 12.5,
+                  fontWeight: FontWeight.w700,
+                  color: isDark ? AppColors.textMutedDark : AppColors.textMutedLight,
+                ),
               ),
               const SizedBox(height: 2),
               Text(
                 value,
                 style: TextStyle(
-                  fontSize: 13,
+                  fontSize: 15.5,
                   height: 1.4,
-                  color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight,
+                  fontWeight: FontWeight.w600,
+                  color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
                 ),
               ),
             ],
@@ -907,62 +833,45 @@ class _PlantDetailsSectionsState extends State<PlantDetailsSections> {
     );
   }
 
-  Widget _buildTaxonomyRow(String label, String value, {bool isItalic = false, required bool isDark}) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: 13,
-            color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight,
-          ),
-        ),
-        Text(
-          value,
-          style: TextStyle(
-            fontSize: 13.5,
-            fontWeight: FontWeight.w700,
-            fontStyle: isItalic ? FontStyle.italic : FontStyle.normal,
-            color: isDark ? Colors.white : Colors.black87,
-          ),
-        ),
-      ],
-    );
-  }
-
   Widget _buildSectionFooterNav(bool isDark) {
-    final nextIndex = _currentIndex + 1;
-    final prevIndex = _currentIndex - 1;
+    final hasPrev = _currentIndex > 0;
+    final hasNext = _currentIndex < _sections.length - 1;
 
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        if (prevIndex >= 0)
-          TextButton.icon(
-            onPressed: () => _switchSection(prevIndex),
-            icon: const Icon(Icons.arrow_back_rounded, size: 16),
-            label: Text(_sections[prevIndex].title),
-            style: TextButton.styleFrom(
-              foregroundColor: isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight,
+        if (hasPrev)
+          Expanded(
+            child: OutlinedButton.icon(
+              onPressed: () => _switchSection(_currentIndex - 1),
+              icon: const Icon(Icons.arrow_back_rounded, size: 18),
+              label: Text(_sections[_currentIndex - 1].title),
+              style: OutlinedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(vertical: 14),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                textStyle: const TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
+              ),
             ),
           )
         else
-          const SizedBox.shrink(),
-        if (nextIndex < _sections.length)
-          ElevatedButton.icon(
-            onPressed: () => _switchSection(nextIndex),
-            icon: const Icon(Icons.arrow_forward_rounded, size: 16),
-            label: Text('Next: ${_sections[nextIndex].title}'),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: _sections[nextIndex].color,
-              foregroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          const Spacer(),
+        const SizedBox(width: 12),
+        if (hasNext)
+          Expanded(
+            child: ElevatedButton.icon(
+              onPressed: () => _switchSection(_currentIndex + 1),
+              icon: const Icon(Icons.arrow_forward_rounded, size: 18),
+              label: Text(_sections[_currentIndex + 1].title),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: _sections[_currentIndex + 1].color,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(vertical: 14),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                textStyle: const TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
+              ),
             ),
           )
         else
-          const SizedBox.shrink(),
+          const Spacer(),
       ],
     );
   }

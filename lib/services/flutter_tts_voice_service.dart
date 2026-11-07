@@ -7,18 +7,21 @@ class FlutterTtsVoiceService implements VoiceTtsService {
   final FlutterTts _tts = FlutterTts();
 
   VoiceState _state = VoiceState.stopped;
-
-  double _speechRate = 0.38;
+  double _speechRate = 0.44; // Balanced, natural human conversational pacing
+  double _pitch = 1.0;
+  String _selectedVoiceName = '';
 
   final _stateController = StreamController<VoiceState>.broadcast();
   final _wordController = StreamController<String>.broadcast();
   final _waveformController = StreamController<List<double>>.broadcast();
+  final _sentenceController = StreamController<int>.broadcast();
 
   Timer? _waveformTimer;
   bool _initialized = false;
 
   List<String> _sentences = [];
   int _currentSentenceIndex = 0;
+  List<Map<String, String>> _availableVoices = [];
 
   FlutterTtsVoiceService() {
     _init();
@@ -30,37 +33,33 @@ class FlutterTtsVoiceService implements VoiceTtsService {
 
     try {
       await _tts.setLanguage('en-US');
-      
       await _tts.setSpeechRate(_speechRate);
-      
       await _tts.setVolume(1.0);
-      
-      await _tts.setPitch(0.9);
+      await _tts.setPitch(_pitch);
 
       if (defaultTargetPlatform == TargetPlatform.android) {
         final engines = await _tts.getEngines;
         debugPrint('[TTS] Available engines: $engines');
-
         try {
-          
           if (engines is List && engines.contains('com.google.android.tts')) {
             await _tts.setEngine('com.google.android.tts');
-            debugPrint('[TTS] Set Google TTS engine for high quality audio');
+            debugPrint('[TTS] Set Google Speech Neural TTS engine');
           }
         } catch (_) {}
       }
+
+      await _loadVoices();
 
       _tts.setCompletionHandler(() async {
         if (_state != VoiceState.playing) return;
 
         if (_currentSentenceIndex + 1 < _sentences.length) {
           _currentSentenceIndex++;
-
-          await Future.delayed(const Duration(milliseconds: 480));
+          _sentenceController.add(_currentSentenceIndex);
+          await Future.delayed(const Duration(milliseconds: 320));
 
           if (_state == VoiceState.playing) {
-            final nextSentence = _sentences[_currentSentenceIndex];
-            await _tts.speak(nextSentence);
+            await _tts.speak(_sentences[_currentSentenceIndex]);
           }
         } else {
           _stopWaveform();
@@ -87,9 +86,52 @@ class FlutterTtsVoiceService implements VoiceTtsService {
       _tts.setPauseHandler(() => _setState(VoiceState.paused));
       _tts.setContinueHandler(() => _setState(VoiceState.playing));
 
-      debugPrint('[TTS] FlutterTtsVoiceService initialized — slow, clear, loud mode');
+      debugPrint('[TTS] Smart Interactive Voice Engine Ready');
     } catch (e) {
       debugPrint('[TTS] Initialization error: $e');
+    }
+  }
+
+  Future<void> _loadVoices() async {
+    try {
+      final rawVoices = await _tts.getVoices;
+      if (rawVoices is List) {
+        final List<Map<String, String>> parsed = [];
+        for (final v in rawVoices) {
+          if (v is Map) {
+            final name = v['name']?.toString() ?? '';
+            final locale = v['locale']?.toString() ?? '';
+            if (locale.startsWith('en')) {
+              String label = name;
+              if (name.contains('female') || name.contains('sfg') || name.contains('f-')) {
+                label = '$name (Female)';
+              } else if (name.contains('male') || name.contains('iol') || name.contains('m-')) {
+                label = '$name (Male)';
+              }
+              parsed.add({
+                'name': name,
+                'locale': locale,
+                'label': label,
+              });
+            }
+          }
+        }
+        if (parsed.isNotEmpty) {
+          _availableVoices = parsed;
+          // Set a premium voice if available
+          final preferred = parsed.firstWhere(
+            (v) => v['name']!.contains('sfg') || v['name']!.contains('natural') || v['name']!.contains('en-us'),
+            orElse: () => parsed.first,
+          );
+          _selectedVoiceName = preferred['name']!;
+          await _tts.setVoice({
+            'name': preferred['name']!,
+            'locale': preferred['locale']!,
+          });
+        }
+      }
+    } catch (e) {
+      debugPrint('[TTS] Could not load custom voices: $e');
     }
   }
 
@@ -99,7 +141,7 @@ class FlutterTtsVoiceService implements VoiceTtsService {
       if (_state == VoiceState.playing) {
         final bars = List<double>.generate(
           12,
-          (i) => 0.3 + (0.6 * ((i % 3 == 0) ? 0.9 : (i % 3 == 1) ? 0.6 : 0.4)),
+          (i) => 0.25 + (0.7 * ((i % 4 == 0) ? 0.95 : (i % 4 == 1) ? 0.7 : (i % 4 == 2) ? 0.45 : 0.85)),
         );
         _waveformController.add(bars);
       }
@@ -129,7 +171,25 @@ class FlutterTtsVoiceService implements VoiceTtsService {
   Stream<List<double>> get waveformStream => _waveformController.stream;
 
   @override
+  Stream<int> get currentSentenceIndexStream => _sentenceController.stream;
+
+  @override
   double get speechRate => _speechRate;
+
+  @override
+  double get pitch => _pitch;
+
+  @override
+  String get voiceName => _selectedVoiceName;
+
+  @override
+  int get currentSentenceIndex => _currentSentenceIndex;
+
+  @override
+  int get totalSentences => _sentences.length;
+
+  @override
+  List<String> get sentences => _sentences;
 
   @override
   Future<void> speak(String text) async {
@@ -150,19 +210,15 @@ class FlutterTtsVoiceService implements VoiceTtsService {
     }
 
     _currentSentenceIndex = 0;
+    _sentenceController.add(_currentSentenceIndex);
     _setState(VoiceState.playing);
     _startWaveform();
 
     await _tts.setVolume(1.0);
     await _tts.setSpeechRate(_speechRate);
-    await _tts.setPitch(0.9);
+    await _tts.setPitch(_pitch);
 
-    final result = await _tts.speak(_sentences[0]);
-    if (result == 0) {
-      debugPrint('[TTS] speak() returned 0 — engine may not be ready.');
-      _stopWaveform();
-      _setState(VoiceState.stopped);
-    }
+    await _tts.speak(_sentences[0]);
   }
 
   @override
@@ -181,6 +237,7 @@ class FlutterTtsVoiceService implements VoiceTtsService {
       _startWaveform();
       await _tts.setVolume(1.0);
       await _tts.setSpeechRate(_speechRate);
+      await _tts.setPitch(_pitch);
       await _tts.speak(_sentences[_currentSentenceIndex]);
     }
   }
@@ -192,15 +249,66 @@ class FlutterTtsVoiceService implements VoiceTtsService {
     await _tts.stop();
     _stopWaveform();
     _wordController.add('');
+    _sentenceController.add(0);
     _setState(VoiceState.stopped);
+  }
+
+  @override
+  Future<void> nextSentence() async {
+    if (_currentSentenceIndex + 1 < _sentences.length) {
+      _currentSentenceIndex++;
+      _sentenceController.add(_currentSentenceIndex);
+      if (_state == VoiceState.playing) {
+        await _tts.stop();
+        await _tts.speak(_sentences[_currentSentenceIndex]);
+      }
+    }
+  }
+
+  @override
+  Future<void> previousSentence() async {
+    if (_currentSentenceIndex > 0) {
+      _currentSentenceIndex--;
+      _sentenceController.add(_currentSentenceIndex);
+      if (_state == VoiceState.playing) {
+        await _tts.stop();
+        await _tts.speak(_sentences[_currentSentenceIndex]);
+      }
+    }
   }
 
   @override
   Future<void> setSpeechRate(double rate) async {
     _speechRate = rate;
-    
-    final mapped = (rate * 0.55).clamp(0.1, 0.55);
+    final mapped = (rate * 0.48).clamp(0.15, 0.85);
     await _tts.setSpeechRate(mapped);
+  }
+
+  @override
+  Future<void> setPitch(double pitch) async {
+    _pitch = pitch;
+    await _tts.setPitch(pitch);
+  }
+
+  @override
+  Future<void> setVoice(String voiceName) async {
+    _selectedVoiceName = voiceName;
+    final matched = _availableVoices.firstWhere(
+      (v) => v['name'] == voiceName,
+      orElse: () => {'name': voiceName, 'locale': 'en-US'},
+    );
+    await _tts.setVoice({
+      'name': matched['name']!,
+      'locale': matched['locale'] ?? 'en-US',
+    });
+  }
+
+  @override
+  Future<List<Map<String, String>>> getAvailableVoices() async {
+    if (_availableVoices.isEmpty) {
+      await _loadVoices();
+    }
+    return _availableVoices;
   }
 
   @override
@@ -210,5 +318,6 @@ class FlutterTtsVoiceService implements VoiceTtsService {
     _stateController.close();
     _wordController.close();
     _waveformController.close();
+    _sentenceController.close();
   }
 }

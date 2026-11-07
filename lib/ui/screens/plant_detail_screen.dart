@@ -17,9 +17,9 @@ class PlantDetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final speechSummary =
-        '${plant.commonName}, botanical scientific name ${plant.scientificName}, '
-        'from the botanical family ${plant.family}. ${plant.description} '
-        'Key medicinal uses: ${plant.medicinalUses.join(', ')}. '
+        '${plant.commonName}. Botanical scientific name: ${plant.scientificName}, '
+        'from the botanical family ${plant.family}. ${plant.description}. '
+        'Key medicinal uses include: ${plant.medicinalUses.join(', ')}. '
         'Traditional preparations: ${plant.traditionalUses.join(', ')}. '
         'Dosage instructions: ${plant.dosageGuidelines}. '
         'Safety precautions: ${plant.precautions.join(', ')}.';
@@ -27,14 +27,14 @@ class PlantDetailScreen extends StatelessWidget {
     return Scaffold(
       body: CustomScrollView(
         slivers: [
-          
+          // Elegant Header Sliver with plant photography and prominent titles
           SliverAppBar(
-            expandedHeight: 280,
+            expandedHeight: 310,
             pinned: true,
             leading: IconButton(
               icon: CircleAvatar(
                 backgroundColor: Colors.black.withOpacity(0.55),
-                child: const Icon(Icons.arrow_back_rounded, color: Colors.white, size: 20),
+                child: const Icon(Icons.arrow_back_rounded, color: Colors.white, size: 22),
               ),
               onPressed: () => Navigator.pop(context),
             ),
@@ -69,9 +69,9 @@ class PlantDetailScreen extends StatelessWidget {
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         colors: [
-                          Colors.black.withOpacity(0.35),
+                          Colors.black.withOpacity(0.4),
                           Colors.transparent,
-                          Colors.black.withOpacity(0.85),
+                          Colors.black.withOpacity(0.9),
                         ],
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
@@ -80,7 +80,7 @@ class PlantDetailScreen extends StatelessWidget {
                     ),
                   ),
                   Positioned(
-                    bottom: 16,
+                    bottom: 20,
                     left: 20,
                     right: 20,
                     child: Column(
@@ -89,7 +89,7 @@ class PlantDetailScreen extends StatelessWidget {
                         Row(
                           children: [
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
                               decoration: BoxDecoration(
                                 color: AppColors.primaryAccent,
                                 borderRadius: BorderRadius.circular(10),
@@ -98,45 +98,45 @@ class PlantDetailScreen extends StatelessWidget {
                                 plant.family.toUpperCase(),
                                 style: const TextStyle(
                                   color: AppColors.primaryDark,
-                                  fontSize: 11,
+                                  fontSize: 12,
                                   fontWeight: FontWeight.w800,
-                                  letterSpacing: 0.5,
+                                  letterSpacing: 0.6,
                                 ),
                               ),
                             ),
                             const SizedBox(width: 8),
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
                               decoration: BoxDecoration(
-                                color: Colors.white.withOpacity(0.22),
+                                color: Colors.white.withOpacity(0.25),
                                 borderRadius: BorderRadius.circular(10),
                               ),
                               child: Text(
                                 plant.plantType,
                                 style: const TextStyle(
                                   color: Colors.white,
-                                  fontSize: 11,
+                                  fontSize: 12,
                                   fontWeight: FontWeight.w700,
                                 ),
                               ),
                             ),
                           ],
                         ),
-                        const SizedBox(height: 6),
+                        const SizedBox(height: 8),
                         Text(
                           plant.commonName,
                           style: const TextStyle(
                             color: Colors.white,
-                            fontSize: 26,
+                            fontSize: 30,
                             fontWeight: FontWeight.w900,
-                            letterSpacing: -0.4,
+                            letterSpacing: -0.5,
                           ),
                         ),
                         Text(
                           plant.scientificName,
                           style: const TextStyle(
                             color: Colors.white70,
-                            fontSize: 15,
+                            fontSize: 17,
                             fontStyle: FontStyle.italic,
                             fontWeight: FontWeight.w500,
                           ),
@@ -149,23 +149,26 @@ class PlantDetailScreen extends StatelessWidget {
             ),
           ),
 
+          // Main Modular Body
           SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.fromLTRB(18, 18, 18, 36),
+              padding: const EdgeInsets.fromLTRB(20, 20, 20, 40),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  
+                  // Smart Voice Navigation Assistant
                   VoiceBotPlayer(
                     title: plant.commonName,
                     speechText: speechSummary,
                   ),
-                  const SizedBox(height: 20),
-
-                  PlantDetailsSections(plant: plant),
-
                   const SizedBox(height: 24),
 
+                  // Modular Sections with Tab Switching
+                  PlantDetailsSections(plant: plant),
+
+                  const SizedBox(height: 28),
+
+                  // Explore Remedies Button
                   ElevatedButton.icon(
                     onPressed: () {
                       final remediesVM = context.read<RemediesViewModel>();
@@ -178,14 +181,15 @@ class PlantDetailScreen extends StatelessWidget {
                         (route) => false,
                       );
                     },
-                    icon: const Icon(Icons.auto_stories_rounded, size: 20),
-                    label: Text('Explore All Remedies for ${plant.commonName}'),
+                    icon: const Icon(Icons.auto_stories_rounded, size: 22),
+                    label: Text('Explore All Recipes for ${plant.commonName}'),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.primary,
                       foregroundColor: Colors.white,
-                      minimumSize: const Size(double.infinity, 52),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                      textStyle: const TextStyle(fontSize: 15, fontWeight: FontWeight.w700),
+                      minimumSize: const Size(double.infinity, 56),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+                      textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
+                      elevation: 2,
                     ),
                   ),
                 ],

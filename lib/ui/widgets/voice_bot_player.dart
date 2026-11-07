@@ -20,27 +20,29 @@ class VoiceBotPlayer extends StatelessWidget {
     final voiceVM = context.watch<VoiceViewModel>();
     final isThisPlaying = voiceVM.isPlaying && voiceVM.currentNarrationTitle == title;
     final isThisPaused = voiceVM.isPaused && voiceVM.currentNarrationTitle == title;
+    final isThisActive = isThisPlaying || isThisPaused;
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     if (isCompact) {
       return Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
         decoration: BoxDecoration(
           color: isThisPlaying
-              ? AppColors.primaryAccent.withOpacity(0.15)
+              ? AppColors.primaryAccent.withOpacity(0.18)
               : (isDark ? AppColors.surfaceSubtleDark : AppColors.surfaceSubtleLight),
-          borderRadius: BorderRadius.circular(24),
+          borderRadius: BorderRadius.circular(26),
           border: Border.all(
             color: isThisPlaying
                 ? AppColors.primaryAccent
                 : (isDark ? AppColors.borderDark : AppColors.borderLight),
+            width: isThisPlaying ? 1.5 : 1,
           ),
         ),
         child: InkWell(
           onTap: () {
             voiceVM.togglePlayPause(title: title, text: speechText);
           },
-          borderRadius: BorderRadius.circular(24),
+          borderRadius: BorderRadius.circular(26),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -51,14 +53,14 @@ class VoiceBotPlayer extends StatelessWidget {
                         ? Icons.play_circle_filled_rounded
                         : Icons.volume_up_rounded),
                 color: isThisPlaying ? AppColors.primaryAccent : AppColors.primary,
-                size: 20,
+                size: 22,
               ),
-              const SizedBox(width: 6),
+              const SizedBox(width: 8),
               Text(
-                isThisPlaying ? 'Listening...' : (isThisPaused ? 'Paused' : 'Listen'),
+                isThisPlaying ? 'Listening...' : (isThisPaused ? 'Paused' : 'Listen Aloud'),
                 style: TextStyle(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w700,
                   color: isThisPlaying ? AppColors.primaryAccent : AppColors.primary,
                 ),
               ),
@@ -72,6 +74,10 @@ class VoiceBotPlayer extends StatelessWidget {
       );
     }
 
+    final totalSentences = voiceVM.totalSentences;
+    final currentSentence = (voiceVM.currentSentenceIndex + 1).clamp(1, totalSentences > 0 ? totalSentences : 1);
+    final progress = totalSentences > 0 ? currentSentence / totalSentences : 0.0;
+
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
@@ -81,62 +87,66 @@ class VoiceBotPlayer extends StatelessWidget {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(24),
         border: Border.all(
           color: isThisPlaying
               ? AppColors.primaryAccent
               : (isDark ? AppColors.borderDark : AppColors.lightMint),
-          width: isThisPlaying ? 1.5 : 1,
+          width: isThisPlaying ? 1.8 : 1,
         ),
-        boxShadow: isThisPlaying
-            ? [
-                BoxShadow(
-                  color: AppColors.primaryAccent.withOpacity(0.12),
-                  blurRadius: 16,
-                  offset: const Offset(0, 4),
-                )
-              ]
-            : null,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(isDark ? 0.25 : 0.04),
+            blurRadius: 14,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(18),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Top Header: Bot avatar + title + speed selector & settings
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(8),
+                width: 44,
+                height: 44,
                 decoration: BoxDecoration(
                   color: isThisPlaying
                       ? AppColors.primaryAccent
-                      : AppColors.primary.withOpacity(0.12),
+                      : AppColors.primary.withOpacity(0.14),
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
                   Icons.auto_awesome,
                   color: isThisPlaying ? Colors.white : AppColors.primary,
-                  size: 18,
+                  size: 22,
                 ),
               ),
-              const SizedBox(width: 10),
+              const SizedBox(width: 12),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'AI Voice Assistant',
+                      'Interactive Botanical Guide',
                       style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w700,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: -0.2,
                         color: isDark ? AppColors.mint : AppColors.primaryDark,
                       ),
                     ),
+                    const SizedBox(height: 2),
                     Text(
                       isThisPlaying
                           ? 'Narrating: $title'
-                          : 'Read aloud plant overview & instructions',
+                          : (isThisPaused ? 'Paused — Tap play to resume' : 'Listen with interactive voice navigation'),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                       style: TextStyle(
-                        fontSize: 11,
+                        fontSize: 13,
                         color: isDark
                             ? AppColors.textSecondaryDark
                             : AppColors.textSecondaryLight,
@@ -145,26 +155,26 @@ class VoiceBotPlayer extends StatelessWidget {
                   ],
                 ),
               ),
-              
-              _SpeedSelector(
-                currentSpeed: voiceVM.speechRate,
-                onSelected: (speed) => voiceVM.setRate(speed),
-              ),
+              const SizedBox(width: 6),
+              _VoiceSettingsButton(voiceVM: voiceVM),
             ],
           ),
           const SizedBox(height: 14),
 
+          // Waveform & Status Visualizer
           Container(
-            height: 36,
-            padding: const EdgeInsets.symmetric(horizontal: 12),
+            height: 42,
+            padding: const EdgeInsets.symmetric(horizontal: 14),
             decoration: BoxDecoration(
               color: isDark
-                  ? Colors.black.withOpacity(0.25)
-                  : Colors.white.withOpacity(0.6),
-              borderRadius: BorderRadius.circular(12),
+                  ? Colors.black.withOpacity(0.28)
+                  : Colors.white.withOpacity(0.7),
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(
+                color: isDark ? AppColors.borderDark : const Color(0xFFE2EBE5),
+              ),
             ),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Expanded(
                   child: Row(
@@ -175,52 +185,78 @@ class VoiceBotPlayer extends StatelessWidget {
                         final val = isThisPlaying ? voiceVM.waveforms[index] : 0.15;
                         return AnimatedContainer(
                           duration: const Duration(milliseconds: 120),
-                          width: 3.5,
-                          height: (val * 24).clamp(4.0, 24.0),
+                          width: 4.0,
+                          height: (val * 26).clamp(5.0, 26.0),
                           decoration: BoxDecoration(
                             color: isThisPlaying
                                 ? AppColors.primaryAccent
                                 : AppColors.textMutedLight,
-                            borderRadius: BorderRadius.circular(3),
+                            borderRadius: BorderRadius.circular(4),
                           ),
                         );
                       },
                     ),
                   ),
                 ),
-                const SizedBox(width: 12),
-                Text(
-                  isThisPlaying ? 'Speaking' : (isThisPaused ? 'Paused' : 'Ready'),
-                  style: TextStyle(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w600,
+                const SizedBox(width: 14),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  decoration: BoxDecoration(
                     color: isThisPlaying
-                        ? AppColors.primaryAccent
-                        : (isDark ? AppColors.textMutedDark : AppColors.textMutedLight),
+                        ? AppColors.primary.withOpacity(0.12)
+                        : (isDark ? AppColors.surfaceSubtleDark : Colors.grey[200]),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Text(
+                    isThisPlaying
+                        ? 'Part $currentSentence of $totalSentences'
+                        : (isThisPaused ? 'Paused' : 'Ready'),
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w700,
+                      color: isThisPlaying
+                          ? AppColors.primary
+                          : (isDark ? AppColors.textMutedDark : AppColors.textMutedLight),
+                    ),
                   ),
                 ),
               ],
             ),
           ),
 
+          // Reading progress bar if active
+          if (isThisActive && totalSentences > 0) ...[
+            const SizedBox(height: 8),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(4),
+              child: LinearProgressIndicator(
+                value: progress,
+                minHeight: 4,
+                backgroundColor: isDark ? Colors.white12 : Colors.grey[200],
+                valueColor: const AlwaysStoppedAnimation<Color>(AppColors.primary),
+              ),
+            ),
+          ],
+
+          // Active speaking word live display
           if (isThisPlaying && voiceVM.activeWord.isNotEmpty) ...[
             const SizedBox(height: 10),
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
               decoration: BoxDecoration(
-                color: AppColors.primary.withOpacity(0.08),
-                borderRadius: BorderRadius.circular(8),
+                color: AppColors.primary.withOpacity(0.09),
+                borderRadius: BorderRadius.circular(10),
               ),
               child: Row(
                 children: [
-                  const Icon(Icons.graphic_eq, size: 14, color: AppColors.primary),
-                  const SizedBox(width: 6),
+                  const Icon(Icons.graphic_eq_rounded, size: 16, color: AppColors.primary),
+                  const SizedBox(width: 8),
                   Expanded(
                     child: Text(
-                      '“ ... ${voiceVM.activeWord} ... ”',
+                      '“ ${voiceVM.activeWord} ”',
                       style: const TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
+                        fontSize: 13.5,
+                        fontWeight: FontWeight.w600,
                         fontStyle: FontStyle.italic,
                         color: AppColors.primary,
                       ),
@@ -233,20 +269,27 @@ class VoiceBotPlayer extends StatelessWidget {
             ),
           ],
 
-          const SizedBox(height: 14),
+          const SizedBox(height: 16),
 
+          // Interactive Transport Controls: Previous Sentence | Play/Pause | Next Sentence | Stop
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              if (isThisPlaying || isThisPaused) ...[
-                IconButton.filledTonal(
-                  icon: const Icon(Icons.stop_rounded),
-                  color: AppColors.confidenceLow,
-                  onPressed: () => voiceVM.stop(),
-                  tooltip: 'Stop',
+              // Rewind / Previous Sentence button
+              IconButton.filledTonal(
+                style: IconButton.styleFrom(
+                  backgroundColor: isDark ? AppColors.surfaceSubtleDark : Colors.white,
+                  padding: const EdgeInsets.all(12),
                 ),
-                const SizedBox(width: 12),
-              ],
+                icon: const Icon(Icons.skip_previous_rounded, size: 22),
+                onPressed: isThisActive
+                    ? () => voiceVM.previousSentence()
+                    : null,
+                tooltip: 'Previous Sentence',
+              ),
+              const SizedBox(width: 14),
+
+              // Main Play / Pause Button
               ElevatedButton.icon(
                 onPressed: () {
                   voiceVM.togglePlayPause(title: title, text: speechText);
@@ -255,23 +298,93 @@ class VoiceBotPlayer extends StatelessWidget {
                   isThisPlaying
                       ? Icons.pause_rounded
                       : (isThisPaused ? Icons.play_arrow_rounded : Icons.volume_up_rounded),
-                  size: 20,
+                  size: 24,
                 ),
                 label: Text(
                   isThisPlaying
-                      ? 'Pause Narration'
-                      : (isThisPaused ? 'Resume' : 'Listen to Information'),
+                      ? 'Pause'
+                      : (isThisPaused ? 'Resume' : 'Listen Aloud'),
+                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
                 ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.primary,
                   foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                  padding: const EdgeInsets.symmetric(horizontal: 26, vertical: 14),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                  elevation: 2,
                 ),
               ),
+              const SizedBox(width: 14),
+
+              // Forward / Next Sentence button
+              IconButton.filledTonal(
+                style: IconButton.styleFrom(
+                  backgroundColor: isDark ? AppColors.surfaceSubtleDark : Colors.white,
+                  padding: const EdgeInsets.all(12),
+                ),
+                icon: const Icon(Icons.skip_next_rounded, size: 22),
+                onPressed: isThisActive
+                    ? () => voiceVM.nextSentence()
+                    : null,
+                tooltip: 'Next Sentence',
+              ),
+
+              if (isThisActive) ...[
+                const SizedBox(width: 12),
+                IconButton.filledTonal(
+                  style: IconButton.styleFrom(
+                    backgroundColor: Colors.red.withOpacity(0.12),
+                    foregroundColor: Colors.redAccent,
+                    padding: const EdgeInsets.all(12),
+                  ),
+                  icon: const Icon(Icons.stop_rounded, size: 22),
+                  onPressed: () => voiceVM.stop(),
+                  tooltip: 'Stop',
+                ),
+              ],
             ],
           ),
         ],
       ),
+    );
+  }
+}
+
+class _VoiceSettingsButton extends StatelessWidget {
+  final VoiceViewModel voiceVM;
+  const _VoiceSettingsButton({required this.voiceVM});
+
+  @override
+  Widget build(BuildContext context) {
+    return PopupMenuButton<String>(
+      tooltip: 'Voice Options',
+      icon: const Icon(Icons.tune_rounded, size: 22),
+      onSelected: (val) {
+        if (val.startsWith('speed:')) {
+          final speed = double.parse(val.substring(6));
+          voiceVM.setRate(speed);
+        } else if (val.startsWith('pitch:')) {
+          final pitch = double.parse(val.substring(6));
+          voiceVM.setPitch(pitch);
+        }
+      },
+      itemBuilder: (ctx) => [
+        const PopupMenuItem(
+          enabled: false,
+          child: Text('Playback Speed', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+        ),
+        PopupMenuItem(value: 'speed:0.75', child: Text('0.75x Slower ${voiceVM.speechRate == 0.75 ? "✓" : ""}')),
+        PopupMenuItem(value: 'speed:1.0', child: Text('1.0x Normal ${voiceVM.speechRate == 1.0 ? "✓" : ""}')),
+        PopupMenuItem(value: 'speed:1.25', child: Text('1.25x Faster ${voiceVM.speechRate == 1.25 ? "✓" : ""}')),
+        const PopupMenuDivider(),
+        const PopupMenuItem(
+          enabled: false,
+          child: Text('Voice Pitch & Tone', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+        ),
+        PopupMenuItem(value: 'pitch:0.85', child: Text('Deep & Warm ${voiceVM.pitch == 0.85 ? "✓" : ""}')),
+        PopupMenuItem(value: 'pitch:1.0', child: Text('Natural Balanced ${voiceVM.pitch == 1.0 ? "✓" : ""}')),
+        PopupMenuItem(value: 'pitch:1.15', child: Text('Bright & Crisp ${voiceVM.pitch == 1.15 ? "✓" : ""}')),
+      ],
     );
   }
 }
@@ -295,48 +408,6 @@ class _CompactWaveform extends StatelessWidget {
           ),
         ),
       ),
-    );
-  }
-}
-
-class _SpeedSelector extends StatelessWidget {
-  final double currentSpeed;
-  final ValueChanged<double> onSelected;
-
-  const _SpeedSelector({
-    required this.currentSpeed,
-    required this.onSelected,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return PopupMenuButton<double>(
-      initialValue: currentSpeed,
-      onSelected: onSelected,
-      tooltip: 'Voice Speed',
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-        decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.primaryContainer.withOpacity(0.4),
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              '${currentSpeed}x',
-              style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w700),
-            ),
-            const Icon(Icons.arrow_drop_down, size: 14),
-          ],
-        ),
-      ),
-      itemBuilder: (context) => const [
-        PopupMenuItem(value: 0.75, child: Text('0.75x (Slower)')),
-        PopupMenuItem(value: 1.0, child: Text('1.0x (Normal)')),
-        PopupMenuItem(value: 1.25, child: Text('1.25x (Faster)')),
-        PopupMenuItem(value: 1.5, child: Text('1.5x (Fast)')),
-      ],
     );
   }
 }
