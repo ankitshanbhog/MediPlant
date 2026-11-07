@@ -7,6 +7,7 @@ import '../../viewmodels/remedies_viewmodel.dart';
 import '../../viewmodels/voice_viewmodel.dart';
 import '../theme/app_colors.dart';
 import '../widgets/plant_details_sections.dart';
+import '../widgets/plant_speech_helper.dart';
 import '../widgets/voice_bot_player.dart';
 import 'main_shell_screen.dart';
 
@@ -21,6 +22,7 @@ class ResultScreen extends StatefulWidget {
 
 class _ResultScreenState extends State<ResultScreen> {
   final ScrollController _scrollController = ScrollController();
+  int _currentSectionIndex = 0;
 
   @override
   void dispose() {
@@ -29,6 +31,18 @@ class _ResultScreenState extends State<ResultScreen> {
       context.read<VoiceViewModel>().stop();
     } catch (_) {}
     super.dispose();
+  }
+
+  void _onSectionChanged(int index) {
+    setState(() => _currentSectionIndex = index);
+    final plant = widget.result.plant;
+    if (plant == null) return;
+    final voiceVM = context.read<VoiceViewModel>();
+    if (voiceVM.isPlaying || voiceVM.isPaused) {
+      final newTitle = '${plant.commonName} - ${PlantSpeechHelper.getSectionTitle(index)}';
+      final newText = PlantSpeechHelper.getSpeechForSection(plant, index);
+      voiceVM.readAloud(title: newTitle, text: newText);
+    }
   }
 
   @override
@@ -99,15 +113,8 @@ class _ResultScreenState extends State<ResultScreen> {
       );
     }
 
-    final speechSummary =
-        'Identified ${plant.commonName}. '
-        'Scientific botanical name: ${plant.scientificName}. '
-        'Belonging to the family ${plant.family}. '
-        'Description: ${plant.description}. '
-        'Primary medicinal uses include: ${plant.medicinalUses.join('. ')}. '
-        'Preparation advice: ${plant.preparationMethods}. '
-        'Dosage guidelines: ${plant.dosageGuidelines}. '
-        'Important safety precautions: ${plant.precautions.join('. ')}.';
+    final sectionTitle = '${plant.commonName} - ${PlantSpeechHelper.getSectionTitle(_currentSectionIndex)}';
+    final sectionSpeechText = PlantSpeechHelper.getSpeechForSection(plant, _currentSectionIndex);
 
     final confidencePercent = (widget.result.confidence * 100).toStringAsFixed(1);
     final isVerified = widget.result.source == RecognitionSource.ensemble;
@@ -261,12 +268,16 @@ class _ResultScreenState extends State<ResultScreen> {
                   const SizedBox(height: 18),
 
                   VoiceBotPlayer(
-                    title: plant.commonName,
-                    speechText: speechSummary,
+                    title: sectionTitle,
+                    speechText: sectionSpeechText,
                   ),
                   const SizedBox(height: 22),
 
-                  PlantDetailsSections(plant: plant),
+                  PlantDetailsSections(
+                    plant: plant,
+                    initialSectionIndex: _currentSectionIndex,
+                    onSectionChanged: _onSectionChanged,
+                  ),
                   const SizedBox(height: 24),
 
                   if (widget.result.alternatives.isNotEmpty) ...[

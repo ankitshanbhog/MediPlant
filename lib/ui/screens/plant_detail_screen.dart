@@ -7,6 +7,7 @@ import '../../viewmodels/voice_viewmodel.dart';
 import '../theme/app_colors.dart';
 import '../widgets/plant_details_sections.dart';
 import '../widgets/plant_image.dart';
+import '../widgets/plant_speech_helper.dart';
 import '../widgets/voice_bot_player.dart';
 import 'main_shell_screen.dart';
 
@@ -20,6 +21,8 @@ class PlantDetailScreen extends StatefulWidget {
 }
 
 class _PlantDetailScreenState extends State<PlantDetailScreen> {
+  int _currentSectionIndex = 0;
+
   @override
   void dispose() {
     // Automatically stop speech immediately when user leaves this screen
@@ -29,16 +32,22 @@ class _PlantDetailScreenState extends State<PlantDetailScreen> {
     super.dispose();
   }
 
+  void _onSectionChanged(int index) {
+    setState(() => _currentSectionIndex = index);
+    final voiceVM = context.read<VoiceViewModel>();
+    // If voice is currently speaking or paused for this plant, switch narration to the new section immediately!
+    if (voiceVM.isPlaying || voiceVM.isPaused) {
+      final newTitle = '${widget.plant.commonName} - ${PlantSpeechHelper.getSectionTitle(index)}';
+      final newText = PlantSpeechHelper.getSpeechForSection(widget.plant, index);
+      voiceVM.readAloud(title: newTitle, text: newText);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final plant = widget.plant;
-    final speechSummary =
-        '${plant.commonName}. Botanical scientific name: ${plant.scientificName}, '
-        'from the botanical family ${plant.family}. ${plant.description}. '
-        'Key medicinal uses include: ${plant.medicinalUses.join(', ')}. '
-        'Traditional preparations: ${plant.traditionalUses.join(', ')}. '
-        'Dosage instructions: ${plant.dosageGuidelines}. '
-        'Safety precautions: ${plant.precautions.join(', ')}.';
+    final sectionTitle = '${plant.commonName} - ${PlantSpeechHelper.getSectionTitle(_currentSectionIndex)}';
+    final sectionSpeechText = PlantSpeechHelper.getSpeechForSection(plant, _currentSectionIndex);
 
     return PopScope(
       onPopInvokedWithResult: (didPop, result) {
@@ -186,15 +195,19 @@ class _PlantDetailScreenState extends State<PlantDetailScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Smart Voice Navigation Assistant
+                    // Smart Section-Specific Voice Assistant
                     VoiceBotPlayer(
-                      title: plant.commonName,
-                      speechText: speechSummary,
+                      title: sectionTitle,
+                      speechText: sectionSpeechText,
                     ),
                     const SizedBox(height: 22),
 
                     // Modular Sections with Tab Switching
-                    PlantDetailsSections(plant: plant),
+                    PlantDetailsSections(
+                      plant: plant,
+                      initialSectionIndex: _currentSectionIndex,
+                      onSectionChanged: _onSectionChanged,
+                    ),
 
                     const SizedBox(height: 24),
 
