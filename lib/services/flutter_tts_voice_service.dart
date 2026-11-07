@@ -118,7 +118,6 @@ class FlutterTtsVoiceService implements VoiceTtsService {
         }
         if (parsed.isNotEmpty) {
           _availableVoices = parsed;
-          // Set a premium voice if available
           final preferred = parsed.firstWhere(
             (v) => v['name']!.contains('sfg') || v['name']!.contains('natural') || v['name']!.contains('en-us'),
             orElse: () => parsed.first,
@@ -258,9 +257,14 @@ class FlutterTtsVoiceService implements VoiceTtsService {
     if (_currentSentenceIndex + 1 < _sentences.length) {
       _currentSentenceIndex++;
       _sentenceController.add(_currentSentenceIndex);
-      if (_state == VoiceState.playing) {
-        await _tts.stop();
+      final wasPlaying = _state == VoiceState.playing;
+      await _tts.stop();
+      if (wasPlaying) {
+        _setState(VoiceState.playing);
+        _startWaveform();
         await _tts.speak(_sentences[_currentSentenceIndex]);
+      } else {
+        _setState(VoiceState.paused);
       }
     }
   }
@@ -270,9 +274,14 @@ class FlutterTtsVoiceService implements VoiceTtsService {
     if (_currentSentenceIndex > 0) {
       _currentSentenceIndex--;
       _sentenceController.add(_currentSentenceIndex);
-      if (_state == VoiceState.playing) {
-        await _tts.stop();
+      final wasPlaying = _state == VoiceState.playing;
+      await _tts.stop();
+      if (wasPlaying) {
+        _setState(VoiceState.playing);
+        _startWaveform();
         await _tts.speak(_sentences[_currentSentenceIndex]);
+      } else {
+        _setState(VoiceState.paused);
       }
     }
   }

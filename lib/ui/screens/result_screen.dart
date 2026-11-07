@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 
 import '../../data/models/recognition_result_model.dart';
 import '../../viewmodels/remedies_viewmodel.dart';
+import '../../viewmodels/voice_viewmodel.dart';
 import '../theme/app_colors.dart';
 import '../widgets/plant_details_sections.dart';
 import '../widgets/voice_bot_player.dart';
@@ -24,6 +25,9 @@ class _ResultScreenState extends State<ResultScreen> {
   @override
   void dispose() {
     _scrollController.dispose();
+    try {
+      context.read<VoiceViewModel>().stop();
+    } catch (_) {}
     super.dispose();
   }
 
@@ -173,7 +177,9 @@ class _ResultScreenState extends State<ResultScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Row(
+                        Wrap(
+                          spacing: 8,
+                          runSpacing: 6,
                           children: [
                             Container(
                               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
@@ -191,7 +197,6 @@ class _ResultScreenState extends State<ResultScreen> {
                                 ),
                               ),
                             ),
-                            const SizedBox(width: 8),
                             Container(
                               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                               decoration: BoxDecoration(
@@ -212,6 +217,8 @@ class _ResultScreenState extends State<ResultScreen> {
                         const SizedBox(height: 8),
                         Text(
                           plant.commonName,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
                           style: const TextStyle(
                             fontSize: 27,
                             fontWeight: FontWeight.w900,
@@ -221,6 +228,8 @@ class _ResultScreenState extends State<ResultScreen> {
                         ),
                         Text(
                           plant.scientificName,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                           style: const TextStyle(
                             fontSize: 16,
                             fontStyle: FontStyle.italic,

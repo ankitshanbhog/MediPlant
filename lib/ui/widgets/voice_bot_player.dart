@@ -102,7 +102,7 @@ class VoiceBotPlayer extends StatelessWidget {
           ),
         ],
       ),
-      padding: const EdgeInsets.all(18),
+      padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -110,8 +110,8 @@ class VoiceBotPlayer extends StatelessWidget {
           Row(
             children: [
               Container(
-                width: 44,
-                height: 44,
+                width: 42,
+                height: 42,
                 decoration: BoxDecoration(
                   color: isThisPlaying
                       ? AppColors.primaryAccent
@@ -121,18 +121,20 @@ class VoiceBotPlayer extends StatelessWidget {
                 child: Icon(
                   Icons.auto_awesome,
                   color: isThisPlaying ? Colors.white : AppColors.primary,
-                  size: 22,
+                  size: 20,
                 ),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: 10),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       'Interactive Botanical Guide',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                       style: TextStyle(
-                        fontSize: 16,
+                        fontSize: 15.5,
                         fontWeight: FontWeight.w800,
                         letterSpacing: -0.2,
                         color: isDark ? AppColors.mint : AppColors.primaryDark,
@@ -146,7 +148,7 @@ class VoiceBotPlayer extends StatelessWidget {
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
-                        fontSize: 13,
+                        fontSize: 12.5,
                         color: isDark
                             ? AppColors.textSecondaryDark
                             : AppColors.textSecondaryLight,
@@ -155,21 +157,21 @@ class VoiceBotPlayer extends StatelessWidget {
                   ],
                 ),
               ),
-              const SizedBox(width: 6),
+              const SizedBox(width: 4),
               _VoiceSettingsButton(voiceVM: voiceVM),
             ],
           ),
-          const SizedBox(height: 14),
+          const SizedBox(height: 12),
 
           // Waveform & Status Visualizer
           Container(
-            height: 42,
-            padding: const EdgeInsets.symmetric(horizontal: 14),
+            height: 38,
+            padding: const EdgeInsets.symmetric(horizontal: 12),
             decoration: BoxDecoration(
               color: isDark
                   ? Colors.black.withOpacity(0.28)
                   : Colors.white.withOpacity(0.7),
-              borderRadius: BorderRadius.circular(14),
+              borderRadius: BorderRadius.circular(12),
               border: Border.all(
                 color: isDark ? AppColors.borderDark : const Color(0xFFE2EBE5),
               ),
@@ -185,39 +187,30 @@ class VoiceBotPlayer extends StatelessWidget {
                         final val = isThisPlaying ? voiceVM.waveforms[index] : 0.15;
                         return AnimatedContainer(
                           duration: const Duration(milliseconds: 120),
-                          width: 4.0,
-                          height: (val * 26).clamp(5.0, 26.0),
+                          width: 3.5,
+                          height: (val * 24).clamp(5.0, 24.0),
                           decoration: BoxDecoration(
                             color: isThisPlaying
                                 ? AppColors.primaryAccent
                                 : AppColors.textMutedLight,
-                            borderRadius: BorderRadius.circular(4),
+                            borderRadius: BorderRadius.circular(3),
                           ),
                         );
                       },
                     ),
                   ),
                 ),
-                const SizedBox(width: 14),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                  decoration: BoxDecoration(
+                const SizedBox(width: 10),
+                Text(
+                  isThisPlaying
+                      ? '$currentSentence/$totalSentences'
+                      : (isThisPaused ? 'Paused' : 'Ready'),
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
                     color: isThisPlaying
-                        ? AppColors.primary.withOpacity(0.12)
-                        : (isDark ? AppColors.surfaceSubtleDark : Colors.grey[200]),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Text(
-                    isThisPlaying
-                        ? 'Part $currentSentence of $totalSentences'
-                        : (isThisPaused ? 'Paused' : 'Ready'),
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w700,
-                      color: isThisPlaying
-                          ? AppColors.primary
-                          : (isDark ? AppColors.textMutedDark : AppColors.textMutedLight),
-                    ),
+                        ? AppColors.primary
+                        : (isDark ? AppColors.textMutedDark : AppColors.textMutedLight),
                   ),
                 ),
               ],
@@ -242,7 +235,7 @@ class VoiceBotPlayer extends StatelessWidget {
           if (isThisPlaying && voiceVM.activeWord.isNotEmpty) ...[
             const SizedBox(height: 10),
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               decoration: BoxDecoration(
                 color: AppColors.primary.withOpacity(0.09),
                 borderRadius: BorderRadius.circular(10),
@@ -255,7 +248,7 @@ class VoiceBotPlayer extends StatelessWidget {
                     child: Text(
                       '“ ${voiceVM.activeWord} ”',
                       style: const TextStyle(
-                        fontSize: 13.5,
+                        fontSize: 13,
                         fontWeight: FontWeight.w600,
                         fontStyle: FontStyle.italic,
                         color: AppColors.primary,
@@ -269,25 +262,26 @@ class VoiceBotPlayer extends StatelessWidget {
             ),
           ],
 
-          const SizedBox(height: 16),
+          const SizedBox(height: 14),
 
-          // Interactive Transport Controls: Previous Sentence | Play/Pause | Next Sentence | Stop
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+          // Responsive Transport Controls: Previous Sentence | Play/Pause | Next Sentence | Stop
+          Wrap(
+            alignment: WrapAlignment.center,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            spacing: 8,
+            runSpacing: 8,
             children: [
               // Rewind / Previous Sentence button
               IconButton.filledTonal(
                 style: IconButton.styleFrom(
                   backgroundColor: isDark ? AppColors.surfaceSubtleDark : Colors.white,
-                  padding: const EdgeInsets.all(12),
+                  padding: const EdgeInsets.all(10),
+                  minimumSize: const Size(40, 40),
                 ),
                 icon: const Icon(Icons.skip_previous_rounded, size: 22),
-                onPressed: isThisActive
-                    ? () => voiceVM.previousSentence()
-                    : null,
+                onPressed: () => voiceVM.previousSentence(),
                 tooltip: 'Previous Sentence',
               ),
-              const SizedBox(width: 14),
 
               // Main Play / Pause Button
               ElevatedButton.icon(
@@ -298,50 +292,47 @@ class VoiceBotPlayer extends StatelessWidget {
                   isThisPlaying
                       ? Icons.pause_rounded
                       : (isThisPaused ? Icons.play_arrow_rounded : Icons.volume_up_rounded),
-                  size: 24,
+                  size: 22,
                 ),
                 label: Text(
                   isThisPlaying
                       ? 'Pause'
                       : (isThisPaused ? 'Resume' : 'Listen Aloud'),
-                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
+                  style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w800),
                 ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.primary,
                   foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(horizontal: 26, vertical: 14),
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                   elevation: 2,
                 ),
               ),
-              const SizedBox(width: 14),
 
               // Forward / Next Sentence button
               IconButton.filledTonal(
                 style: IconButton.styleFrom(
                   backgroundColor: isDark ? AppColors.surfaceSubtleDark : Colors.white,
-                  padding: const EdgeInsets.all(12),
+                  padding: const EdgeInsets.all(10),
+                  minimumSize: const Size(40, 40),
                 ),
                 icon: const Icon(Icons.skip_next_rounded, size: 22),
-                onPressed: isThisActive
-                    ? () => voiceVM.nextSentence()
-                    : null,
+                onPressed: () => voiceVM.nextSentence(),
                 tooltip: 'Next Sentence',
               ),
 
-              if (isThisActive) ...[
-                const SizedBox(width: 12),
+              if (isThisActive)
                 IconButton.filledTonal(
                   style: IconButton.styleFrom(
                     backgroundColor: Colors.red.withOpacity(0.12),
                     foregroundColor: Colors.redAccent,
-                    padding: const EdgeInsets.all(12),
+                    padding: const EdgeInsets.all(10),
+                    minimumSize: const Size(40, 40),
                   ),
                   icon: const Icon(Icons.stop_rounded, size: 22),
                   onPressed: () => voiceVM.stop(),
                   tooltip: 'Stop',
                 ),
-              ],
             ],
           ),
         ],
