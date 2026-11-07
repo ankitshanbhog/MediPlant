@@ -51,7 +51,7 @@ class RemedyCard extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 18),
       decoration: BoxDecoration(
         color: isDark ? AppColors.surfaceDark : Colors.white,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(22),
         border: Border.all(
           color: isThisSpeaking
               ? AppColors.primaryAccent
@@ -61,39 +61,46 @@ class RemedyCard extends StatelessWidget {
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.035),
-            blurRadius: 12,
+            blurRadius: 14,
             offset: const Offset(0, 4),
           ),
         ],
       ),
       child: InkWell(
         onTap: () => _openRecipeDossier(context),
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(22),
         child: Padding(
           padding: const EdgeInsets.all(18),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Top action bar: Condition badge + audio & bookmark buttons
+              // Top action bar: Condition badge (Expanded to avoid overflow) + audio & bookmark
               Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                    decoration: BoxDecoration(
-                      color: AppColors.primary.withOpacity(0.12),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Text(
-                      r.condition,
-                      style: const TextStyle(
-                        fontSize: 12.5,
-                        fontWeight: FontWeight.w700,
-                        color: AppColors.primary,
+                  Expanded(
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                        decoration: BoxDecoration(
+                          color: AppColors.primary.withOpacity(0.12),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Text(
+                          r.condition,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            fontSize: 12.5,
+                            fontWeight: FontWeight.w700,
+                            color: AppColors.primary,
+                          ),
+                        ),
                       ),
                     ),
                   ),
-                  const Spacer(),
+                  const SizedBox(width: 8),
                   IconButton(
                     visualDensity: VisualDensity.compact,
                     padding: EdgeInsets.zero,
@@ -148,8 +155,10 @@ class RemedyCard extends StatelessWidget {
                       children: [
                         Text(
                           r.title,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
                           style: const TextStyle(
-                            fontSize: 18,
+                            fontSize: 17.5,
                             fontWeight: FontWeight.w800,
                             letterSpacing: -0.3,
                             height: 1.25,
@@ -184,81 +193,98 @@ class RemedyCard extends StatelessWidget {
               ),
               const SizedBox(height: 16),
 
-              // Bottom Info Bar: Time + Ingredients count + "View Recipe →"
-              Row(
+              // Bottom Info Bar: Uses Wrap/Flexible so it NEVER overflows on any screen
+              Wrap(
+                alignment: WrapAlignment.spaceBetween,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                spacing: 8,
+                runSpacing: 8,
                 children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                    decoration: BoxDecoration(
-                      color: isDark ? AppColors.surfaceSubtleDark : AppColors.surfaceSubtleLight,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          Icons.timer_outlined,
-                          size: 14,
-                          color: isDark ? AppColors.textMutedDark : AppColors.textMutedLight,
-                        ),
-                        const SizedBox(width: 5),
-                        Text(
-                          r.timeToPrepare,
-                          style: TextStyle(
-                            fontSize: 13,
-                            fontWeight: FontWeight.w600,
-                            color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                    decoration: BoxDecoration(
-                      color: isDark ? AppColors.surfaceSubtleDark : AppColors.surfaceSubtleLight,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          Icons.receipt_long_outlined,
-                          size: 14,
-                          color: isDark ? AppColors.textMutedDark : AppColors.textMutedLight,
-                        ),
-                        const SizedBox(width: 5),
-                        Text(
-                          '${r.ingredients.length} items',
-                          style: TextStyle(
-                            fontSize: 13,
-                            fontWeight: FontWeight.w600,
-                            color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const Spacer(),
                   Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text(
-                        'View Recipe',
-                        style: TextStyle(
-                          fontSize: 13.5,
-                          fontWeight: FontWeight.w700,
-                          color: isDark ? AppColors.mint : AppColors.primary,
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 5),
+                        decoration: BoxDecoration(
+                          color: isDark ? AppColors.surfaceSubtleDark : AppColors.surfaceSubtleLight,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.timer_outlined,
+                              size: 13.5,
+                              color: isDark ? AppColors.textMutedDark : AppColors.textMutedLight,
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              r.timeToPrepare,
+                              style: TextStyle(
+                                fontSize: 12.5,
+                                fontWeight: FontWeight.w600,
+                                color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                      const SizedBox(width: 4),
-                      Icon(
-                        Icons.arrow_forward_rounded,
-                        size: 16,
-                        color: isDark ? AppColors.mint : AppColors.primary,
+                      const SizedBox(width: 8),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 5),
+                        decoration: BoxDecoration(
+                          color: isDark ? AppColors.surfaceSubtleDark : AppColors.surfaceSubtleLight,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.receipt_long_outlined,
+                              size: 13.5,
+                              color: isDark ? AppColors.textMutedDark : AppColors.textMutedLight,
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              '${r.ingredients.length} items',
+                              style: TextStyle(
+                                fontSize: 12.5,
+                                fontWeight: FontWeight.w600,
+                                color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ],
+                  ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                    decoration: BoxDecoration(
+                      color: isDark
+                          ? AppColors.primaryAccent.withOpacity(0.12)
+                          : AppColors.primary.withOpacity(0.08),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          'View Recipe',
+                          style: TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w700,
+                            color: isDark ? AppColors.mint : AppColors.primary,
+                          ),
+                        ),
+                        const SizedBox(width: 4),
+                        Icon(
+                          Icons.arrow_forward_rounded,
+                          size: 15,
+                          color: isDark ? AppColors.mint : AppColors.primary,
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),
@@ -341,27 +367,35 @@ class _RecipeDossierSheetState extends State<_RecipeDossierSheet> {
               Expanded(
                 child: ListView(
                   controller: scrollController,
-                  padding: const EdgeInsets.fromLTRB(22, 8, 22, 32),
+                  padding: const EdgeInsets.fromLTRB(20, 8, 20, 32),
                   children: [
                     // Top header: Condition & Close
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                          decoration: BoxDecoration(
-                            color: AppColors.primary.withOpacity(0.12),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Text(
-                            r.condition,
-                            style: const TextStyle(
-                              fontSize: 13,
-                              fontWeight: FontWeight.w700,
-                              color: AppColors.primary,
+                        Expanded(
+                          child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                              decoration: BoxDecoration(
+                                color: AppColors.primary.withOpacity(0.12),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Text(
+                                r.condition,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w700,
+                                  color: AppColors.primary,
+                                ),
+                              ),
                             ),
                           ),
                         ),
+                        const SizedBox(width: 8),
                         IconButton(
                           icon: const Icon(Icons.close_rounded, size: 24),
                           onPressed: () => Navigator.pop(context),
@@ -374,7 +408,7 @@ class _RecipeDossierSheetState extends State<_RecipeDossierSheet> {
                     Text(
                       r.title,
                       style: const TextStyle(
-                        fontSize: 24,
+                        fontSize: 23,
                         fontWeight: FontWeight.w900,
                         letterSpacing: -0.4,
                         height: 1.25,
@@ -437,55 +471,68 @@ class _RecipeDossierSheetState extends State<_RecipeDossierSheet> {
                       ),
                     const SizedBox(height: 16),
 
-                    // Quick Meta Row & Actions
-                    Row(
+                    // Quick Meta Row & Actions - with Wrap to NEVER overflow
+                    Wrap(
+                      alignment: WrapAlignment.spaceBetween,
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      spacing: 8,
+                      runSpacing: 10,
                       children: [
-                        _DossierMeta(
-                          icon: Icons.timer_outlined,
-                          title: 'Prep Time',
-                          value: r.timeToPrepare,
-                          isDark: isDark,
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            _DossierMeta(
+                              icon: Icons.timer_outlined,
+                              title: 'Prep Time',
+                              value: r.timeToPrepare,
+                              isDark: isDark,
+                            ),
+                            const SizedBox(width: 8),
+                            _DossierMeta(
+                              icon: Icons.local_dining_outlined,
+                              title: 'Ingredients',
+                              value: '${r.ingredients.length} items',
+                              isDark: isDark,
+                            ),
+                          ],
                         ),
-                        const SizedBox(width: 10),
-                        _DossierMeta(
-                          icon: Icons.local_dining_outlined,
-                          title: 'Ingredients',
-                          value: '${r.ingredients.length} items',
-                          isDark: isDark,
-                        ),
-                        const Spacer(),
-                        IconButton.filledTonal(
-                          style: IconButton.styleFrom(
-                            backgroundColor: isThisSpeaking
-                                ? AppColors.primaryAccent
-                                : (isDark ? AppColors.surfaceSubtleDark : const Color(0xFFE8F5E9)),
-                          ),
-                          icon: Icon(
-                            isThisSpeaking ? Icons.volume_up_rounded : Icons.volume_down_rounded,
-                            color: isThisSpeaking
-                                ? Colors.white
-                                : (isDark ? AppColors.mint : AppColors.primary),
-                            size: 22,
-                          ),
-                          onPressed: () {
-                            voiceVM.togglePlayPause(title: r.title, text: speechText);
-                          },
-                          tooltip: 'Listen to Guide',
-                        ),
-                        const SizedBox(width: 8),
-                        IconButton.filledTonal(
-                          style: IconButton.styleFrom(
-                            backgroundColor: widget.isBookmarked
-                                ? AppColors.amberHoney.withOpacity(0.2)
-                                : (isDark ? AppColors.surfaceSubtleDark : const Color(0xFFF5F5F5)),
-                          ),
-                          icon: Icon(
-                            widget.isBookmarked ? Icons.bookmark_rounded : Icons.bookmark_border_rounded,
-                            color: widget.isBookmarked ? AppColors.amberHoney : Colors.grey,
-                            size: 22,
-                          ),
-                          onPressed: widget.onToggleBookmark,
-                          tooltip: 'Save',
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            IconButton.filledTonal(
+                              style: IconButton.styleFrom(
+                                backgroundColor: isThisSpeaking
+                                    ? AppColors.primaryAccent
+                                    : (isDark ? AppColors.surfaceSubtleDark : const Color(0xFFE8F5E9)),
+                              ),
+                              icon: Icon(
+                                isThisSpeaking ? Icons.volume_up_rounded : Icons.volume_down_rounded,
+                                color: isThisSpeaking
+                                    ? Colors.white
+                                    : (isDark ? AppColors.mint : AppColors.primary),
+                                size: 21,
+                              ),
+                              onPressed: () {
+                                voiceVM.togglePlayPause(title: r.title, text: speechText);
+                              },
+                              tooltip: 'Listen to Guide',
+                            ),
+                            const SizedBox(width: 8),
+                            IconButton.filledTonal(
+                              style: IconButton.styleFrom(
+                                backgroundColor: widget.isBookmarked
+                                    ? AppColors.amberHoney.withOpacity(0.2)
+                                    : (isDark ? AppColors.surfaceSubtleDark : const Color(0xFFF5F5F5)),
+                              ),
+                              icon: Icon(
+                                widget.isBookmarked ? Icons.bookmark_rounded : Icons.bookmark_border_rounded,
+                                color: widget.isBookmarked ? AppColors.amberHoney : Colors.grey,
+                                size: 21,
+                              ),
+                              onPressed: widget.onToggleBookmark,
+                              tooltip: 'Save',
+                            ),
+                          ],
                         ),
                       ],
                     ),
@@ -745,7 +792,7 @@ class _DossierMeta extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
         color: isDark ? AppColors.surfaceSubtleDark : AppColors.surfaceSubtleLight,
         borderRadius: BorderRadius.circular(12),
@@ -753,15 +800,15 @@ class _DossierMeta extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 16, color: isDark ? AppColors.textMutedDark : AppColors.textMutedLight),
-          const SizedBox(width: 6),
+          Icon(icon, size: 15, color: isDark ? AppColors.textMutedDark : AppColors.textMutedLight),
+          const SizedBox(width: 5),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 title,
                 style: TextStyle(
-                  fontSize: 10.5,
+                  fontSize: 10,
                   color: isDark ? AppColors.textMutedDark : AppColors.textMutedLight,
                   fontWeight: FontWeight.w600,
                 ),
@@ -769,7 +816,7 @@ class _DossierMeta extends StatelessWidget {
               Text(
                 value,
                 style: TextStyle(
-                  fontSize: 13,
+                  fontSize: 12.5,
                   fontWeight: FontWeight.w700,
                   color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight,
                 ),

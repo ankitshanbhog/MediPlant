@@ -16,14 +16,25 @@ class RemediesScreen extends StatefulWidget {
 }
 
 class _RemediesScreenState extends State<RemediesScreen> {
-  bool _showOnlyBookmarked = false;
+  // 0: All Remedies, 1: Saved Preparations
+  int _selectedTabIndex = 0;
+
+  static const List<String> _quickRemedyFilters = [
+    'Cold',
+    'Digestion',
+    'Immunity',
+    'Skin',
+    'Tea',
+    'Kadha',
+    'Honey',
+  ];
 
   @override
   Widget build(BuildContext context) {
     final remediesVM = context.watch<RemediesViewModel>();
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    final displayedRemedies = _showOnlyBookmarked
+    final displayedRemedies = _selectedTabIndex == 1
         ? remediesVM.remedies.where((r) => remediesVM.isBookmarked(r.id)).toList()
         : remediesVM.remedies;
 
@@ -31,67 +42,31 @@ class _RemediesScreenState extends State<RemediesScreen> {
       backgroundColor: isDark ? AppColors.backgroundDark : const Color(0xFFF7FAF8),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 20),
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Header
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'Home Remedies',
-                          style: TextStyle(
-                            fontSize: 30,
-                            fontWeight: FontWeight.w900,
-                            letterSpacing: -0.6,
-                          ),
-                        ),
-                        const SizedBox(height: 6),
-                        Text(
-                          'Traditional botanical wellness preparations',
-                          style: TextStyle(
-                            fontSize: 15,
-                            height: 1.4,
-                            color: isDark ? AppColors.textSecondaryDark : AppColors.textMutedLight,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                    decoration: BoxDecoration(
-                      color: AppColors.primary.withOpacity(0.12),
-                      borderRadius: BorderRadius.circular(14),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Icon(Icons.bookmark_rounded, size: 17, color: AppColors.primary),
-                        const SizedBox(width: 6),
-                        Text(
-                          '${remediesVM.bookmarkedIds.length} saved',
-                          style: const TextStyle(
-                            fontSize: 13.5,
-                            fontWeight: FontWeight.w700,
-                            color: AppColors.primary,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
+              const Text(
+                'Herbal Remedies',
+                style: TextStyle(
+                  fontSize: 30,
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: -0.6,
+                ),
               ),
-              const SizedBox(height: 22),
+              const SizedBox(height: 6),
+              Text(
+                'Traditional botanical wellness preparations and recipes',
+                style: TextStyle(
+                  fontSize: 15,
+                  height: 1.4,
+                  color: isDark ? AppColors.textSecondaryDark : AppColors.textMutedLight,
+                ),
+              ),
+              const SizedBox(height: 20),
 
-              // Search Box
+              // Search Bar
               TextField(
                 onChanged: (value) => remediesVM.setSearchQuery(value),
                 style: const TextStyle(fontSize: 16),
@@ -127,67 +102,182 @@ class _RemediesScreenState extends State<RemediesScreen> {
                   ),
                 ),
               ),
-              const SizedBox(height: 18),
+              const SizedBox(height: 16),
 
-              // Category & Bookmark Filter Row
+              // Quick Focus Chips
               SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: Row(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(right: 10),
-                      child: FilterChip(
-                        selected: _showOnlyBookmarked,
-                        showCheckmark: false,
-                        avatar: Icon(
-                          _showOnlyBookmarked ? Icons.bookmark_rounded : Icons.bookmark_border_rounded,
-                          size: 17,
-                          color: _showOnlyBookmarked ? Colors.white : AppColors.primary,
-                        ),
-                        label: Text('Saved (${remediesVM.bookmarkedIds.length})'),
+                  children: _quickRemedyFilters.map((term) {
+                    final isSelected = remediesVM.searchQuery.toLowerCase() == term.toLowerCase();
+                    return Padding(
+                      padding: const EdgeInsets.only(right: 8),
+                      child: ActionChip(
+                        label: Text(term),
                         labelStyle: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w700,
-                          color: _showOnlyBookmarked
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                          color: isSelected
                               ? Colors.white
-                              : (isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight),
+                              : (isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight),
                         ),
-                        backgroundColor: isDark ? AppColors.surfaceDark : Colors.white,
-                        selectedColor: AppColors.primary,
+                        backgroundColor: isSelected
+                            ? AppColors.primary
+                            : (isDark ? AppColors.surfaceDark : Colors.white),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(22),
+                          borderRadius: BorderRadius.circular(18),
                           side: BorderSide(
-                            color: _showOnlyBookmarked
+                            color: isSelected
                                 ? AppColors.primary
-                                : (isDark ? AppColors.borderDark : AppColors.borderLight),
+                                : (isDark ? AppColors.borderDark : const Color(0xFFE2EBE5)),
                           ),
                         ),
-                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-                        onSelected: (selected) {
-                          setState(() => _showOnlyBookmarked = selected);
+                        onPressed: () {
+                          if (isSelected) {
+                            remediesVM.setSearchQuery('');
+                          } else {
+                            remediesVM.setSearchQuery(term);
+                          }
                         },
                       ),
+                    );
+                  }).toList(),
+                ),
+              ),
+              const SizedBox(height: 18),
+
+              // Dual-Segment Switcher: [ 🌿 All Remedies ] vs [ ⭐ Saved Recipes ]
+              Container(
+                padding: const EdgeInsets.all(4),
+                decoration: BoxDecoration(
+                  color: isDark ? AppColors.surfaceDark : const Color(0xFFEDF3EE),
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () => setState(() => _selectedTabIndex = 0),
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 200),
+                          padding: const EdgeInsets.symmetric(vertical: 11),
+                          decoration: BoxDecoration(
+                            color: _selectedTabIndex == 0
+                                ? (isDark ? AppColors.primaryAccent : Colors.white)
+                                : Colors.transparent,
+                            borderRadius: BorderRadius.circular(13),
+                            boxShadow: _selectedTabIndex == 0
+                                ? [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.06),
+                                      blurRadius: 6,
+                                      offset: const Offset(0, 2),
+                                    ),
+                                  ]
+                                : null,
+                          ),
+                          child: Center(
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  Icons.local_florist_rounded,
+                                  size: 17,
+                                  color: _selectedTabIndex == 0
+                                      ? (isDark ? Colors.black : AppColors.primary)
+                                      : (isDark ? Colors.grey[400] : Colors.grey[600]),
+                                ),
+                                const SizedBox(width: 7),
+                                Text(
+                                  'All Remedies (${remediesVM.remedies.length})',
+                                  style: TextStyle(
+                                    fontSize: 13.5,
+                                    fontWeight: _selectedTabIndex == 0 ? FontWeight.w800 : FontWeight.w600,
+                                    color: _selectedTabIndex == 0
+                                        ? (isDark ? Colors.black : AppColors.primary)
+                                        : (isDark ? Colors.grey[400] : Colors.grey[600]),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
                     ),
-                    ...remediesVM.categories.map((cat) {
-                      return DiseaseChip(
-                        label: cat,
-                        isSelected: !_showOnlyBookmarked && remediesVM.selectedCategory == cat,
-                        onTap: () {
-                          if (_showOnlyBookmarked) {
-                            setState(() => _showOnlyBookmarked = false);
-                          }
-                          remediesVM.setCategory(cat);
-                        },
-                      );
-                    }),
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () => setState(() => _selectedTabIndex = 1),
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 200),
+                          padding: const EdgeInsets.symmetric(vertical: 11),
+                          decoration: BoxDecoration(
+                            color: _selectedTabIndex == 1
+                                ? (isDark ? AppColors.primaryAccent : Colors.white)
+                                : Colors.transparent,
+                            borderRadius: BorderRadius.circular(13),
+                            boxShadow: _selectedTabIndex == 1
+                                ? [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.06),
+                                      blurRadius: 6,
+                                      offset: const Offset(0, 2),
+                                    ),
+                                  ]
+                                : null,
+                          ),
+                          child: Center(
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  Icons.bookmark_rounded,
+                                  size: 17,
+                                  color: _selectedTabIndex == 1
+                                      ? (isDark ? Colors.black : AppColors.amberHoney)
+                                      : (isDark ? Colors.grey[400] : Colors.grey[600]),
+                                ),
+                                const SizedBox(width: 7),
+                                Text(
+                                  'Saved (${remediesVM.bookmarkedIds.length})',
+                                  style: TextStyle(
+                                    fontSize: 13.5,
+                                    fontWeight: _selectedTabIndex == 1 ? FontWeight.w800 : FontWeight.w600,
+                                    color: _selectedTabIndex == 1
+                                        ? (isDark ? Colors.black : AppColors.primary)
+                                        : (isDark ? Colors.grey[400] : Colors.grey[600]),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ),
               const SizedBox(height: 18),
 
-              // Guidance Banner
+              // Category Pills (When in All tab)
+              if (_selectedTabIndex == 0) ...[
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: remediesVM.categories.map((cat) {
+                      return DiseaseChip(
+                        label: cat,
+                        isSelected: remediesVM.selectedCategory == cat,
+                        onTap: () => remediesVM.setCategory(cat),
+                      );
+                    }).toList(),
+                  ),
+                ),
+                const SizedBox(height: 18),
+              ],
+
+              // Guidance Card
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 decoration: BoxDecoration(
                   color: isDark ? AppColors.surfaceSubtleDark : AppColors.lightMint.withOpacity(0.55),
                   borderRadius: BorderRadius.circular(14),
@@ -198,9 +288,9 @@ class _RemediesScreenState extends State<RemediesScreen> {
                     const SizedBox(width: 10),
                     Expanded(
                       child: Text(
-                        'Traditional preparations for minor ailments. Consult a physician if symptoms persist.',
+                        'Traditional herbal recipes for minor ailments. Always consult a physician for persistent symptoms.',
                         style: TextStyle(
-                          fontSize: 13.5,
+                          fontSize: 13,
                           height: 1.4,
                           color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight,
                         ),
@@ -209,34 +299,18 @@ class _RemediesScreenState extends State<RemediesScreen> {
                   ],
                 ),
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 22),
 
-              // Remedies List / Empty State
+              // Remedies Feed / Empty State
               if (displayedRemedies.isEmpty) ...[
                 EmptyStateView(
-                  icon: _showOnlyBookmarked ? Icons.bookmark_border_rounded : Icons.healing_outlined,
-                  title: _showOnlyBookmarked ? 'No Saved Remedies' : 'No Remedies Found',
-                  message: _showOnlyBookmarked
-                      ? 'Tap the bookmark icon on any remedy card to save it here for quick access.'
-                      : 'Try searching for another condition or ingredient like "Cinnamon", "Ashwagandha", or "Honey".',
+                  icon: _selectedTabIndex == 1 ? Icons.bookmark_border_rounded : Icons.healing_outlined,
+                  title: _selectedTabIndex == 1 ? 'No Saved Recipes' : 'No Remedies Found',
+                  message: _selectedTabIndex == 1
+                      ? 'Tap the bookmark icon on any recipe card to save it here for quick kitchen access.'
+                      : 'Try searching for another term like "Honey", "Kadha", "Tulsi", or "Steam".',
                 ),
               ] else ...[
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      _showOnlyBookmarked
-                          ? 'Saved Remedies (${displayedRemedies.length})'
-                          : 'Available Preparations (${displayedRemedies.length})',
-                      style: const TextStyle(
-                        fontSize: 19,
-                        fontWeight: FontWeight.w800,
-                        letterSpacing: -0.3,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
                 ...displayedRemedies.map((remedy) {
                   return RemedyCard(
                     remedy: remedy,
