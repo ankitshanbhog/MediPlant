@@ -20,7 +20,7 @@ class DiseaseChip extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Padding(
-      padding: const EdgeInsets.only(right: 8),
+      padding: const EdgeInsets.only(right: 10),
       child: FilterChip(
         label: Text(label),
         selected: isSelected,
@@ -28,7 +28,7 @@ class DiseaseChip extends StatelessWidget {
         avatar: icon != null
             ? Icon(
                 icon,
-                size: 16,
+                size: 17,
                 color: isSelected
                     ? (isDark ? AppColors.primaryDark : Colors.white)
                     : (isDark ? AppColors.mint : AppColors.primary),
@@ -37,21 +37,21 @@ class DiseaseChip extends StatelessWidget {
         backgroundColor: isDark ? AppColors.surfaceSubtleDark : AppColors.surfaceLight,
         selectedColor: isDark ? AppColors.primaryAccent : AppColors.primary,
         labelStyle: TextStyle(
-          fontSize: 13,
+          fontSize: 14,
           fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
           color: isSelected
               ? (isDark ? AppColors.primaryDark : Colors.white)
               : (isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight),
         ),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(22),
           side: BorderSide(
             color: isSelected
                 ? Colors.transparent
                 : (isDark ? AppColors.borderDark : AppColors.borderLight),
           ),
         ),
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
         showCheckmark: false,
       ),
     );

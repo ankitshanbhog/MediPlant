@@ -209,7 +209,23 @@ class BackendRecognitionService implements RecognitionService {
         );
       }
 
+      final bool isKnownSpecies = data['is_known_species'] != false;
       final rawPlantName = data['plant_name'] as String? ?? '';
+
+      if (!isKnownSpecies || rawPlantName.isEmpty) {
+        onStageChanged?.call(PipelineStage.completed);
+        return RecognitionResult(
+          status: RecognitionStatus.outsideSupportedClasses,
+          confidence: normalizedConfidence,
+          source: RecognitionSource.internalModel,
+          isModel1Passed: true,
+          nonPlantReason: data['message'] as String? ??
+              'This is a plant, but it does not match any of the 13 medicinal species currently in our botanical database.',
+          timestamp: DateTime.now(),
+          imagePath: imageSource,
+        );
+      }
+
       final plant = await _lookupPlantInDatabase(rawPlantName);
 
       final List<PlantAlternative> alternatives = [];

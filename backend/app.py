@@ -224,6 +224,30 @@ def softmax (x :np .ndarray )->np .ndarray :
     e_x =np .exp (x -np .max (x ,axis =-1 ,keepdims =True ))
     return e_x /np .sum (e_x ,axis =-1 ,keepdims =True )
 
+def compute_entropy (probs :np .ndarray )->float :
+    """Shannon entropy of probability distribution."""
+    clipped =np .clip (probs ,1e-9 ,1.0 )
+    return float (-np .sum (clipped *np .log (clipped )))
+
+def evaluate_ood_signals (probs :np .ndarray ,entropy_threshold :float =1.95 ,top1_threshold :float =0.55 ,min_top3_gap :float =0.20 ):
+    """
+    Evaluates whether a predicted sample is likely out-of-distribution (OOD)
+    or an unsupported plant species.
+    """
+    top1_conf =float (np .max (probs ))
+    entropy =compute_entropy (probs )
+    sorted_probs =np .sort (probs )[::-1 ]
+    top3_gap =float (sorted_probs [0 ]-sorted_probs [2 ])if len (sorted_probs )>=3 else float (sorted_probs [0 ])
+
+    if top1_conf <top1_threshold :
+        return True ,"low_confidence",entropy ,top3_gap 
+    if entropy >entropy_threshold :
+        return True ,"high_entropy",entropy ,top3_gap 
+    if top3_gap <min_top3_gap :
+        return True ,"ambiguous_spread",entropy ,top3_gap 
+
+    return False ,None ,entropy ,top3_gap 
+
 def preprocess_image_bytes (image_bytes :bytes ,size :int =224 )->np .ndarray :
     """
     Standard MediPlant Preprocessing:
@@ -257,6 +281,52 @@ def preprocess_image_bytes (image_bytes :bytes ,size :int =224 )->np .ndarray :
     arr =np .transpose (arr ,(2 ,0 ,1 ))
     arr =np .expand_dims (arr ,axis =0 )
     return arr
+
+def generate_tta_tensors (image_bytes :bytes ,size :int =224 )->List [np .ndarray ]:
+    """
+    Test-Time Augmentation (TTA):
+    Generates 5 augmented views of the input image for uncertainty and consistency evaluation:
+      1. Standard center crop
+      2. Horizontally flipped
+      3. Slightly rotated clockwise (+8 deg)
+      4. Slightly rotated counter-clockwise (-8 deg)
+      5. Slightly zoomed/cropped (1.05x zoom)
+    """
+    try :
+        raw_img =Image .open (io .BytesIO (image_bytes )).convert ("RGB")
+    except Exception as exc :
+        raise ValueError ("Invalid or corrupted image format")from exc
+
+    target_crop =size
+    target_scale =int (target_crop *1.14 )
+    base_img =raw_img .resize ((target_scale ,target_scale ),Image .BILINEAR )
+    w ,h =base_img .size
+    left =(w -target_crop )//2
+    top =(h -target_crop )//2
+
+    views =[
+    base_img .crop ((left ,top ,left +target_crop ,top +target_crop )),
+    base_img .crop ((left ,top ,left +target_crop ,top +target_crop )).transpose (Image .FLIP_LEFT_RIGHT ),
+    base_img .rotate (8 ,resample =Image .BILINEAR ).crop ((left ,top ,left +target_crop ,top +target_crop )),
+    base_img .rotate (-8 ,resample =Image .BILINEAR ).crop ((left ,top ,left +target_crop ,top +target_crop )),
+    ]
+
+    zoom_crop =int (target_crop *0.92 )
+    zoom_left =(w -zoom_crop )//2
+    zoom_top =(h -zoom_crop )//2
+    views .append (base_img .crop ((zoom_left ,zoom_top ,zoom_left +zoom_crop ,zoom_top +zoom_crop )).resize ((target_crop ,target_crop ),Image .BILINEAR ))
+
+    mean =np .array ([0.485 ,0.456 ,0.406 ],dtype =np .float32 )
+    std =np .array ([0.229 ,0.224 ,0.225 ],dtype =np .float32 )
+
+    tensors =[]
+    for v in views :
+        arr =np .array (v ,dtype =np .float32 )/255.0
+        arr =(arr -mean )/std
+        arr =np .transpose (arr ,(2 ,0 ,1 ))
+        tensors .append (np .expand_dims (arr ,axis =0 ))
+
+    return tensors 
 
 @app .get ("/")
 def root ():
@@ -358,9 +428,46 @@ async def predict (file :UploadFile =File (...)):
 
         id_inputs ={classifier_session .get_inputs ()[0 ].name :tensor }
         id_outputs =classifier_session .run (None ,id_inputs )
-        probs =softmax (id_outputs [0 ])[0 ]
+        initial_probs =softmax (id_outputs [0 ])[0 ]
 
         class_slugs =classifier_metadata .get ("class_names",list (SPECIES_CATALOG .keys ()))
+        top_idx =int (np .argmax (initial_probs ))
+        initial_top_conf =float (initial_probs [top_idx ])
+
+        tta_applied =False 
+        tta_agreement =1.0 
+        final_probs =initial_probs 
+
+        if 0.40 <=initial_top_conf <0.80 :
+            try :
+                tta_tensors =generate_tta_tensors (contents ,size =224 )
+                tta_probs_list =[]
+                tta_top_indices =[]
+                input_name =classifier_session .get_inputs ()[0 ].name 
+
+                for t_aug in tta_tensors :
+                    out =classifier_session .run (None ,{input_name :t_aug })
+                    p =softmax (out [0 ])[0 ]
+                    tta_probs_list .append (p )
+                    tta_top_indices .append (int (np .argmax (p )))
+
+                final_probs =np .mean (tta_probs_list ,axis =0 )
+                tta_applied =True 
+
+                matching_passes =sum (1 for idx in tta_top_indices if idx ==top_idx )
+                tta_agreement =matching_passes /float (len (tta_top_indices ))
+
+                logger .info (
+                "TTA Executed (5 passes): agreement=%.2f, initial_conf=%.2f%%, refined_conf=%.2f%%",
+                tta_agreement ,
+                initial_top_conf *100 ,
+                float (final_probs [top_idx ])*100 ,
+                )
+            except Exception as tta_err :
+                logger .warning ("TTA pass encountered an error, falling back to initial: %s",tta_err )
+                final_probs =initial_probs 
+
+        probs =final_probs 
         top_idx =int (np .argmax (probs ))
         top_slug =class_slugs [top_idx ]if top_idx <len (class_slugs )else f"plant_{top_idx }"
         top_conf =float (probs [top_idx ])
@@ -379,24 +486,55 @@ async def predict (file :UploadFile =File (...)):
             "confidence":round (float (probs [idx ])*100 ,2 ),
             })
 
+        is_ood ,ood_reason ,entropy_val ,top3_gap =evaluate_ood_signals (probs )
+
+        if tta_applied and tta_agreement <0.60 :
+            is_ood =True 
+            ood_reason ="tta_low_consensus"
+        if is_ood :
+            supported_names =", ".join ([v .get ("common_name",k )for k ,v in SPECIES_CATALOG .items ()])
+            logger .warning (
+            "OOD / Unknown Plant Detected: reason=%s, top1=%.2f%%, entropy=%.3f, top3_gap=%.3f",
+            ood_reason ,
+            top_conf *100 ,
+            entropy_val ,
+            top3_gap ,
+            )
+            return {
+            "is_plant":True ,
+            "gate_passed":True ,
+            "is_known_species":False ,
+            "plant_name":None ,
+            "confidence":round (top_conf *100 ,2 ),
+            "ood_reason":ood_reason ,
+            "message":(
+            "This is a plant, but it does not match any of the 13 medicinal species "
+            f"currently supported by our botanical database (Supported: {supported_names })."
+            ),
+            "predictions":[],
+            }
+
         species_info =SPECIES_CATALOG .get (top_slug ,{})
         display_name =species_info .get ("common_name",top_slug .replace ("_"," ").title ())
 
         logger .info (
-        "Identified: %s (%s) with %.2f%% confidence",
+        "Identified: %s (%s) with %.2f%% confidence (entropy: %.3f)",
         top_slug ,
         display_name ,
         top_conf *100 ,
+        entropy_val ,
         )
 
         return {
         "is_plant":True ,
         "gate_passed":True ,
+        "is_known_species":True ,
         "plant_name":top_slug ,
         "common_name":display_name ,
         "botanical_name":species_info .get ("botanical_name",""),
         "family":species_info .get ("family",""),
         "confidence":round (top_conf *100 ,2 ),
+        "verification_applied":tta_applied ,
         "message":f"Identified as {display_name } with {round (top_conf *100 ,1 )}% confidence.",
         "predictions":ranked_predictions ,
         }
