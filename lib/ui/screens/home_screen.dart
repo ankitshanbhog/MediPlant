@@ -9,7 +9,6 @@ import 'plant_detail_screen.dart';
 import '../widgets/plant_image.dart';
 import '../../data/database_helper.dart';
 import '../../viewmodels/auth_viewmodel.dart';
-import 'farmer/farmer_dashboard_screen.dart';
 import 'admin/admin_dashboard_screen.dart';
 import 'auth/login_screen.dart';
 import 'resources_screen.dart';
@@ -320,7 +319,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 Consumer<AuthViewModel>(
                   builder: (context, authVM, _) {
                     final user = authVM.currentUser;
-                    final isFarmer = authVM.isFarmer;
                     final isAdmin = authVM.isAdmin;
 
                     return Container(
@@ -330,9 +328,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         gradient: LinearGradient(
                           colors: isAdmin
                               ? [const Color(0xFFB71C1C), const Color(0xFF7F0000)]
-                              : isFarmer
-                                  ? [const Color(0xFF1B5E20), const Color(0xFF2E7D32)]
-                                  : [const Color(0xFF0F172A), const Color(0xFF1E293B)],
+                              : [const Color(0xFF0F172A), const Color(0xFF1E293B)],
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
                         ),
@@ -356,9 +352,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   Icon(
                                     isAdmin
                                         ? Icons.shield_rounded
-                                        : isFarmer
-                                            ? Icons.agriculture_rounded
-                                            : Icons.people_alt_rounded,
+                                        : Icons.menu_book_rounded,
                                     color: Colors.white,
                                     size: 24,
                                   ),
@@ -366,9 +360,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   Text(
                                     isAdmin
                                         ? 'ADMIN CONSOLE'
-                                        : isFarmer
-                                            ? 'FARMER WORKSPACE'
-                                            : 'GROWER ECOSYSTEM',
+                                        : 'BOTANICAL KNOWLEDGE HUB',
                                     style: const TextStyle(
                                       color: Colors.white70,
                                       fontSize: 12,
@@ -400,9 +392,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           Text(
                             isAdmin
                                 ? 'Botanical Review & User Oversight'
-                                : isFarmer
-                                    ? 'Crop Planning & Agronomy Dashboard'
-                                    : 'Connect with Farmers & Botanical Reviewers',
+                                : 'Official Portals & Clinical Evidence',
                             style: const TextStyle(
                               color: Colors.white,
                               fontSize: 18,
@@ -413,10 +403,8 @@ class _HomeScreenState extends State<HomeScreen> {
                           const SizedBox(height: 6),
                           Text(
                             isAdmin
-                                ? 'Verify farmer accounts, audit data, and manage botantical evidence.'
-                                : isFarmer
-                                    ? 'Plan crop batches, consult agronomy guides, and track market benchmark prices.'
-                                    : 'MediPlant bridges plant enthusiasts with verified farmers and botanical experts.',
+                                ? 'Verify user accounts, audit safety alerts, and manage botanical evidence.'
+                                : 'Explore peer-reviewed WHO monographs, NCCIH herb-drug safety, and official AYUSH resources.',
                             style: TextStyle(
                               color: Colors.white.withOpacity(0.85),
                               fontSize: 12,
@@ -428,22 +416,6 @@ class _HomeScreenState extends State<HomeScreen> {
                             spacing: 8,
                             runSpacing: 8,
                             children: [
-                              if (isFarmer)
-                                ElevatedButton.icon(
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.white,
-                                    foregroundColor: const Color(0xFF1B5E20),
-                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                                  ),
-                                  icon: const Icon(Icons.dashboard_rounded, size: 18),
-                                  label: const Text('Open Farmer Workspace', style: TextStyle(fontWeight: FontWeight.bold)),
-                                  onPressed: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(builder: (_) => const FarmerDashboardScreen()),
-                                    );
-                                  },
-                                ),
                               if (isAdmin)
                                 ElevatedButton.icon(
                                   style: ElevatedButton.styleFrom(
@@ -468,7 +440,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                                   ),
                                   icon: const Icon(Icons.login_rounded, size: 18),
-                                  label: const Text('Sign In to Role Workspace', style: TextStyle(fontWeight: FontWeight.bold)),
+                                  label: const Text('Sign In / Register', style: TextStyle(fontWeight: FontWeight.bold)),
                                   onPressed: () {
                                     Navigator.push(
                                       context,
@@ -487,7 +459,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   ),
                                 ),
                                 icon: const Icon(Icons.verified_outlined, size: 18),
-                                label: const Text('Verified Resources', style: TextStyle(fontWeight: FontWeight.bold)),
+                                label: const Text('Official Herbal Portals', style: TextStyle(fontWeight: FontWeight.bold)),
                                 onPressed: () {
                                   Navigator.push(
                                     context,

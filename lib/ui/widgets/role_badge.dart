@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../viewmodels/auth_viewmodel.dart';
 import '../screens/auth/login_screen.dart';
-import '../screens/farmer/farmer_dashboard_screen.dart';
 import '../screens/admin/admin_dashboard_screen.dart';
 
 class RoleBadgeWidget extends StatelessWidget {
@@ -34,7 +33,6 @@ class RoleBadgeWidget extends StatelessWidget {
       );
     }
 
-    final user = authVM.currentUser!;
     final primaryRole = authVM.activeRole;
 
     Color badgeBg;
@@ -46,11 +44,6 @@ class RoleBadgeWidget extends StatelessWidget {
         badgeBg = const Color(0xFFB71C1C);
         badgeIcon = Icons.shield_rounded;
         displayLabel = 'Admin';
-        break;
-      case 'farmer':
-        badgeBg = const Color(0xFF2E7D32);
-        badgeIcon = Icons.agriculture_rounded;
-        displayLabel = user.isVerified ? 'Farmer ✓' : 'Farmer';
         break;
       default:
         badgeBg = const Color(0xFF1565C0);
@@ -155,22 +148,6 @@ class RoleBadgeWidget extends StatelessWidget {
                   }).toList(),
                 ),
                 const SizedBox(height: 14),
-                if (user.isFarmer) ...[
-                  ListTile(
-                    leading: const Icon(Icons.agriculture_rounded, color: Color(0xFF2E7D32)),
-                    title: const Text('Farmer Workspace'),
-                    subtitle: const Text('Crop batches, harvest records & alerts'),
-                    trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 14),
-                    contentPadding: EdgeInsets.zero,
-                    onTap: () {
-                      Navigator.pop(ctx);
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (_) => const FarmerDashboardScreen()),
-                      );
-                    },
-                  ),
-                ],
                 if (user.isAdmin) ...[
                   ListTile(
                     leading: const Icon(Icons.admin_panel_settings_rounded, color: Color(0xFFB71C1C)),
