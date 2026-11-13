@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../theme/app_colors.dart';
-import 'resources_screen.dart';
 
 class AboutScreen extends StatelessWidget {
   const AboutScreen({super.key});
@@ -167,78 +166,6 @@ class AboutScreen extends StatelessWidget {
                   _buildFeatureRow(Icons.healing_outlined, 'Traditional Home Remedies with Step-by-Step Recipes'),
                   _buildFeatureRow(Icons.history_rounded, 'Local Scan History with Confidence Meters'),
                   _buildFeatureRow(Icons.local_hospital_outlined, 'Doctor Consultation Recommendation Safeguard'),
-                ],
-              ),
-            ),
-            const SizedBox(height: 14),
-
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: isDark ? AppColors.surfaceDark : Colors.white,
-                borderRadius: BorderRadius.circular(18),
-                border: Border.all(
-                  color: isDark ? AppColors.borderDark : AppColors.borderLight,
-                ),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF2E7D32).withOpacity(0.12),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: const Icon(Icons.verified_outlined, color: Color(0xFF2E7D32), size: 20),
-                      ),
-                      const SizedBox(width: 10),
-                      const Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Agricultural & Safety Resources',
-                              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
-                            ),
-                            Text(
-                              'e-Charak, NCCIH Safety, WHO, and CSIR Portals',
-                              style: TextStyle(fontSize: 11.5, color: AppColors.textMutedLight),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 12),
-                  Text(
-                    'Access verified government portals, clinical herb-drug safety databases, and grower support directories.',
-                    style: TextStyle(
-                      fontSize: 13,
-                      height: 1.45,
-                      color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight,
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  SizedBox(
-                    width: double.infinity,
-                    child: OutlinedButton.icon(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (_) => const AgriculturalResourcesScreen()),
-                        );
-                      },
-                      icon: const Icon(Icons.open_in_new_rounded, size: 16),
-                      label: const Text('Open Institutional Directory', style: TextStyle(fontWeight: FontWeight.bold)),
-                      style: OutlinedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 12),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                      ),
-                    ),
-                  ),
                 ],
               ),
             ),
