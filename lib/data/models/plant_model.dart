@@ -1,4 +1,11 @@
 
+/// Evidence level for medicinal claims.
+/// - `traditional` : documented traditional/folk use only
+/// - `lab`         : in-vitro or animal study evidence
+/// - `clinical`    : human clinical trial evidence
+/// - `unknown`     : not yet reviewed
+enum EvidenceLevel { traditional, lab, clinical, unknown }
+
 class Plant {
   final String id;
   final String commonName;
@@ -22,6 +29,16 @@ class Plant {
   final String plantType;
   final bool isSupportedInModel2;
 
+  // ── Stage 1 additions (all optional / backward-compatible) ──
+  /// Highest evidence level available for this plant's medicinal uses.
+  final EvidenceLevel evidenceLevel;
+  /// Known herb–drug interactions (brief descriptions).
+  final List<String> drugInteractions;
+  /// Source references (e.g. "WHO Monographs, 2002").
+  final List<String> sources;
+  /// Common name IDs of visually similar plants (look-alikes).
+  final List<String> lookAlikeNames;
+
   const Plant({
     required this.id,
     required this.commonName,
@@ -44,9 +61,22 @@ class Plant {
     this.appearance = '',
     this.plantType = 'Medicinal Herb',
     this.isSupportedInModel2 = true,
+    this.evidenceLevel = EvidenceLevel.unknown,
+    this.drugInteractions = const [],
+    this.sources = const [],
+    this.lookAlikeNames = const [],
   });
 
   factory Plant.fromJson(Map<String, dynamic> json) {
+    EvidenceLevel parseEvidence(String? s) {
+      switch (s) {
+        case 'traditional': return EvidenceLevel.traditional;
+        case 'lab': return EvidenceLevel.lab;
+        case 'clinical': return EvidenceLevel.clinical;
+        default: return EvidenceLevel.unknown;
+      }
+    }
+
     return Plant(
       id: json['id'] as String,
       commonName: json['commonName'] as String,
@@ -69,6 +99,10 @@ class Plant {
       appearance: json['appearance'] as String? ?? '',
       plantType: json['plantType'] as String? ?? 'Medicinal Plant',
       isSupportedInModel2: json['isSupportedInModel2'] as bool? ?? true,
+      evidenceLevel: parseEvidence(json['evidenceLevel'] as String?),
+      drugInteractions: List<String>.from(json['drugInteractions'] ?? []),
+      sources: List<String>.from(json['sources'] ?? []),
+      lookAlikeNames: List<String>.from(json['lookAlikeNames'] ?? []),
     );
   }
 
@@ -95,6 +129,10 @@ class Plant {
       'appearance': appearance,
       'plantType': plantType,
       'isSupportedInModel2': isSupportedInModel2,
+      'evidenceLevel': evidenceLevel.name,
+      'drugInteractions': drugInteractions,
+      'sources': sources,
+      'lookAlikeNames': lookAlikeNames,
     };
   }
 }

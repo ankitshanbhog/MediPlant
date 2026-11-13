@@ -25,12 +25,65 @@ class DatabaseHelper {
     final dbPath = await getDatabasesPath();
     final path = join(dbPath, filePath);
 
-    return await openDatabase(
+    final db = await openDatabase(
       path,
       version: 8,
       onCreate: _createDB,
       onUpgrade: _onUpgrade,
     );
+    await _ensureFarmerTable(db);
+    return db;
+  }
+
+  Future<void> _ensureFarmerTable(Database db) async {
+    await db.execute('''
+      CREATE TABLE IF NOT EXISTS farmer_crops (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        plantName TEXT NOT NULL,
+        stage TEXT NOT NULL,
+        sowingDate TEXT NOT NULL,
+        expectedHarvest TEXT NOT NULL,
+        plotArea TEXT,
+        quantity TEXT,
+        notes TEXT,
+        isSynced INTEGER NOT NULL DEFAULT 0
+      )
+    ''');
+
+    try {
+      final count = Sqflite.firstIntValue(
+        await db.rawQuery('SELECT COUNT(*) FROM farmer_crops'),
+      );
+      if (count == null || count == 0) {
+        final now = DateTime.now();
+        final sow1 = now.subtract(const Duration(days: 55)).toString().substring(0, 10);
+        final harv1 = now.add(const Duration(days: 105)).toString().substring(0, 10);
+        final sow2 = now.subtract(const Duration(days: 40)).toString().substring(0, 10);
+        final harv2 = now.add(const Duration(days: 40)).toString().substring(0, 10);
+
+        await db.insert('farmer_crops', {
+          'plantName': 'Ashwagandha (Withania somnifera)',
+          'stage': 'Vegetative Growth',
+          'sowingDate': sow1,
+          'expectedHarvest': harv1,
+          'plotArea': '1.5 Acres',
+          'quantity': '850 kg dried roots (est.)',
+          'notes': 'Raised bed line sowing; soil test pH 7.8. Certified organic seed batch #ASH-2026-B1.',
+          'isSynced': 1,
+        });
+
+        await db.insert('farmer_crops', {
+          'plantName': 'Tulsi (Holy Basil)',
+          'stage': 'Flowering Stage',
+          'sowingDate': sow2,
+          'expectedHarvest': harv2,
+          'plotArea': '0.75 Acres',
+          'quantity': '420 kg dry leaf herbage',
+          'notes': 'First harvest scheduled at 80% bloom; drip-irrigated plot.',
+          'isSynced': 1,
+        });
+      }
+    } catch (_) {}
   }
 
   Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
@@ -570,8 +623,47 @@ class DatabaseHelper {
   }
 
   Plant _rowToPlant(Map<String, dynamic> row) {
+    final id = row['id'] as String;
+    Plant? mock;
+    try {
+      mock = mockPlants.firstWhere((p) => p.id == id);
+    } catch (_) {}
+
+    EvidenceLevel ev = mock?.evidenceLevel ?? EvidenceLevel.unknown;
+    if (row['evidenceLevel'] != null) {
+      final s = row['evidenceLevel'] as String;
+      if (s == 'traditional') {
+        ev = EvidenceLevel.traditional;
+      } else if (s == 'lab') {
+        ev = EvidenceLevel.lab;
+      } else if (s == 'clinical') {
+        ev = EvidenceLevel.clinical;
+      }
+    }
+
+    List<String> drugInteractions = mock?.drugInteractions ?? const [];
+    if (row['drugInteractions'] != null) {
+      try {
+        drugInteractions = List<String>.from(jsonDecode(row['drugInteractions'] as String));
+      } catch (_) {}
+    }
+
+    List<String> sources = mock?.sources ?? const [];
+    if (row['sources'] != null) {
+      try {
+        sources = List<String>.from(jsonDecode(row['sources'] as String));
+      } catch (_) {}
+    }
+
+    List<String> lookAlikeNames = mock?.lookAlikeNames ?? const [];
+    if (row['lookAlikeNames'] != null) {
+      try {
+        lookAlikeNames = List<String>.from(jsonDecode(row['lookAlikeNames'] as String));
+      } catch (_) {}
+    }
+
     return Plant(
-      id: row['id'] as String,
+      id: id,
       commonName: row['commonName'] as String,
       scientificName: row['scientificName'] as String,
       family: row['family'] as String,
@@ -592,6 +684,10 @@ class DatabaseHelper {
       appearance: (row['appearance'] as String?) ?? '',
       plantType: (row['plantType'] as String?) ?? 'Medicinal Plant',
       isSupportedInModel2: (row['isSupportedInModel2'] as int) == 1,
+      evidenceLevel: ev,
+      drugInteractions: drugInteractions,
+      sources: sources,
+      lookAlikeNames: lookAlikeNames,
     );
   }
 
@@ -772,5 +868,57 @@ class DatabaseHelper {
       {'key': key, 'value': value},
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
+  }
+
+  // ── Farmer Local Database Methods ──
+  Future<List<Map<String, dynamic>>> getLocalFarmerCrops() async {
+    final db = await database;
+    return await db.query('farmer_crops', orderBy: 'id DESC');
+  }
+
+  Future<int> insertLocalFarmerCrop(Map<String, dynamic> crop) async {
+    final db = await database;
+    return await db.insert('farmer_crops', crop);
+  }
+
+  Future<void> insertOrUpdateCloudCrop({
+    required int id,
+    required String plantName,
+    required String stage,
+    required String sowingDate,
+    required String expectedHarvest,
+    String? quantity,
+    String? notes,
+  }) async {
+    final db = await database;
+    await db.insert(
+      'farmer_crops',
+      {
+        'id': id,
+        'plantName': plantName,
+        'stage': stage,
+        'sowingDate': sowingDate,
+        'expectedHarvest': expectedHarvest,
+        'plotArea': '1.0 Acre',
+        'quantity': quantity ?? '',
+        'notes': notes ?? '',
+        'isSynced': 1,
+      },
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+  }
+
+  Future<void> updateLocalFarmerCropStage(int id, String newStage, {String? notes}) async {
+    final db = await database;
+    final data = <String, dynamic>{'stage': newStage};
+    if (notes != null && notes.isNotEmpty) {
+      data['notes'] = notes;
+    }
+    await db.update('farmer_crops', data, where: 'id = ?', whereArgs: [id]);
+  }
+
+  Future<void> deleteLocalFarmerCrop(int id) async {
+    final db = await database;
+    await db.delete('farmer_crops', where: 'id = ?', whereArgs: [id]);
   }
 }

@@ -8,72 +8,74 @@ Usage:
 
 import os
 import argparse
-import torch
 import numpy as np
-from sklearn .metrics import classification_report ,confusion_matrix
+import tensorflow as tf
+from sklearn.metrics import classification_report, confusion_matrix
 from tqdm import tqdm
+import onnxruntime as ort
 
-from config import VAL_DIR ,CHECKPOINTS_DIR ,IMAGE_SIZE ,DEVICE
-from model import build_gate_model
-from dataset_loader import create_gate_dataloaders
+from config import VAL_DIR, CHECKPOINTS_DIR, IMAGE_SIZE, CLASSES
 
-def evaluate (model_path :str =None ):
-    if model_path is None :
-        model_path =os .path .join (CHECKPOINTS_DIR ,"best_gate_model.pth")
+def evaluate(model_path: str = None):
+    if model_path is None:
+        model_path = os.path.join(os.path.dirname(__file__), "exports", "plant_gate_model.onnx")
 
-    if not os .path .exists (model_path ):
-        print (f"[ERROR] Checkpoint not found at: {model_path }")
-        print ("Please train the model first by running `python train_gate.py`.")
+    if not os.path.exists(model_path):
+        print(f"[ERROR] Model not found at: {model_path}")
         return
 
-    print (f"\nLoading checkpoint: {model_path }")
-    checkpoint =torch .load (model_path ,map_location =DEVICE )
-    backbone =checkpoint .get ("backbone","mobilenet_v3_small")
-    class_names =checkpoint .get ("class_names",["non_plant","plant"])
+    print(f"\nLoading ONNX model: {model_path}")
+    sess = ort.InferenceSession(model_path, providers=["CPUExecutionProvider"])
+    input_name = sess.get_inputs()[0].name
 
-    model =build_gate_model (backbone =backbone ,pretrained =False )
-    model .load_state_dict (checkpoint ["state_dict"])
-    model .to (DEVICE )
-    model .eval ()
+    if not os.path.exists(VAL_DIR):
+        print(f"[ERROR] Validation directory not found at: {VAL_DIR}")
+        return
 
-    _ ,val_loader ,_ =create_gate_dataloaders (
-    train_dir =VAL_DIR ,
-    val_dir =VAL_DIR ,
-    batch_size =32 ,
-    image_size =IMAGE_SIZE
+    val_dataset = tf.keras.utils.image_dataset_from_directory(
+        VAL_DIR,
+        image_size=(IMAGE_SIZE, IMAGE_SIZE),
+        batch_size=32,
+        shuffle=False,
+        label_mode="int",
     )
+    class_names = val_dataset.class_names
 
-    all_preds =[]
-    all_labels =[]
+    mean = np.array([0.485, 0.456, 0.406], dtype=np.float32)
+    std = np.array([0.229, 0.224, 0.225], dtype=np.float32)
 
-    print (f"Evaluating {len (val_loader .dataset )} validation samples across classes: {class_names }...\n")
-    with torch .no_grad ():
-        for images ,labels in tqdm (val_loader ,desc ="Testing Gate Model"):
-            images =images .to (DEVICE )
-            outputs =model (images )
-            preds =torch .argmax (outputs ,dim =1 ).cpu ().numpy ()
-            all_preds .extend (preds )
-            all_labels .extend (labels .numpy ())
+    all_preds = []
+    all_labels = []
 
-    all_preds =np .array (all_preds )
-    all_labels =np .array (all_labels )
+    print(f"Evaluating validation samples across classes: {class_names}...\n")
+    for images, labels in tqdm(val_dataset, desc="Evaluating Gate Model"):
+        arr = (images.numpy() / 255.0 - mean) / std
+        arr = np.transpose(arr, (0, 3, 1, 2)).astype(np.float32)
+        outputs = sess.run(None, {input_name: arr})[0]
+        preds = np.argmax(outputs, axis=1)
 
-    report =classification_report (all_labels ,all_preds ,target_names =class_names ,digits =4 )
-    cm =confusion_matrix (all_labels ,all_preds )
+        all_preds.extend(preds)
+        all_labels.extend(labels.numpy())
 
-    print ("\n========================================================")
-    print (" MediPlant Gate Keeper Classification Report")
-    print ("========================================================")
-    print (report )
+    all_preds = np.array(all_preds)
+    all_labels = np.array(all_labels)
 
-    print ("Confusion Matrix:")
-    print (f"                Predicted Non-Plant  Predicted Plant")
-    print (f"Actual Non-Plant:     {cm [0 ][0 ]:<15}      {cm [0 ][1 ]:<15}")
-    print (f"Actual Plant:         {cm [1 ][0 ]:<15}      {cm [1 ][1 ]:<15}")
-    print ("========================================================\n")
+    report = classification_report(all_labels, all_preds, target_names=class_names, digits=4)
+    cm = confusion_matrix(all_labels, all_preds)
 
-if __name__ =="__main__":
-    parser =argparse .ArgumentParser ()
-    parser .add_argument ("--model",type =str ,default =None )
-    args =parser .parse_args ()
-    evaluate (args .model )
+    print("\n========================================================")
+    print(" MediPlant Gate Keeper Classification Report")
+    print("========================================================")
+    print(report)
+
+    print("Confusion Matrix:")
+    print(f"                Predicted Non-Plant  Predicted Plant")
+    print(f"Actual Non-Plant:     {cm[0][0]:<15}      {cm[0][1]:<15}")
+    print(f"Actual Plant:         {cm[1][0]:<15}      {cm[1][1]:<15}")
+    print("========================================================\n")
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--model", type=str, default=None)
+    args = parser.parse_args()
+    evaluate(args.model)

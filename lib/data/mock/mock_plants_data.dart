@@ -76,6 +76,22 @@ final List<Plant> mockPlants = [
     appearance: 'Dense rosette of thick, lanceolate, fleshy green leaves with serrated spiny margins.',
     plantType: 'Medicinal Succulent',
     isSupportedInModel2: true,
+    evidenceLevel: EvidenceLevel.lab,
+    drugInteractions: [
+      'May potentiate hypoglycaemic drugs (oral aloin)',
+      'Caution with diuretics — risk of hypokalemia',
+      'May enhance anticoagulant effects of warfarin',
+    ],
+    sources: [
+      'WHO Monographs on Selected Medicinal Plants, Vol. 1, 1999',
+      'ESCOP Monographs: Aloe Barbadensis, 2003',
+      'Surjushe A. et al., Indian J Dermatol, 2008',
+    ],
+    lookAlikeNames: [
+      'Agave americana (Century Plant)',
+      'Gasteria species',
+      'Haworthia attenuata',
+    ],
   ),
 
   const Plant(
@@ -148,6 +164,22 @@ final List<Plant> mockPlants = [
     appearance: 'Small to medium tree with light gray bark, feathery pinnate leaves, and pale green round fruit.',
     plantType: 'Medicinal Deciduous Tree',
     isSupportedInModel2: true,
+    evidenceLevel: EvidenceLevel.clinical,
+    drugInteractions: [
+      'May enhance antiplatelet/anticoagulant therapy — monitor INR',
+      'Potential additive hypoglycaemic effect with insulin or metformin',
+      'May interfere with iron absorption when taken simultaneously',
+    ],
+    sources: [
+      'Chopra RN et al., Glossary of Indian Medicinal Plants, CSIR 1956',
+      'Bhattacharya A. et al., Phytomedicine, 1999',
+      'European Journal of Clinical Nutrition, Vinson et al., 2001',
+    ],
+    lookAlikeNames: [
+      'Phyllanthus niruri (Stonebreaker)',
+      'Phyllanthus acidus (Otaheite Gooseberry)',
+      'Terminalia chebula (Haritaki)',
+    ],
   ),
 
   const Plant(
@@ -223,6 +255,23 @@ final List<Plant> mockPlants = [
     appearance: 'Small woody shrub (35-75 cm) with dull green elliptic leaves, bell-shaped greenish-yellow flowers, and red berries.',
     plantType: 'Medicinal Shrub',
     isSupportedInModel2: true,
+    evidenceLevel: EvidenceLevel.clinical,
+    drugInteractions: [
+      'May potentiate sedatives and CNS depressants',
+      'Avoid concurrent use with immunosuppressants',
+      'Possible additive thyroid-stimulant effect — caution in hyperthyroidism',
+      'May enhance hypoglycaemic medications',
+    ],
+    sources: [
+      'Chandrasekhar K. et al., Indian J Psychol Med, 2012',
+      'WHO Monographs on Selected Medicinal Plants, Vol. 2, 2002',
+      'Wankhede S. et al., J Int Soc Sports Nutr, 2015',
+    ],
+    lookAlikeNames: [
+      'Physalis alkekengi (Chinese Lantern)',
+      'Withania coagulans (Rennet plant)',
+      'Datura stramonium — TOXIC, do not confuse',
+    ],
   ),
 
   const Plant(
@@ -294,6 +343,20 @@ final List<Plant> mockPlants = [
     appearance: 'Erect perennial herb (40-60 cm) with reddish-purple stems, narrow lanceolate aromatic leaves, and pale purple flower heads.',
     plantType: 'Medicinal Herb',
     isSupportedInModel2: true,
+    evidenceLevel: EvidenceLevel.traditional,
+    drugInteractions: [
+      'No clinically significant drug interactions documented to date',
+      'Theoretical caution with anticoagulants due to coumarin content',
+    ],
+    sources: [
+      'Ayapana triplinervis — Useful Plants of the World, Orwa et al., 2009',
+      'Packer J. et al., Journal of Ethnopharmacology, 2012',
+    ],
+    lookAlikeNames: [
+      'Eupatorium perfoliatum (Boneset)',
+      'Mikania micrantha (Mile-a-minute weed)',
+      'Chromolaena odorata — INVASIVE, common confusion',
+    ],
   ),
 
   const Plant(
@@ -367,6 +430,23 @@ final List<Plant> mockPlants = [
     appearance: 'Low creeping succulent perennial with oblong fleshy leaves and delicate pale blue or white flowers.',
     plantType: 'Medicinal Aquatic Succulent',
     isSupportedInModel2: true,
+    evidenceLevel: EvidenceLevel.clinical,
+    drugInteractions: [
+      'May enhance benzodiazepine / sedative CNS effects',
+      'Caution with calcium channel blockers',
+      'May inhibit CYP450 3A4 enzymes — check co-medications',
+      'Avoid with antiepileptic drugs without medical supervision',
+    ],
+    sources: [
+      'Stough C. et al., Psychopharmacology, 2001',
+      'Roodenrys S. et al., Neuropsychopharmacology, 2002',
+      'WHO Monographs on Selected Medicinal Plants, Vol. 2, 2002',
+    ],
+    lookAlikeNames: [
+      'Bacopa monnieri var. (Water Hyssop cultivars)',
+      'Centella asiatica — may be confused in markets',
+      'Lindernia crustacea (Malaysian false pimpernel)',
+    ],
   ),
 
   const Plant(
@@ -439,6 +519,23 @@ final List<Plant> mockPlants = [
     appearance: 'Creeping herbaceous perennial with slender stolons, kidney-shaped notched leaves, and tiny pinkish-white flowers.',
     plantType: 'Medicinal Herb',
     isSupportedInModel2: true,
+    evidenceLevel: EvidenceLevel.clinical,
+    drugInteractions: [
+      'Additive sedative potential with CNS depressants',
+      'May potentiate antidiabetic medications',
+      'Caution with hepatotoxic drugs — monitor liver enzymes',
+      'Possible interaction with cholesterol-lowering drugs',
+    ],
+    sources: [
+      'Brinkhaus B. et al., Phytomedicine, 2000',
+      'WHO Monographs on Selected Medicinal Plants, Vol. 1, 1999',
+      'Mato L. et al., J Ethnopharmacol, 2000',
+    ],
+    lookAlikeNames: [
+      'Hydrocotyle sibthorpioides (Lawn Marshpennywort)',
+      'Bacopa monnieri — frequently confused in Ayurveda',
+      'Dichondra micrantha',
+    ],
   ),
 
   const Plant(
@@ -512,6 +609,22 @@ final List<Plant> mockPlants = [
     appearance: 'Fast-growing slender deciduous tree with drooping branches, tripinnate feathery leaves, fragrant white flowers, and long ribbed seed pods.',
     plantType: 'Medicinal Superfood Tree',
     isSupportedInModel2: true,
+    evidenceLevel: EvidenceLevel.lab,
+    drugInteractions: [
+      'May enhance hypoglycaemic medications — monitor blood glucose',
+      'May potentiate antihypertensive drugs',
+      'High vitamin K content may interact with anticoagulants (warfarin)',
+    ],
+    sources: [
+      'Anwar F. et al., Phytotherapy Research, 2007',
+      'Kasolo JN et al., J Med Plants Res, 2010',
+      'Leone A. et al., International Journal of Molecular Sciences, 2015',
+    ],
+    lookAlikeNames: [
+      'Canavalia ensiformis (Jack Bean) — leaf confusion',
+      'Sesbania grandiflora — similar leaf shape',
+      'Cassia angustifolia',
+    ],
   ),
 
   const Plant(
@@ -582,6 +695,20 @@ final List<Plant> mockPlants = [
     appearance: 'Upright dark green shrub (1-2 m) with flexible slender stems, alternate ovate leaves, and tiny dark red flowers along the underside of branchlets.',
     plantType: 'Medicinal Shrub / Vegetable',
     isSupportedInModel2: true,
+    evidenceLevel: EvidenceLevel.traditional,
+    drugInteractions: [
+      'No significant pharmacological drug interactions documented',
+      'High oxalate content — caution with calcium supplements and kidney stone history',
+    ],
+    sources: [
+      'Orwa C. et al., Agroforestree Database 4.0, 2009',
+      'Flach M. & Rumawas F., Plant Resources of South-East Asia, 1996',
+    ],
+    lookAlikeNames: [
+      'Sauropus androgynus (Katuk / Sweet Leaf)',
+      'Breynia androgyna',
+      'Phyllanthus species',
+    ],
   ),
 
   const Plant(
@@ -655,6 +782,23 @@ final List<Plant> mockPlants = [
     appearance: 'Large evergreen tree (15-20 m) with broad spreading crown, pinnate serrated leaflets, and fragrant white flowers.',
     plantType: 'Medicinal Tree',
     isSupportedInModel2: true,
+    evidenceLevel: EvidenceLevel.lab,
+    drugInteractions: [
+      'May enhance hypoglycaemic drugs — monitor blood glucose closely',
+      'Immunosuppressant effects may antagonise immunotherapy',
+      'Potential interaction with barbiturates and antiseizure medications',
+      'Caution with anticoagulants',
+    ],
+    sources: [
+      'Biswas K. et al., Current Science, 2002',
+      'WHO Monographs on Selected Medicinal Plants, Vol. 2, 2002',
+      'Subapriya R. & Nagini S., Curr Med Chem Anticancer Agents, 2005',
+    ],
+    lookAlikeNames: [
+      'Melia azedarach (Chinaberry / Persian Lilac) — TOXIC look-alike',
+      'Swietenia mahagoni (Mahogany) — foliage confusion',
+      'Toona sinensis (Chinese Toon)',
+    ],
   ),
 
   const Plant(
@@ -727,6 +871,23 @@ final List<Plant> mockPlants = [
     appearance: 'Woody evergreen shrub with aromatic needle-like leaves (dark green above, white-pubescent beneath) and pale blue flowers.',
     plantType: 'Medicinal Aromatic Shrub',
     isSupportedInModel2: true,
+    evidenceLevel: EvidenceLevel.lab,
+    drugInteractions: [
+      'Avoid with anticoagulants (warfarin) — large medicinal doses may enhance bleeding risk',
+      'May enhance ACE inhibitor and diuretic hypotensive effects',
+      'Iron absorption inhibited when taken simultaneously',
+      'Potential interaction with lithium',
+    ],
+    sources: [
+      'Petiwala SM & Johnson JJ, Cancer Letters, 2015',
+      'Moreno S. et al., Food Chemistry, 2006',
+      'European Medicines Agency, Rosmarinus officinalis assessment report, 2010',
+    ],
+    lookAlikeNames: [
+      'Lavandula angustifolia (Lavender)',
+      'Salvia rosmarinus (taxonomic synonym)',
+      'Westringia fruticosa (Australian Rosemary)',
+    ],
   ),
 
   const Plant(
@@ -801,6 +962,23 @@ final List<Plant> mockPlants = [
     appearance: 'Small erect glabrous evergreen shrub (30-90 cm) with whorled leaves, white-to-pinkish flowers, and black-purple berries.',
     plantType: 'Medicinal Shrub (Controlled Dosing)',
     isSupportedInModel2: true,
+    evidenceLevel: EvidenceLevel.clinical,
+    drugInteractions: [
+      'CRITICAL: Additive hypotension with antihypertensives — closely monitor BP',
+      'Reserpine may potentiate CNS depressants and anaesthetics',
+      'Contraindicated with MAO inhibitors — severe hypertensive crisis risk',
+      'Interaction with digoxin and other cardiac glycosides',
+    ],
+    sources: [
+      'Dhar ML et al., Indian Journal of Experimental Biology, 1968',
+      'WHO Monographs on Selected Medicinal Plants, Vol. 2, 2002',
+      'Mukherjee PK, Quality Control of Herbal Drugs, 2002',
+    ],
+    lookAlikeNames: [
+      'Alstonia scholaris (Devil Tree)',
+      'Carissa carandas (Karonda)',
+      'Tabernaemontana divaricata — similar bark appearance',
+    ],
   ),
 
   const Plant(
@@ -875,6 +1053,23 @@ final List<Plant> mockPlants = [
     appearance: 'Aromatic branched subshrub (30-60 cm) with green or purple ovate serrate leaves and purple-flowered terminal racemes.',
     plantType: 'Medicinal Aromatic Herb',
     isSupportedInModel2: true,
+    evidenceLevel: EvidenceLevel.clinical,
+    drugInteractions: [
+      'May enhance antiplatelet / anticoagulant effects — caution with warfarin',
+      'Possible additive hypoglycaemic effect with antidiabetic medications',
+      'May inhibit CYP2D6 — potential interaction with tamoxifen and codeine',
+      'Caution with immunosuppressants',
+    ],
+    sources: [
+      'Cohen MM, J Ayurveda Integr Med, 2014',
+      'WHO Monographs on Selected Medicinal Plants, Vol. 2, 2002',
+      'Kochhar A. & Nagi M., Plant Foods for Human Nutrition, 2005',
+    ],
+    lookAlikeNames: [
+      'Ocimum basilicum (Sweet Basil)',
+      'Ocimum gratissimum (African Basil)',
+      'Orthosiphon aristatus (Cat Whiskers)',
+    ],
   ),
 
   const Plant(
@@ -948,5 +1143,20 @@ final List<Plant> mockPlants = [
     appearance: 'Medium-sized armed thorny deciduous tree with smooth gray bark, alternate pinnate leaves (3-5 leaflets), and round hard woody-shelled fruit.',
     plantType: 'Medicinal Fruit Tree',
     isSupportedInModel2: true,
+    evidenceLevel: EvidenceLevel.traditional,
+    drugInteractions: [
+      'May enhance laxative effects of stool softeners',
+      'High tannin content may inhibit iron absorption',
+      'Possible additive antidiarrhoeal effect with prescribed medications',
+    ],
+    sources: [
+      'Orwa C. et al., Agroforestree Database 4.0, 2009',
+      'Panda H., Handbook on Medicinal Herbs with Uses, 2004',
+    ],
+    lookAlikeNames: [
+      'Aegle marmelos (Bael / Bengal Quince) — commonly confused',
+      'Feronia limonia (synonym)',
+      'Citrus species — fruit confusion',
+    ],
   ),
 ];

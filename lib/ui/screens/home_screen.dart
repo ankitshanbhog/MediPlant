@@ -12,6 +12,7 @@ import '../../viewmodels/auth_viewmodel.dart';
 import 'farmer/farmer_dashboard_screen.dart';
 import 'admin/admin_dashboard_screen.dart';
 import 'auth/login_screen.dart';
+import 'resources_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   final VoidCallback onNavigateToIdentify;
@@ -475,6 +476,25 @@ class _HomeScreenState extends State<HomeScreen> {
                                     );
                                   },
                                 ),
+                              ElevatedButton.icon(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.white.withOpacity(0.2),
+                                  foregroundColor: Colors.white,
+                                  elevation: 0,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                    side: const BorderSide(color: Colors.white30),
+                                  ),
+                                ),
+                                icon: const Icon(Icons.verified_outlined, size: 18),
+                                label: const Text('Verified Resources', style: TextStyle(fontWeight: FontWeight.bold)),
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(builder: (_) => const AgriculturalResourcesScreen()),
+                                  );
+                                },
+                              ),
                             ],
                           ),
                         ],

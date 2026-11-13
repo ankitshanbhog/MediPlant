@@ -12,6 +12,8 @@ class FarmerDashboardScreen extends StatefulWidget {
 }
 
 class _FarmerDashboardScreenState extends State<FarmerDashboardScreen> {
+  String _guideSearchQuery = '';
+
   @override
   void initState() {
     super.initState();
@@ -20,34 +22,138 @@ class _FarmerDashboardScreenState extends State<FarmerDashboardScreen> {
     });
   }
 
+  void _showDatabaseArchitectureSheet(BuildContext context, bool isConnected) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (ctx) {
+        return Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: AppColors.primary.withOpacity(0.12),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(Icons.storage_rounded, color: AppColors.primary, size: 24),
+                  ),
+                  const SizedBox(width: 12),
+                  const Text(
+                    'Dual-Database Architecture',
+                    style: TextStyle(fontSize: 19, fontWeight: FontWeight.w900),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              Container(
+                padding: const EdgeInsets.all(14),
+                decoration: BoxDecoration(
+                  color: isDark ? AppColors.surfaceSubtleDark : const Color(0xFFF3F9F5),
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(color: const Color(0xFFD6EAE0)),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Row(
+                      children: [
+                        Icon(Icons.check_circle_rounded, size: 18, color: Color(0xFF2E7D32)),
+                        SizedBox(width: 8),
+                        Text('1. Local SQLite Engine (Active)', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 15)),
+                      ],
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      'All crop entries and harvest records are saved instantly to the local SQLite database. Works 100% offline in agricultural fields with zero latency.',
+                      style: TextStyle(fontSize: 13.5, height: 1.4, color: isDark ? Colors.white70 : Colors.black87),
+                    ),
+                    const SizedBox(height: 12),
+                    Row(
+                      children: [
+                        Icon(
+                          isConnected ? Icons.cloud_done_rounded : Icons.cloud_queue_rounded,
+                          size: 18,
+                          color: isConnected ? const Color(0xFF1565C0) : Colors.orange,
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          isConnected ? '2. Cloud Database (Synchronized)' : '2. Cloud Database (Offline Standby)',
+                          style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 15),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      'When network connectivity is detected, local records seamlessly synchronize with the central REST/PostgreSQL cloud server for multi-device backup.',
+                      style: TextStyle(fontSize: 13.5, height: 1.4, color: isDark ? Colors.white70 : Colors.black87),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 18),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () => Navigator.pop(ctx),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primary,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                  ),
+                  child: const Text('Got It', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final authVM = context.watch<AuthViewModel>();
     final farmerVM = context.watch<FarmerViewModel>();
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     if (!authVM.isFarmer) {
       return Scaffold(
         appBar: AppBar(title: const Text('Farmer Workspace')),
         body: Center(
           child: Padding(
-            padding: const EdgeInsets.all(24.0),
+            padding: const EdgeInsets.all(28.0),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Icon(Icons.lock_outline_rounded, size: 64, color: Colors.orange),
-                const SizedBox(height: 16),
-                const Text('Farmer Access Required', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                const Icon(Icons.agriculture_rounded, size: 68, color: AppColors.primary),
+                const SizedBox(height: 18),
+                const Text('Farmer Account Required', style: TextStyle(fontSize: 22, fontWeight: FontWeight.w900)),
                 const SizedBox(height: 8),
                 Text(
-                  'Please sign in with a registered Farmer account to access cultivation tools and crop records.',
+                  'Please sign in with a registered Farmer profile to access agronomy dossiers, crop planning, and local SQLite harvest tracking.',
                   textAlign: TextAlign.center,
-                  style: TextStyle(color: Colors.grey.shade600, fontSize: 13),
+                  style: TextStyle(color: isDark ? AppColors.textSecondaryDark : AppColors.textMutedLight, fontSize: 15, height: 1.4),
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 24),
                 ElevatedButton(
                   onPressed: () => Navigator.pop(context),
-                  style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF2E7D32), foregroundColor: Colors.white),
-                  child: const Text('Return Home'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primary,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 14),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                  ),
+                  child: const Text('Return Home', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
                 ),
               ],
             ),
@@ -56,209 +162,125 @@ class _FarmerDashboardScreenState extends State<FarmerDashboardScreen> {
       );
     }
 
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
     return Scaffold(
-      backgroundColor: isDark ? AppColors.backgroundDark : const Color(0xFFF8FAF8),
+      backgroundColor: isDark ? AppColors.backgroundDark : const Color(0xFFF7FAF8),
       appBar: AppBar(
-        title: Text(
-          'Farmer Hub',
-          style: TextStyle(
-            fontWeight: FontWeight.w800,
-            fontSize: 19,
-            letterSpacing: -0.3,
-            color: isDark ? AppColors.mint : const Color(0xFF1B5E20),
-          ),
+        title: const Text(
+          'Farmer Workspace',
+          style: TextStyle(fontWeight: FontWeight.w900, fontSize: 20, letterSpacing: -0.3),
         ),
-        backgroundColor: isDark ? AppColors.surfaceDark : Colors.white,
-        foregroundColor: isDark ? AppColors.mint : const Color(0xFF1B5E20),
-        elevation: 0,
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh_rounded),
-            tooltip: 'Refresh',
+            tooltip: 'Sync / Refresh',
             onPressed: () => farmerVM.loadFarmerData(),
           ),
-          const SizedBox(width: 4),
         ],
       ),
-      floatingActionButton: _buildContextualFAB(farmerVM),
+      floatingActionButton: farmerVM.selectedTabIndex == 0
+          ? FloatingActionButton.extended(
+              onPressed: () => _showAddCropSheet(context, farmerVM),
+              backgroundColor: AppColors.primary,
+              foregroundColor: Colors.white,
+              icon: const Icon(Icons.add_rounded, size: 22),
+              label: const Text('Record New Sowing', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 15)),
+            )
+          : null,
       body: farmerVM.isLoading
-          ? const Center(child: CircularProgressIndicator(color: Color(0xFF2E7D32)))
+          ? const Center(child: CircularProgressIndicator(color: AppColors.primary))
           : RefreshIndicator(
               onRefresh: () => farmerVM.loadFarmerData(),
-              color: const Color(0xFF2E7D32),
+              color: AppColors.primary,
               child: ListView(
                 physics: const AlwaysScrollableScrollPhysics(),
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
                 children: [
-                  _buildFarmerHeroBanner(context, farmerVM),
-                  const SizedBox(height: 14),
-                  _buildStatsRow(farmerVM, isDark),
+                  // Dual Architecture Status Banner (Tap to explain)
+                  _buildDualArchitectureBanner(context, farmerVM, isDark),
                   const SizedBox(height: 16),
-                  _buildCategoryTabs(farmerVM, isDark),
-                  const SizedBox(height: 14),
-                  _buildActiveTabView(context, farmerVM),
-                  const SizedBox(height: 80),
+
+                  // 4 Segmented Tabs
+                  _buildSegmentedTabs(farmerVM, isDark),
+                  const SizedBox(height: 18),
+
+                  // Active Tab View
+                  _buildActiveTabView(context, farmerVM, isDark),
+                  const SizedBox(height: 90),
                 ],
               ),
             ),
     );
   }
 
-  Widget _buildFarmerHeroBanner(BuildContext context, FarmerViewModel farmerVM) {
-    return Container(
-      padding: const EdgeInsets.all(18),
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [Color(0xFF14532D), Color(0xFF166534)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: const Color(0xFF14532D).withOpacity(0.25),
-            blurRadius: 14,
-            offset: const Offset(0, 6),
-          ),
-        ],
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            width: 44,
-            height: 44,
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.18),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: const Icon(Icons.agriculture_rounded, color: Colors.white, size: 26),
-          ),
-          const SizedBox(width: 12),
-          const Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Medicinal Crop Management',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 17,
-                    fontWeight: FontWeight.w800,
-                    letterSpacing: -0.2,
-                  ),
-                ),
-                SizedBox(height: 3),
-                Text(
-                  'Crop calendar, agronomic cultivation guides & market benchmark signals',
-                  style: TextStyle(color: Colors.white70, fontSize: 12, height: 1.3),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+  Widget _buildDualArchitectureBanner(BuildContext context, FarmerViewModel farmerVM, bool isDark) {
+    final isCloud = farmerVM.isCloudConnected;
 
-  Widget _buildStatsRow(FarmerViewModel farmerVM, bool isDark) {
-    final activeCrops = farmerVM.crops.length;
-    final totalGuides = farmerVM.cultivationGuides.length;
-    final totalSignals = ((farmerVM.marketInfo?['benchmarks'] as List?) ?? []).length;
-
-    return Row(
-      children: [
-        Expanded(
-          child: _buildMetricTile(
-            label: 'Crops Sown',
-            value: '$activeCrops',
-            unit: 'batches',
-            icon: Icons.calendar_today_rounded,
-            color: const Color(0xFF047857),
-            isDark: isDark,
-            onTap: () => farmerVM.setTabIndex(0),
-          ),
-        ),
-        const SizedBox(width: 10),
-        Expanded(
-          child: _buildMetricTile(
-            label: 'Agronomy Guides',
-            value: '$totalGuides',
-            unit: 'species',
-            icon: Icons.menu_book_rounded,
-            color: const Color(0xFF1D4ED8),
-            isDark: isDark,
-            onTap: () => farmerVM.setTabIndex(1),
-          ),
-        ),
-        const SizedBox(width: 10),
-        Expanded(
-          child: _buildMetricTile(
-            label: 'Market Signals',
-            value: '$totalSignals',
-            unit: 'benchmarks',
-            icon: Icons.trending_up_rounded,
-            color: const Color(0xFFD97706),
-            isDark: isDark,
-            onTap: () => farmerVM.setTabIndex(2),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildMetricTile({
-    required String label,
-    required String value,
-    required String unit,
-    required IconData icon,
-    required Color color,
-    required bool isDark,
-    required VoidCallback onTap,
-  }) {
     return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(14),
+      onTap: () => _showDatabaseArchitectureSheet(context, isCloud),
+      borderRadius: BorderRadius.circular(18),
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         decoration: BoxDecoration(
           color: isDark ? AppColors.surfaceDark : Colors.white,
-          borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: isDark ? AppColors.borderDark : Colors.grey.shade200),
+          borderRadius: BorderRadius.circular(18),
+          border: Border.all(
+            color: isDark ? AppColors.borderDark : const Color(0xFFDCE7DF),
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.03),
+              blurRadius: 8,
+              offset: const Offset(0, 3),
+            ),
+          ],
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: Row(
           children: [
-            Icon(icon, size: 20, color: color),
-            const SizedBox(height: 8),
-            Text(
-              value,
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.w900,
-                color: isDark ? Colors.white : const Color(0xFF0F172A),
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: const Color(0xFF2E7D32).withOpacity(0.12),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(Icons.check_circle_rounded, color: Color(0xFF2E7D32), size: 18),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Local SQLite Storage: ACTIVE',
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w900,
+                      color: Color(0xFF2E7D32),
+                    ),
+                  ),
+                  Text(
+                    isCloud ? 'Cloud Database: Synchronized' : 'Cloud Sync: Standby (Offline Ready)',
+                    style: TextStyle(
+                      fontSize: 12.5,
+                      fontWeight: FontWeight.w600,
+                      color: isCloud ? const Color(0xFF1565C0) : Colors.orange.shade800,
+                    ),
+                  ),
+                ],
               ),
             ),
-            Row(
-              children: [
-                Flexible(
-                  child: Text(
-                    label,
-                    style: TextStyle(
-                      fontSize: 10,
-                      color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
-                      fontWeight: FontWeight.w600,
-                    ),
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-              ],
-            ),
-            Text(
-              unit,
-              style: TextStyle(fontSize: 10, color: color, fontWeight: FontWeight.bold),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              decoration: BoxDecoration(
+                color: AppColors.primary.withOpacity(0.08),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: const Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text('Info', style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.bold, color: AppColors.primary)),
+                  Icon(Icons.chevron_right_rounded, size: 14, color: AppColors.primary),
+                ],
+              ),
             ),
           ],
         ),
@@ -266,49 +288,60 @@ class _FarmerDashboardScreenState extends State<FarmerDashboardScreen> {
     );
   }
 
-  Widget _buildCategoryTabs(FarmerViewModel farmerVM, bool isDark) {
+  Widget _buildSegmentedTabs(FarmerViewModel farmerVM, bool isDark) {
     final tabs = [
-      {'title': 'Crop Planning & Calendar', 'icon': Icons.calendar_today_rounded},
-      {'title': 'Agronomy Guides', 'icon': Icons.menu_book_rounded},
-      {'title': 'Market Signals & Benchmarks', 'icon': Icons.trending_up_rounded},
+      {'title': 'Crop Tracker', 'icon': Icons.calendar_today_rounded, 'count': '${farmerVM.crops.length}'},
+      {'title': 'Cultivation Dossiers', 'icon': Icons.menu_book_rounded, 'count': '${farmerVM.dossiers.length}'},
+      {'title': 'Gov Subsidies', 'icon': Icons.account_balance_rounded, 'count': '${farmerVM.schemes.length}'},
+      {'title': 'Market Rates', 'icon': Icons.trending_up_rounded, 'count': '${farmerVM.benchmarks.length}'},
     ];
 
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
+      physics: const BouncingScrollPhysics(),
       child: Row(
-        children: List.generate(tabs.length, (idx) {
-          final isSelected = farmerVM.selectedTabIndex == idx;
-          final tab = tabs[idx];
+        children: List.generate(tabs.length, (index) {
+          final isSelected = farmerVM.selectedTabIndex == index;
+          final tab = tabs[index];
+
           return Padding(
             padding: const EdgeInsets.only(right: 8.0),
-            child: ChoiceChip(
-              avatar: Icon(
-                tab['icon'] as IconData,
-                size: 15,
-                color: isSelected
-                    ? Colors.white
-                    : (isDark ? AppColors.mint : const Color(0xFF166534)),
-              ),
-              label: Text(
-                tab['title'] as String,
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w700,
+            child: InkWell(
+              onTap: () => farmerVM.setTabIndex(index),
+              borderRadius: BorderRadius.circular(20),
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                decoration: BoxDecoration(
                   color: isSelected
-                      ? Colors.white
-                      : (isDark ? AppColors.mint : const Color(0xFF166534)),
+                      ? AppColors.primary
+                      : (isDark ? AppColors.surfaceDark : Colors.white),
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(
+                    color: isSelected ? AppColors.primary : (isDark ? AppColors.borderDark : const Color(0xFFE2EBE5)),
+                    width: isSelected ? 1.6 : 1.0,
+                  ),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      tab['icon'] as IconData,
+                      size: 17,
+                      color: isSelected ? Colors.white : (isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight),
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      '${tab['title']} (${tab['count']})',
+                      style: TextStyle(
+                        fontSize: 14.5,
+                        fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
+                        color: isSelected ? Colors.white : (isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight),
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              selected: isSelected,
-              selectedColor: const Color(0xFF15803D),
-              backgroundColor: isDark ? AppColors.surfaceDark : Colors.white,
-              side: BorderSide(
-                color: isSelected
-                    ? const Color(0xFF15803D)
-                    : (isDark ? AppColors.borderDark : Colors.grey.shade300),
-              ),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-              onSelected: (_) => farmerVM.setTabIndex(idx),
             ),
           );
         }),
@@ -316,29 +349,55 @@ class _FarmerDashboardScreenState extends State<FarmerDashboardScreen> {
     );
   }
 
-  Widget _buildActiveTabView(BuildContext context, FarmerViewModel farmerVM) {
+  Widget _buildActiveTabView(BuildContext context, FarmerViewModel farmerVM, bool isDark) {
     switch (farmerVM.selectedTabIndex) {
       case 0:
-        return _buildCropCalendarView(context, farmerVM);
+        return _buildCropTrackerTab(context, farmerVM, isDark);
       case 1:
-        return _buildCultivationGuideView(farmerVM);
+        return _buildCultivationDossiersTab(farmerVM, isDark);
       case 2:
-        return _buildMarketSignalsView(farmerVM);
+        return _buildGovernmentSubsidiesTab(farmerVM, isDark);
+      case 3:
+        return _buildMarketRatesTab(farmerVM, isDark);
       default:
-        return _buildCropCalendarView(context, farmerVM);
+        return _buildCropTrackerTab(context, farmerVM, isDark);
     }
   }
 
-  Widget _buildCropCalendarView(BuildContext context, FarmerViewModel farmerVM) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
+  // ════════════════════════════════════════════════════════════════════════
+  // TAB 1: CROP TRACKER & HARVESTS (SQLITE + CLOUD)
+  // ════════════════════════════════════════════════════════════════════════
+  Widget _buildCropTrackerTab(BuildContext context, FarmerViewModel farmerVM, bool isDark) {
     if (farmerVM.crops.isEmpty) {
-      return _buildEmptyState(
-        icon: Icons.grass_rounded,
-        title: 'No crops planned yet',
-        subtitle: 'Track sowing dates, vegetative stages, and expected harvest windows.',
-        buttonLabel: 'Record First Crop',
-        onTap: () => _showAddCropDialog(context, farmerVM),
+      return Container(
+        padding: const EdgeInsets.all(32),
+        decoration: BoxDecoration(
+          color: isDark ? AppColors.surfaceDark : Colors.white,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: isDark ? AppColors.borderDark : const Color(0xFFE5ECE7)),
+        ),
+        child: Center(
+          child: Column(
+            children: [
+              const Icon(Icons.grass_rounded, size: 48, color: AppColors.primary),
+              const SizedBox(height: 12),
+              const Text('No Sowing Records Yet', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w900)),
+              const SizedBox(height: 6),
+              Text(
+                'Track crop lifecycles, growth stages, and automatic harvest dates stored directly in your local SQLite database.',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 14, color: isDark ? AppColors.textSecondaryDark : AppColors.textMutedLight, height: 1.4),
+              ),
+              const SizedBox(height: 18),
+              ElevatedButton.icon(
+                onPressed: () => _showAddCropSheet(context, farmerVM),
+                icon: const Icon(Icons.add_rounded, size: 18),
+                label: const Text('Record First Crop', style: TextStyle(fontWeight: FontWeight.bold)),
+                style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary, foregroundColor: Colors.white),
+              ),
+            ],
+          ),
+        ),
       );
     }
 
@@ -348,201 +407,154 @@ class _FarmerDashboardScreenState extends State<FarmerDashboardScreen> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
-              'Active Crop Batches',
-              style: TextStyle(
-                fontSize: 15,
-                fontWeight: FontWeight.bold,
-                color: isDark ? Colors.white : Colors.black87,
-              ),
+            const Text(
+              'Active Botanical Batches',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w900, letterSpacing: -0.3),
             ),
             Text(
-              '${farmerVM.crops.length} species',
-              style: TextStyle(fontSize: 12, color: isDark ? Colors.grey.shade400 : Colors.grey.shade600),
+              '${farmerVM.crops.length} Batches',
+              style: TextStyle(fontSize: 13, color: isDark ? AppColors.textSecondaryDark : AppColors.textMutedLight, fontWeight: FontWeight.w700),
             ),
           ],
         ),
-        const SizedBox(height: 8),
-        ...farmerVM.crops.map((c) {
-          final id = c['id'] as int;
-          final plantName = c['plant_name'] ?? 'Medicinal Plant';
-          final stage = c['stage'] ?? 'Sowing';
-          final sowing = c['sowing_date'];
-          final harvest = c['expected_harvest'];
-          final qty = c['quantity'];
-          final notes = c['notes'];
+        const SizedBox(height: 12),
 
-          Color stageBg = isDark ? const Color(0xFF064E3B) : const Color(0xFFE8F5E9);
-          Color stageColor = isDark ? const Color(0xFF34D399) : const Color(0xFF2E7D32);
-          if (stage.contains('Harvest')) {
-            stageBg = isDark ? const Color(0xFF78350F) : const Color(0xFFFEF3C7);
-            stageColor = isDark ? const Color(0xFFFBBF24) : const Color(0xFFB45309);
-          } else if (stage.contains('Flowering')) {
-            stageBg = isDark ? const Color(0xFF4C1D95) : const Color(0xFFEDE9FE);
-            stageColor = isDark ? const Color(0xFFA78BFA) : const Color(0xFF6D28D9);
+        ...farmerVM.crops.map((c) {
+          final id = c['id'] is int ? c['id'] as int : int.tryParse(c['id'].toString()) ?? 0;
+          final plantName = c['plantName'] ?? c['plant_name'] ?? 'Medicinal Plant';
+          final stage = c['stage'] ?? 'Sowing';
+          final sow = c['sowingDate'] ?? c['sowing_date'] ?? '';
+          final harv = c['expectedHarvest'] ?? c['expected_harvest'] ?? '';
+          final plot = c['plotArea'] ?? '1 Acre';
+          final qty = c['quantity'] ?? '';
+          final notes = c['notes'] ?? '';
+
+          Color stageColor = const Color(0xFF2E7D32);
+          if (stage.toString().contains('Harvest')) {
+            stageColor = const Color(0xFFE65100);
+          } else if (stage.toString().contains('Flowering')) {
+            stageColor = const Color(0xFF5E35B1);
           }
 
-          return Card(
-            margin: const EdgeInsets.only(bottom: 10),
-            elevation: 0,
-            color: isDark ? AppColors.surfaceDark : Colors.white,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
-              side: BorderSide(color: isDark ? AppColors.borderDark : Colors.grey.shade200),
+          return Container(
+            margin: const EdgeInsets.only(bottom: 14),
+            padding: const EdgeInsets.all(18),
+            decoration: BoxDecoration(
+              color: isDark ? AppColors.surfaceDark : Colors.white,
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(
+                color: isDark ? AppColors.borderDark : const Color(0xFFE5ECE7),
+              ),
+              boxShadow: [
+                BoxShadow(color: Colors.black.withOpacity(0.03), blurRadius: 10, offset: const Offset(0, 3)),
+              ],
             ),
-            child: Padding(
-              padding: const EdgeInsets.all(14),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        plantName,
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: isDark ? Colors.white : Colors.black87,
-                        ),
-                      ),
-                      PopupMenuButton<String>(
-                        icon: Icon(Icons.more_vert, size: 18, color: isDark ? Colors.grey.shade400 : Colors.black54),
-                        onSelected: (val) {
-                          if (val == 'delete') {
-                            farmerVM.deleteCrop(id);
-                          } else {
-                            farmerVM.updateCropStage(id, val);
-                          }
-                        },
-                        itemBuilder: (ctx) => [
-                          const PopupMenuItem(value: 'Sowing / Germination', child: Text('Stage: Sowing')),
-                          const PopupMenuItem(value: 'Vegetative Growth', child: Text('Stage: Vegetative')),
-                          const PopupMenuItem(value: 'Flowering Stage', child: Text('Stage: Flowering')),
-                          const PopupMenuItem(value: 'Harvest Ready', child: Text('Stage: Harvest Ready')),
-                          const PopupMenuItem(value: 'Post-Harvest Curing', child: Text('Stage: Post-Harvest')),
-                          const PopupMenuDivider(),
-                          const PopupMenuItem(value: 'delete', child: Text('Delete Record', style: TextStyle(color: Colors.red))),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            plantName,
+                            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w900, letterSpacing: -0.3),
+                          ),
+                          const SizedBox(height: 4),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                            decoration: BoxDecoration(
+                              color: stageColor.withOpacity(0.12),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Text(
+                              stage,
+                              style: TextStyle(fontSize: 12.5, fontWeight: FontWeight.w800, color: stageColor),
+                            ),
+                          ),
                         ],
                       ),
-                    ],
-                  ),
-                  const SizedBox(height: 6),
-                  Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                        decoration: BoxDecoration(color: stageBg, borderRadius: BorderRadius.circular(6)),
-                        child: Text(stage, style: TextStyle(color: stageColor, fontSize: 11, fontWeight: FontWeight.bold)),
-                      ),
-                      if (qty != null && qty.isNotEmpty) ...[
-                        const SizedBox(width: 8),
-                        Text(qty, style: TextStyle(fontSize: 12, color: isDark ? Colors.grey.shade300 : Colors.grey.shade700)),
+                    ),
+                    PopupMenuButton<String>(
+                      icon: const Icon(Icons.more_vert_rounded),
+                      onSelected: (val) {
+                        if (val == 'delete') {
+                          farmerVM.deleteCrop(id);
+                        } else {
+                          farmerVM.updateCropStage(id, val);
+                        }
+                      },
+                      itemBuilder: (ctx) => [
+                        const PopupMenuItem(value: 'Sowing / Germination', child: Text('Stage: Sowing')),
+                        const PopupMenuItem(value: 'Vegetative Growth', child: Text('Stage: Vegetative Growth')),
+                        const PopupMenuItem(value: 'Flowering Stage', child: Text('Stage: Flowering Stage')),
+                        const PopupMenuItem(value: 'Harvest Ready', child: Text('Stage: Harvest Ready')),
+                        const PopupMenuItem(value: 'Post-Harvest Curing', child: Text('Stage: Post-Harvest Curing')),
+                        const PopupMenuDivider(),
+                        const PopupMenuItem(value: 'delete', child: Text('Delete Record', style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold))),
                       ],
-                    ],
-                  ),
-                  const SizedBox(height: 10),
-                  Row(
-                    children: [
-                      if (sowing != null && sowing.isNotEmpty) ...[
-                        Icon(Icons.calendar_today_rounded, size: 12, color: isDark ? Colors.grey.shade400 : Colors.grey),
-                        const SizedBox(width: 4),
-                        Text('Sown: $sowing', style: TextStyle(fontSize: 11, color: isDark ? Colors.grey.shade300 : Colors.grey.shade700)),
-                        const SizedBox(width: 14),
-                      ],
-                      if (harvest != null && harvest.isNotEmpty) ...[
-                        Icon(Icons.event_available_rounded, size: 13, color: isDark ? const Color(0xFF34D399) : const Color(0xFF047857)),
-                        const SizedBox(width: 4),
-                        Text(
-                          'Harvest: $harvest',
-                          style: TextStyle(
-                            fontSize: 11,
-                            color: isDark ? const Color(0xFF34D399) : const Color(0xFF047857),
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ],
-                  ),
-                  if (notes != null && notes.isNotEmpty) ...[
-                    const SizedBox(height: 8),
-                    Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: isDark ? const Color(0xFF1E293B) : const Color(0xFFF1F5F9),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Text(notes, style: TextStyle(fontSize: 11, color: isDark ? Colors.grey.shade300 : Colors.grey.shade800)),
                     ),
                   ],
-                ],
-              ),
-            ),
-          );
-        }),
-      ],
-    );
-  }
-
-  Widget _buildCultivationGuideView(FarmerViewModel farmerVM) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final guides = farmerVM.cultivationGuides;
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Botanical Agronomy Guides',
-          style: TextStyle(
-            fontSize: 15,
-            fontWeight: FontWeight.bold,
-            color: isDark ? Colors.white : Colors.black87,
-          ),
-        ),
-        const SizedBox(height: 4),
-        Text(
-          'Documented guidance on soil, climate, spacing, and post-harvest handling.',
-          style: TextStyle(fontSize: 12, color: isDark ? Colors.grey.shade400 : Colors.grey.shade600),
-        ),
-        const SizedBox(height: 10),
-        ...guides.map((g) {
-          final species = g['species'] ?? 'Botanical Species';
-          final part = g['primary_part'] ?? 'Whole Herb';
-
-          return Card(
-            margin: const EdgeInsets.only(bottom: 10),
-            elevation: 0,
-            color: isDark ? AppColors.surfaceDark : Colors.white,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
-              side: BorderSide(color: isDark ? AppColors.borderDark : Colors.grey.shade200),
-            ),
-            child: ExpansionTile(
-              tilePadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
-              leading: Icon(Icons.eco_rounded, color: isDark ? const Color(0xFF34D399) : const Color(0xFF166534)),
-              title: Text(
-                species,
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 14,
-                  color: isDark ? Colors.white : Colors.black87,
                 ),
-              ),
-              subtitle: Text(
-                'Primary Harvest: $part',
-                style: TextStyle(fontSize: 11, color: isDark ? Colors.grey.shade400 : Colors.grey.shade600),
-              ),
-              childrenPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              children: [
-                _buildGuideRow(Icons.landscape_rounded, 'Soil & pH', g['soil'], isDark),
-                _buildGuideRow(Icons.wb_sunny_rounded, 'Sunlight', g['sunlight'], isDark),
-                _buildGuideRow(Icons.thermostat_rounded, 'Climate', g['climate'], isDark),
-                _buildGuideRow(Icons.water_drop_rounded, 'Irrigation', g['irrigation'], isDark),
-                _buildGuideRow(Icons.grid_4x4_rounded, 'Spacing', g['spacing'], isDark),
-                _buildGuideRow(Icons.bug_report_rounded, 'Pests & Management', g['pests'], isDark),
-                _buildGuideRow(Icons.agriculture_rounded, 'Harvesting Time', g['harvesting'], isDark),
-                _buildGuideRow(Icons.inventory_2_rounded, 'Post-Harvest Curing', g['post_harvest'], isDark),
+                const SizedBox(height: 12),
+                Divider(color: isDark ? AppColors.borderDark : const Color(0xFFEDF2EE)),
+                const SizedBox(height: 8),
+
+                Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('Sowing Date', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: isDark ? AppColors.textMutedDark : AppColors.textMutedLight)),
+                          const SizedBox(height: 2),
+                          Text(sow.isNotEmpty ? sow : 'Recorded', style: const TextStyle(fontSize: 14.5, fontWeight: FontWeight.w600)),
+                        ],
+                      ),
+                    ),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('Target Harvest', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: isDark ? AppColors.textMutedDark : AppColors.textMutedLight)),
+                          const SizedBox(height: 2),
+                          Text(harv.isNotEmpty ? harv : 'Calculated', style: const TextStyle(fontSize: 14.5, fontWeight: FontWeight.w800, color: Color(0xFF2E7D32))),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 10),
+
+                Row(
+                  children: [
+                    Icon(Icons.landscape_rounded, size: 16, color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight),
+                    const SizedBox(width: 6),
+                    Text('Plot: $plot', style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
+                    if (qty.isNotEmpty) ...[
+                      const SizedBox(width: 14),
+                      Icon(Icons.inventory_2_outlined, size: 16, color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight),
+                      const SizedBox(width: 6),
+                      Text('Est: $qty', style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
+                    ],
+                  ],
+                ),
+
+                if (notes.isNotEmpty) ...[
+                  const SizedBox(height: 10),
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: isDark ? AppColors.surfaceSubtleDark : const Color(0xFFF5F8F6),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Text(notes, style: const TextStyle(fontSize: 13, height: 1.4)),
+                  ),
+                ],
               ],
             ),
           );
@@ -551,32 +563,124 @@ class _FarmerDashboardScreenState extends State<FarmerDashboardScreen> {
     );
   }
 
-  Widget _buildGuideRow(IconData icon, String title, String? desc, bool isDark) {
-    if (desc == null || desc.isEmpty) return const SizedBox.shrink();
+  // ════════════════════════════════════════════════════════════════════════
+  // TAB 2: CULTIVATION DOSSIERS (13 PLANTS - ICAR / NMPB DATA)
+  // ════════════════════════════════════════════════════════════════════════
+  Widget _buildCultivationDossiersTab(FarmerViewModel farmerVM, bool isDark) {
+    final filtered = farmerVM.dossiers.where((d) {
+      if (_guideSearchQuery.isEmpty) return true;
+      final q = _guideSearchQuery.toLowerCase();
+      return d.speciesName.toLowerCase().contains(q) ||
+          d.botanicalName.toLowerCase().contains(q) ||
+          d.soilAndPh.toLowerCase().contains(q);
+    }).toList();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'Botanical Agronomic Protocols',
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.w900, letterSpacing: -0.3),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          'Verified field guidelines sourced from NMPB and ICAR research bulletins',
+          style: TextStyle(fontSize: 13.5, color: isDark ? AppColors.textSecondaryDark : AppColors.textMutedLight),
+        ),
+        const SizedBox(height: 14),
+
+        // Search bar
+        TextField(
+          onChanged: (val) => setState(() => _guideSearchQuery = val.trim()),
+          decoration: InputDecoration(
+            hintText: 'Search species (e.g. Ashwagandha, Tulsi)...',
+            prefixIcon: const Icon(Icons.search_rounded, color: AppColors.primary),
+            filled: true,
+            fillColor: isDark ? AppColors.surfaceDark : Colors.white,
+            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide.none),
+          ),
+        ),
+        const SizedBox(height: 16),
+
+        ...filtered.map((dossier) {
+          return Container(
+            margin: const EdgeInsets.only(bottom: 16),
+            padding: const EdgeInsets.all(18),
+            decoration: BoxDecoration(
+              color: isDark ? AppColors.surfaceDark : Colors.white,
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(color: isDark ? AppColors.borderDark : const Color(0xFFE5ECE7)),
+              boxShadow: [
+                BoxShadow(color: Colors.black.withOpacity(0.03), blurRadius: 10, offset: const Offset(0, 3)),
+              ],
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: AppColors.primary.withOpacity(0.12),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: const Icon(Icons.eco_rounded, color: AppColors.primary, size: 24),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(dossier.speciesName, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w900)),
+                          Text(dossier.botanicalName, style: TextStyle(fontSize: 13.5, fontStyle: FontStyle.italic, color: isDark ? AppColors.mint : const Color(0xFF2E7D32), fontWeight: FontWeight.w600)),
+                          const SizedBox(height: 4),
+                          Text('Harvested Part: ${dossier.primaryPart}', style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 14),
+                Divider(color: isDark ? AppColors.borderDark : const Color(0xFFEDF2EE)),
+                const SizedBox(height: 8),
+
+                _buildDossierRow(Icons.landscape_rounded, 'Soil & pH Range', dossier.soilAndPh, isDark),
+                _buildDossierRow(Icons.grid_4x4_rounded, 'Seed Rate & Spacing', dossier.seedRateAndSpacing, isDark),
+                _buildDossierRow(Icons.thermostat_rounded, 'Agro-Climate Zone', dossier.climateZone, isDark),
+                _buildDossierRow(Icons.water_drop_rounded, 'Irrigation Protocol', dossier.irrigationNeeds, isDark),
+                _buildDossierRow(Icons.timelapse_rounded, 'Cycle to Maturity', '${dossier.daysToMaturity} days (${dossier.harvestingIndicators})', isDark),
+                _buildDossierRow(Icons.dry_cleaning_rounded, 'Post-Harvest Curing', dossier.postHarvestCuring, isDark),
+                _buildDossierRow(Icons.inventory_rounded, 'Expected Yield per Ha', dossier.expectedYield, isDark),
+              ],
+            ),
+          );
+        }),
+      ],
+    );
+  }
+
+  Widget _buildDossierRow(IconData icon, String label, String value, bool isDark) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 8.0),
+      padding: const EdgeInsets.only(bottom: 10),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icon, size: 14, color: isDark ? const Color(0xFF34D399) : const Color(0xFF166534)),
-          const SizedBox(width: 8),
+          Icon(icon, size: 16, color: AppColors.primary),
+          const SizedBox(width: 10),
           Expanded(
             child: RichText(
               text: TextSpan(
                 style: TextStyle(
-                  fontSize: 11,
-                  color: isDark ? Colors.grey.shade300 : const Color(0xFF334155),
-                  height: 1.4,
+                  fontSize: 14,
+                  height: 1.45,
+                  color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
                 ),
                 children: [
-                  TextSpan(
-                    text: '$title: ',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: isDark ? Colors.white : const Color(0xFF0F172A),
-                    ),
-                  ),
-                  TextSpan(text: desc),
+                  TextSpan(text: '$label: ', style: const TextStyle(fontWeight: FontWeight.w800)),
+                  TextSpan(text: value),
                 ],
               ),
             ),
@@ -586,123 +690,108 @@ class _FarmerDashboardScreenState extends State<FarmerDashboardScreen> {
     );
   }
 
-  Widget _buildMarketSignalsView(FarmerViewModel farmerVM) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final benchmarks = (farmerVM.marketInfo?['benchmarks'] as List?) ?? [];
-    final disclaimer = farmerVM.marketInfo?['disclaimer_notice'] ?? 'Benchmark reference only.';
-
+  // ════════════════════════════════════════════════════════════════════════
+  // TAB 3: GOVERNMENT SCHEMES & SUBSIDIES
+  // ════════════════════════════════════════════════════════════════════════
+  Widget _buildGovernmentSubsidiesTab(FarmerViewModel farmerVM, bool isDark) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Container(
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            color: isDark ? const Color(0xFF1E293B) : const Color(0xFFEFF6FF),
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: isDark ? const Color(0xFF334155) : const Color(0xFFBFDBFE)),
-          ),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Icon(Icons.info_outline_rounded, size: 16, color: isDark ? const Color(0xFF60A5FA) : const Color(0xFF1D4ED8)),
-              const SizedBox(width: 8),
-              Expanded(
-                child: Text(
-                  disclaimer,
-                  style: TextStyle(
-                    fontSize: 11,
-                    color: isDark ? const Color(0xFF93C5FD) : const Color(0xFF1E40AF),
-                    height: 1.4,
+        const Text(
+          'Government Cultivation Subsidies',
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.w900, letterSpacing: -0.3),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          'Official financial grants, cluster schemes, and direct assistance for medicinal flora',
+          style: TextStyle(fontSize: 13.5, color: isDark ? AppColors.textSecondaryDark : AppColors.textMutedLight),
+        ),
+        const SizedBox(height: 16),
+
+        ...farmerVM.schemes.map((scheme) {
+          return Container(
+            margin: const EdgeInsets.only(bottom: 16),
+            padding: const EdgeInsets.all(18),
+            decoration: BoxDecoration(
+              color: isDark ? AppColors.surfaceDark : Colors.white,
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(color: isDark ? AppColors.borderDark : const Color(0xFFE5ECE7)),
+              boxShadow: [
+                BoxShadow(color: Colors.black.withOpacity(0.03), blurRadius: 10, offset: const Offset(0, 3)),
+              ],
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF2E7D32).withOpacity(0.12),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text(
+                    scheme.subsidyRate,
+                    style: const TextStyle(fontSize: 12.5, fontWeight: FontWeight.w900, color: Color(0xFF2E7D32)),
                   ),
                 ),
-              ),
-            ],
-          ),
-        ),
-        const SizedBox(height: 12),
-        ...benchmarks.map((b) {
-          final crop = b['crop'] ?? '';
-          final price = b['benchmark_price'] ?? '';
-          final trend = b['trend'] ?? '';
-          final signal = b['demand_signal'] ?? '';
-          final source = b['source'] ?? '';
-          final lastUp = b['last_updated'] ?? '';
+                const SizedBox(height: 10),
+                Text(scheme.title, style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w900)),
+                const SizedBox(height: 2),
+                Text(scheme.agency, style: TextStyle(fontSize: 12.5, fontWeight: FontWeight.w600, color: isDark ? AppColors.textSecondaryDark : AppColors.textMutedLight)),
+                const SizedBox(height: 12),
+                Text(scheme.description, style: const TextStyle(fontSize: 14, height: 1.45)),
+                const SizedBox(height: 14),
 
-          return Card(
-            margin: const EdgeInsets.only(bottom: 10),
-            elevation: 0,
-            color: isDark ? AppColors.surfaceDark : Colors.white,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
-              side: BorderSide(color: isDark ? AppColors.borderDark : Colors.grey.shade200),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(14),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        crop,
-                        style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.bold,
-                          color: isDark ? Colors.white : Colors.black87,
-                        ),
+                // Eligibility
+                const Text('Eligibility Criteria:', style: TextStyle(fontSize: 13.5, fontWeight: FontWeight.w800)),
+                const SizedBox(height: 6),
+                ...scheme.eligibilityCriteria.map((c) => Padding(
+                      padding: const EdgeInsets.only(bottom: 4),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Icon(Icons.check_rounded, size: 16, color: Color(0xFF2E7D32)),
+                          const SizedBox(width: 8),
+                          Expanded(child: Text(c, style: const TextStyle(fontSize: 13, height: 1.35))),
+                        ],
                       ),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                        decoration: BoxDecoration(
-                          color: isDark ? const Color(0xFF064E3B) : const Color(0xFFDCFCE7),
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                        child: Text(
-                          trend,
-                          style: TextStyle(
-                            color: isDark ? const Color(0xFF34D399) : const Color(0xFF15803D),
-                            fontSize: 10,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
+                    )),
+                const SizedBox(height: 10),
+
+                // Required Documents
+                const Text('Required Documents:', style: TextStyle(fontSize: 13.5, fontWeight: FontWeight.w800)),
+                const SizedBox(height: 6),
+                ...scheme.requiredDocuments.map((doc) => Padding(
+                      padding: const EdgeInsets.only(bottom: 4),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Icon(Icons.description_outlined, size: 15, color: Colors.blueGrey),
+                          const SizedBox(width: 8),
+                          Expanded(child: Text(doc, style: const TextStyle(fontSize: 13, height: 1.35))),
+                        ],
                       ),
-                    ],
+                    )),
+                const SizedBox(height: 12),
+
+                // Helpline & Portal
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: isDark ? AppColors.surfaceSubtleDark : const Color(0xFFF7FAF8),
+                    borderRadius: BorderRadius.circular(10),
                   ),
-                  const SizedBox(height: 6),
-                  Text(
-                    price,
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w900,
-                      color: isDark ? const Color(0xFF34D399) : const Color(0xFF047857),
-                    ),
-                  ),
-                  const SizedBox(height: 6),
-                  Text(
-                    signal,
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: isDark ? Colors.grey.shade300 : Colors.grey.shade800,
-                      height: 1.3,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Row(
+                  child: Row(
                     children: [
-                      Icon(Icons.verified_outlined, size: 12, color: isDark ? Colors.grey.shade400 : Colors.grey),
-                      const SizedBox(width: 4),
+                      const Icon(Icons.support_agent_rounded, size: 18, color: AppColors.primary),
+                      const SizedBox(width: 8),
                       Expanded(
-                        child: Text(
-                          'Source: $source • $lastUp',
-                          style: TextStyle(fontSize: 10, color: isDark ? Colors.grey.shade400 : Colors.grey.shade600),
-                          overflow: TextOverflow.ellipsis,
-                        ),
+                        child: Text('Helpline: ${scheme.helplineNumber}', style: const TextStyle(fontSize: 12.5, fontWeight: FontWeight.bold)),
                       ),
                     ],
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           );
         }),
@@ -710,159 +799,263 @@ class _FarmerDashboardScreenState extends State<FarmerDashboardScreen> {
     );
   }
 
-  Widget? _buildContextualFAB(FarmerViewModel farmerVM) {
-    if (farmerVM.selectedTabIndex == 0) {
-      return FloatingActionButton.extended(
-        onPressed: () => _showAddCropDialog(context, farmerVM),
-        backgroundColor: const Color(0xFF166534),
-        foregroundColor: Colors.white,
-        icon: const Icon(Icons.add_rounded),
-        label: const Text('New Crop Batch', style: TextStyle(fontWeight: FontWeight.bold)),
-      );
-    }
-    return null;
-  }
+  // ════════════════════════════════════════════════════════════════════════
+  // TAB 4: MARKET RATES (e-CHARAK MANDI BENCHMARKS)
+  // ════════════════════════════════════════════════════════════════════════
+  Widget _buildMarketRatesTab(FarmerViewModel farmerVM, bool isDark) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'Wholesale Market Price Bands',
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.w900, letterSpacing: -0.3),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          'Reference benchmark rates compiled from e-Charak and APMC Neemuch trading bulletins',
+          style: TextStyle(fontSize: 13.5, color: isDark ? AppColors.textSecondaryDark : AppColors.textMutedLight),
+        ),
+        const SizedBox(height: 16),
 
-  void _showAddCropDialog(BuildContext context, FarmerViewModel farmerVM) {
-    final plantCtrl = TextEditingController();
-    final stageCtrl = TextEditingController(text: 'Sowing / Germination');
-    final sowDateCtrl = TextEditingController(text: DateTime.now().toString().substring(0, 10));
-    final harvDateCtrl = TextEditingController();
-    final qtyCtrl = TextEditingController();
-    final notesCtrl = TextEditingController();
-
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
-      builder: (ctx) {
-        return Padding(
-          padding: EdgeInsets.only(
-            left: 20,
-            right: 20,
-            top: 20,
-            bottom: MediaQuery.of(ctx).viewInsets.bottom + 20,
-          ),
-          child: SingleChildScrollView(
+        ...farmerVM.benchmarks.map((item) {
+          return Container(
+            margin: const EdgeInsets.only(bottom: 14),
+            padding: const EdgeInsets.all(18),
+            decoration: BoxDecoration(
+              color: isDark ? AppColors.surfaceDark : Colors.white,
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(color: isDark ? AppColors.borderDark : const Color(0xFFE5ECE7)),
+              boxShadow: [
+                BoxShadow(color: Colors.black.withOpacity(0.03), blurRadius: 10, offset: const Offset(0, 3)),
+              ],
+            ),
             child: Column(
-              mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text('Plan New Crop Batch', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                const SizedBox(height: 14),
-                TextField(
-                  controller: plantCtrl,
-                  decoration: const InputDecoration(labelText: 'Species (e.g. Ashwagandha, Gotu Kola)', border: OutlineInputBorder()),
-                ),
-                const SizedBox(height: 10),
-                TextField(
-                  controller: stageCtrl,
-                  decoration: const InputDecoration(labelText: 'Growth Stage', border: OutlineInputBorder()),
-                ),
-                const SizedBox(height: 10),
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Expanded(
-                      child: TextField(
-                        controller: sowDateCtrl,
-                        decoration: const InputDecoration(labelText: 'Sowing Date', border: OutlineInputBorder()),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(item.cropName, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w900)),
+                          Text(item.botanicalName, style: TextStyle(fontSize: 13, fontStyle: FontStyle.italic, color: isDark ? AppColors.mint : const Color(0xFF2E7D32))),
+                        ],
                       ),
                     ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: TextField(
-                        controller: harvDateCtrl,
-                        decoration: const InputDecoration(labelText: 'Expected Harvest', border: OutlineInputBorder()),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF2E7D32).withOpacity(0.12),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(
+                        item.trend,
+                        style: const TextStyle(fontSize: 11.5, fontWeight: FontWeight.w800, color: Color(0xFF2E7D32)),
                       ),
                     ),
                   ],
                 ),
                 const SizedBox(height: 10),
-                TextField(
-                  controller: qtyCtrl,
-                  decoration: const InputDecoration(labelText: 'Estimated Quantity (e.g. 50 kg dried roots)', border: OutlineInputBorder()),
+
+                Text(
+                  item.wholesalePriceBand,
+                  style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w900, color: Color(0xFF2E7D32), letterSpacing: -0.5),
                 ),
-                const SizedBox(height: 10),
-                TextField(
-                  controller: notesCtrl,
-                  decoration: const InputDecoration(labelText: 'Field Notes & Plot Details', border: OutlineInputBorder()),
-                ),
-                const SizedBox(height: 16),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF166534), foregroundColor: Colors.white, padding: const EdgeInsets.symmetric(vertical: 14)),
-                    onPressed: () async {
-                      if (plantCtrl.text.trim().isEmpty) return;
-                      Navigator.pop(ctx);
-                      await farmerVM.addCrop(
-                        plantName: plantCtrl.text.trim(),
-                        stage: stageCtrl.text.trim(),
-                        sowingDate: sowDateCtrl.text.trim(),
-                        expectedHarvest: harvDateCtrl.text.trim(),
-                        quantity: qtyCtrl.text.trim(),
-                        notes: notesCtrl.text.trim(),
-                      );
-                    },
-                    child: const Text('Save Crop Record', style: TextStyle(fontWeight: FontWeight.bold)),
-                  ),
-                ),
+                const SizedBox(height: 6),
+                Text('Quality Standard: ${item.grade}', style: const TextStyle(fontSize: 13.5, fontWeight: FontWeight.w600)),
+                const SizedBox(height: 4),
+                Text('Trading Hub: ${item.majorMandi}', style: TextStyle(fontSize: 12.5, color: isDark ? AppColors.textSecondaryDark : AppColors.textMutedLight)),
+                const SizedBox(height: 6),
+                Text(item.demandLevel, style: TextStyle(fontSize: 13, fontStyle: FontStyle.italic, color: isDark ? Colors.white70 : const Color(0xFF374151))),
               ],
             ),
-          ),
-        );
-      },
+          );
+        }),
+      ],
     );
   }
 
-  Widget _buildEmptyState({
-    required IconData icon,
-    required String title,
-    required String subtitle,
-    String? buttonLabel,
-    VoidCallback? onTap,
-  }) {
-    return Builder(
-      builder: (context) {
-        final isDark = Theme.of(context).brightness == Brightness.dark;
-        return Container(
-          padding: const EdgeInsets.symmetric(vertical: 36, horizontal: 20),
-          decoration: BoxDecoration(
-            color: isDark ? AppColors.surfaceDark : Colors.white,
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: isDark ? AppColors.borderDark : Colors.grey.shade200),
-          ),
-          child: Center(
-            child: Column(
-              children: [
-                Icon(icon, size: 44, color: isDark ? Colors.grey.shade600 : Colors.grey.shade400),
-                const SizedBox(height: 12),
-                Text(
-                  title,
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                    color: isDark ? Colors.white : Colors.black87,
-                  ),
+  // ════════════════════════════════════════════════════════════════════════
+  // ADD NEW CROP MODAL (SQLITE CRUD + AUTO-HARVEST DATES)
+  // ════════════════════════════════════════════════════════════════════════
+  void _showAddCropSheet(BuildContext context, FarmerViewModel farmerVM) {
+    String selectedSpecies = 'Ashwagandha';
+    final plotCtrl = TextEditingController(text: '1.0 Acre');
+    final sowDateCtrl = TextEditingController(text: DateTime.now().toString().substring(0, 10));
+    final harvDateCtrl = TextEditingController(
+      text: farmerVM.calculateEstimatedHarvest('Ashwagandha', DateTime.now()),
+    );
+    final qtyCtrl = TextEditingController(text: '750 kg dried roots');
+    final notesCtrl = TextEditingController();
+    String selectedStage = 'Sowing / Germination';
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
+      builder: (ctx) {
+        return StatefulBuilder(
+          builder: (context, setModalState) {
+            return Padding(
+              padding: EdgeInsets.only(
+                left: 22,
+                right: 22,
+                top: 22,
+                bottom: MediaQuery.of(ctx).viewInsets.bottom + 22,
+              ),
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text('Record New Sowing Batch', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w900)),
+                    const SizedBox(height: 4),
+                    const Text('Saved instantly to SQLite database and synced to cloud.', style: TextStyle(fontSize: 13, color: Colors.grey)),
+                    const SizedBox(height: 16),
+
+                    // Plant species picker
+                    const Text('Select Botanical Species:', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+                    const SizedBox(height: 6),
+                    DropdownButtonFormField<String>(
+                      value: selectedSpecies,
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(14)),
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                      ),
+                      items: farmerVM.dossiers.map((d) {
+                        return DropdownMenuItem(value: d.speciesName, child: Text(d.speciesName));
+                      }).toList(),
+                      onChanged: (val) {
+                        if (val != null) {
+                          setModalState(() {
+                            selectedSpecies = val;
+                            harvDateCtrl.text = farmerVM.calculateEstimatedHarvest(val, DateTime.parse(sowDateCtrl.text));
+                          });
+                        }
+                      },
+                    ),
+                    const SizedBox(height: 14),
+
+                    // Growth Stage
+                    const Text('Initial Growth Stage:', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+                    const SizedBox(height: 6),
+                    DropdownButtonFormField<String>(
+                      value: selectedStage,
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(14)),
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                      ),
+                      items: const [
+                        DropdownMenuItem(value: 'Sowing / Germination', child: Text('Sowing / Germination')),
+                        DropdownMenuItem(value: 'Vegetative Growth', child: Text('Vegetative Growth')),
+                        DropdownMenuItem(value: 'Flowering Stage', child: Text('Flowering Stage')),
+                        DropdownMenuItem(value: 'Harvest Ready', child: Text('Harvest Ready')),
+                      ],
+                      onChanged: (val) {
+                        if (val != null) setModalState(() => selectedStage = val);
+                      },
+                    ),
+                    const SizedBox(height: 14),
+
+                    // Sowing & Harvest Date
+                    Row(
+                      children: [
+                        Expanded(
+                          child: TextField(
+                            controller: sowDateCtrl,
+                            decoration: InputDecoration(
+                              labelText: 'Sowing Date',
+                              border: OutlineInputBorder(borderRadius: BorderRadius.circular(14)),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: TextField(
+                            controller: harvDateCtrl,
+                            decoration: InputDecoration(
+                              labelText: 'Auto Harvest Date',
+                              border: OutlineInputBorder(borderRadius: BorderRadius.circular(14)),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 14),
+
+                    // Plot area & estimated quantity
+                    Row(
+                      children: [
+                        Expanded(
+                          child: TextField(
+                            controller: plotCtrl,
+                            decoration: InputDecoration(
+                              labelText: 'Plot Area (e.g. 1 Acre)',
+                              border: OutlineInputBorder(borderRadius: BorderRadius.circular(14)),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: TextField(
+                            controller: qtyCtrl,
+                            decoration: InputDecoration(
+                              labelText: 'Target Yield (e.g. 800 kg)',
+                              border: OutlineInputBorder(borderRadius: BorderRadius.circular(14)),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 14),
+
+                    // Notes
+                    TextField(
+                      controller: notesCtrl,
+                      decoration: InputDecoration(
+                        labelText: 'Plot Notes / Seed Lot #',
+                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(14)),
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+
+                    // Save Button
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.primary,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                        ),
+                        onPressed: () async {
+                          Navigator.pop(ctx);
+                          await farmerVM.addCrop(
+                            plantName: selectedSpecies,
+                            stage: selectedStage,
+                            sowingDate: sowDateCtrl.text.trim(),
+                            expectedHarvest: harvDateCtrl.text.trim(),
+                            plotArea: plotCtrl.text.trim(),
+                            quantity: qtyCtrl.text.trim(),
+                            notes: notesCtrl.text.trim(),
+                          );
+                          if (context.mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text('Saved $selectedSpecies batch to local SQLite.')),
+                            );
+                          }
+                        },
+                        child: const Text('Save Crop Record (SQLite + Cloud)', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                      ),
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 6),
-                Text(
-                  subtitle,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 12, color: isDark ? Colors.grey.shade400 : Colors.grey.shade600),
-                ),
-                if (buttonLabel != null && onTap != null) ...[
-                  const SizedBox(height: 16),
-                  ElevatedButton.icon(
-                    onPressed: onTap,
-                    style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF166534), foregroundColor: Colors.white),
-                    icon: const Icon(Icons.add, size: 16),
-                    label: Text(buttonLabel),
-                  ),
-                ],
-              ],
-            ),
-          ),
+              ),
+            );
+          },
         );
       },
     );

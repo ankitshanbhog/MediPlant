@@ -482,6 +482,10 @@ class _PlantDetailsSectionsState extends State<PlantDetailsSections> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        // Evidence Level Banner
+        _buildEvidenceCard(isDark, plant.evidenceLevel),
+        const SizedBox(height: 18),
+
         if (plant.dosageGuidelines.isNotEmpty)
           _buildSectionCard(
             isDark: isDark,
@@ -509,84 +513,341 @@ class _PlantDetailsSectionsState extends State<PlantDetailsSections> {
               ),
             ),
           ),
-        const SizedBox(height: 18),
+        if (plant.dosageGuidelines.isNotEmpty) const SizedBox(height: 18),
 
-        if (plant.precautions.isNotEmpty)
-          _buildSectionCard(
-            isDark: isDark,
-            icon: Icons.warning_amber_rounded,
-            iconColor: AppColors.warning,
-            title: 'Precautions & Contraindications',
-            subtitle: 'Safety guidance for pregnant women, children, and medications',
-            content: Column(
-              children: plant.precautions.map((prec) {
-                return Container(
-                  margin: const EdgeInsets.only(bottom: 10),
-                  padding: const EdgeInsets.all(14),
-                  decoration: BoxDecoration(
-                    color: AppColors.warning.withOpacity(0.08),
-                    borderRadius: BorderRadius.circular(14),
-                    border: Border.all(color: AppColors.warning.withOpacity(0.3)),
-                  ),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text('⚠️ ', style: TextStyle(fontSize: 14)),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Text(
-                          prec,
-                          style: TextStyle(
-                            fontSize: 15,
-                            height: 1.45,
-                            color: isDark ? AppColors.textPrimaryDark : const Color(0xFF5A4000),
-                          ),
+        // Herb-Drug Interactions Card
+        _buildSectionCard(
+          isDark: isDark,
+          icon: Icons.medication_liquid_rounded,
+          iconColor: const Color(0xFFD32F2F),
+          title: 'Herb–Drug Interactions',
+          subtitle: 'Documented interactions with prescription medications',
+          content: plant.drugInteractions.isNotEmpty
+              ? Column(
+                  children: plant.drugInteractions.map((interaction) {
+                    return Container(
+                      margin: const EdgeInsets.only(bottom: 10),
+                      padding: const EdgeInsets.all(14),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFD32F2F).withOpacity(0.06),
+                        borderRadius: BorderRadius.circular(14),
+                        border: Border.all(
+                          color: const Color(0xFFD32F2F).withOpacity(0.25),
                         ),
                       ),
-                    ],
-                  ),
-                );
-              }).toList(),
-            ),
-          ),
-        const SizedBox(height: 18),
-
-        if (plant.sideEffects.isNotEmpty)
-          _buildSectionCard(
-            isDark: isDark,
-            icon: Icons.info_outline_rounded,
-            iconColor: const Color(0xFFC62828),
-            title: 'Possible Side Effects',
-            subtitle: 'Reported adverse reactions upon overdose',
-            content: Column(
-              children: plant.sideEffects.map((side) {
-                return Padding(
-                  padding: const EdgeInsets.only(bottom: 8),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Padding(
-                        padding: EdgeInsets.only(top: 3),
-                        child: Icon(Icons.circle, size: 7, color: Color(0xFFC62828)),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Icon(
+                            Icons.error_outline_rounded,
+                            size: 18,
+                            color: Color(0xFFD32F2F),
+                          ),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: Text(
+                              interaction,
+                              style: TextStyle(
+                                fontSize: 15,
+                                height: 1.45,
+                                fontWeight: FontWeight.w600,
+                                color: isDark
+                                    ? AppColors.textPrimaryDark
+                                    : const Color(0xFF4A1010),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
+                    );
+                  }).toList(),
+                )
+              : Container(
+                  padding: const EdgeInsets.all(14),
+                  decoration: BoxDecoration(
+                    color: isDark
+                        ? AppColors.surfaceSubtleDark
+                        : const Color(0xFFF5F7F6),
+                    borderRadius: BorderRadius.circular(14),
+                    border: Border.all(
+                      color: isDark ? AppColors.borderDark : const Color(0xFFE0E6E2),
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.info_outline_rounded,
+                          size: 18, color: AppColors.textSecondaryLight),
                       const SizedBox(width: 10),
                       Expanded(
                         child: Text(
-                          side,
+                          'No direct adverse pharmaceutical interactions reported in available monographs. Consult a healthcare provider if taking chronic medications.',
                           style: TextStyle(
-                            fontSize: 15,
+                            fontSize: 14.5,
                             height: 1.4,
-                            color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
+                            color: isDark
+                                ? AppColors.textSecondaryDark
+                                : AppColors.textSecondaryLight,
                           ),
                         ),
                       ),
                     ],
                   ),
-                );
-              }).toList(),
+                ),
+        ),
+        const SizedBox(height: 18),
+
+        // Precautions & Contraindications
+        _buildSectionCard(
+          isDark: isDark,
+          icon: Icons.warning_amber_rounded,
+          iconColor: AppColors.warning,
+          title: 'Precautions & Contraindications',
+          subtitle: 'Safety guidance for pregnant women, children, and conditions',
+          content: plant.precautions.isNotEmpty
+              ? Column(
+                  children: plant.precautions.map((prec) {
+                    return Container(
+                      margin: const EdgeInsets.only(bottom: 10),
+                      padding: const EdgeInsets.all(14),
+                      decoration: BoxDecoration(
+                        color: AppColors.warning.withOpacity(0.08),
+                        borderRadius: BorderRadius.circular(14),
+                        border: Border.all(color: AppColors.warning.withOpacity(0.3)),
+                      ),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text('⚠️ ', style: TextStyle(fontSize: 14)),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              prec,
+                              style: TextStyle(
+                                fontSize: 15,
+                                height: 1.45,
+                                color: isDark ? AppColors.textPrimaryDark : const Color(0xFF5A4000),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  }).toList(),
+                )
+              : Container(
+                  padding: const EdgeInsets.all(14),
+                  decoration: BoxDecoration(
+                    color: isDark ? AppColors.surfaceSubtleDark : const Color(0xFFFFF9E6),
+                    borderRadius: BorderRadius.circular(14),
+                    border: Border.all(color: AppColors.warning.withOpacity(0.3)),
+                  ),
+                  child: const Text(
+                    'Not fully reviewed in current safety monographs. Absence of documented caution does not imply complete safety.',
+                    style: TextStyle(fontSize: 14.5, height: 1.4),
+                  ),
+                ),
+        ),
+        const SizedBox(height: 18),
+
+        // Possible Side Effects
+        _buildSectionCard(
+          isDark: isDark,
+          icon: Icons.info_outline_rounded,
+          iconColor: const Color(0xFFC62828),
+          title: 'Possible Side Effects',
+          subtitle: 'Reported adverse reactions upon overdose or allergy',
+          content: plant.sideEffects.isNotEmpty
+              ? Column(
+                  children: plant.sideEffects.map((side) {
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 8),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Padding(
+                            padding: EdgeInsets.only(top: 3),
+                            child: Icon(Icons.circle, size: 7, color: Color(0xFFC62828)),
+                          ),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: Text(
+                              side,
+                              style: TextStyle(
+                                fontSize: 15,
+                                height: 1.4,
+                                color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  }).toList(),
+                )
+              : Text(
+                  'No significant side effects documented at standard therapeutic doses.',
+                  style: TextStyle(
+                    fontSize: 14.5,
+                    color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight,
+                  ),
+                ),
+        ),
+        const SizedBox(height: 18),
+
+        // Source & Monograph Traceability
+        _buildSectionCard(
+          isDark: isDark,
+          icon: Icons.menu_book_rounded,
+          iconColor: const Color(0xFF1E88E5),
+          title: 'Evidence Sources & Monographs',
+          subtitle: 'Peer-reviewed literature, WHO, and pharmacopeial references',
+          content: plant.sources.isNotEmpty
+              ? Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: plant.sources.map((src) {
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 8),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Icon(Icons.bookmark_added_rounded,
+                              size: 16, color: Color(0xFF1E88E5)),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: Text(
+                              src,
+                              style: TextStyle(
+                                fontSize: 14.5,
+                                height: 1.45,
+                                fontStyle: FontStyle.italic,
+                                color: isDark
+                                    ? AppColors.textPrimaryDark
+                                    : const Color(0xFF1B3A57),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  }).toList(),
+                )
+              : Text(
+                  'Traditional ethnobotanical records (CSIR Indian Medicinal Plants compendium).',
+                  style: TextStyle(
+                    fontSize: 14.5,
+                    fontStyle: FontStyle.italic,
+                    color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight,
+                  ),
+                ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildEvidenceCard(bool isDark, EvidenceLevel level) {
+    String title;
+    String desc;
+    Color color;
+    IconData icon;
+
+    switch (level) {
+      case EvidenceLevel.clinical:
+        title = 'Human Clinical Evidence Base';
+        desc = 'Supported by controlled human clinical trials or established national pharmacopeia.';
+        color = const Color(0xFF00897B);
+        icon = Icons.verified_user_rounded;
+        break;
+      case EvidenceLevel.lab:
+        title = 'Laboratory & In-Vivo Evidence';
+        desc = 'Therapeutic activity documented in peer-reviewed in-vitro or animal pharmacological assays.';
+        color = const Color(0xFF1E88E5);
+        icon = Icons.science_rounded;
+        break;
+      case EvidenceLevel.traditional:
+        title = 'Documented Traditional Use';
+        desc = 'Backed by traditional Ayurvedic, Siddha, or Unani ethnobotanical medicine texts.';
+        color = const Color(0xFFE65100);
+        icon = Icons.auto_stories_rounded;
+        break;
+      case EvidenceLevel.unknown:
+        title = 'Preliminary Review';
+        desc = 'Traditional records available; formal clinical monographs not yet fully aggregated.';
+        color = Colors.blueGrey;
+        icon = Icons.help_outline_rounded;
+        break;
+    }
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.09),
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: color.withOpacity(0.35), width: 1.2),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: color.withOpacity(0.18),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(icon, color: color, size: 22),
+          ),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                      decoration: BoxDecoration(
+                        color: color,
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: Text(
+                        level.name.toUpperCase(),
+                        style: const TextStyle(
+                          fontSize: 10.5,
+                          fontWeight: FontWeight.w800,
+                          color: Colors.white,
+                          letterSpacing: 0.8,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        title,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w800,
+                          color: isDark ? Colors.white : color,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  desc,
+                  style: TextStyle(
+                    fontSize: 13.5,
+                    height: 1.4,
+                    color: isDark ? AppColors.textSecondaryDark : AppColors.textPrimaryLight,
+                  ),
+                ),
+              ],
             ),
           ),
-      ],
+        ],
+      ),
     );
   }
 

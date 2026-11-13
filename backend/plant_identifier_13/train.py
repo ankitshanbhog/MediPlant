@@ -7,32 +7,23 @@ Usage:
 """
 
 import os
-import sys
-import importlib
 import argparse
 import time
 import tensorflow as tf
 from tqdm import tqdm
 
-_cfg = importlib.util.spec_from_file_location("config", os.path.join(os.path.dirname(__file__), "config.py"))
-_mod = importlib.util.module_from_spec(_cfg)
-sys.modules.setdefault("torch", type(sys)("torch"))
-sys.modules["torch"].device = lambda *a, **k: None
-sys.modules["torch"].cuda = type(sys)("cuda")
-sys.modules["torch"].cuda.is_available = lambda: False
-_cfg.loader.exec_module(_mod)
-
-TRAIN_DIR = _mod.TRAIN_DIR
-VAL_DIR = _mod.VAL_DIR
-CHECKPOINTS_DIR = _mod.CHECKPOINTS_DIR
-NUM_CLASSES = _mod.NUM_CLASSES
-BATCH_SIZE = _mod.BATCH_SIZE
-EPOCHS = _mod.EPOCHS
-LEARNING_RATE = _mod.LEARNING_RATE
-WEIGHT_DECAY = _mod.WEIGHT_DECAY
-LABEL_SMOOTHING = _mod.LABEL_SMOOTHING
-IMAGE_SIZE = _mod.IMAGE_SIZE
-
+from config import (
+    TRAIN_DIR,
+    VAL_DIR,
+    CHECKPOINTS_DIR,
+    NUM_CLASSES,
+    BATCH_SIZE,
+    EPOCHS,
+    LEARNING_RATE,
+    WEIGHT_DECAY,
+    LABEL_SMOOTHING,
+    IMAGE_SIZE,
+)
 from model.network import build_model
 
 

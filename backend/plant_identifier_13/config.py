@@ -1,5 +1,5 @@
 import os
-import torch
+import tensorflow as tf
 
 BASE_DIR =os .path .dirname (os .path .abspath (__file__ ))
 
@@ -184,4 +184,4 @@ LABEL_SMOOTHING =0.1
 EPOCHS =25
 TRAIN_VAL_SPLIT =0.80
 
-DEVICE =torch .device ("cuda"if torch .cuda .is_available ()else "cpu")
+DEVICE = "GPU" if len(tf.config.list_physical_devices("GPU")) > 0 else "CPU"

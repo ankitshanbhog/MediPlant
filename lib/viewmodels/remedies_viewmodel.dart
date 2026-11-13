@@ -1,4 +1,6 @@
+import 'dart:convert';
 import 'package:flutter/foundation.dart';
+import '../data/database_helper.dart';
 import '../data/models/remedy_model.dart';
 import '../data/repositories/remedy_repository.dart';
 
@@ -30,6 +32,15 @@ class RemediesViewModel extends ChangeNotifier {
     _isLoading = true;
     notifyListeners();
 
+    try {
+      final savedStr = await DatabaseHelper.instance.getSetting('bookmarked_remedies');
+      if (savedStr != null && savedStr.isNotEmpty) {
+        final List<dynamic> list = jsonDecode(savedStr);
+        _bookmarkedIds.clear();
+        _bookmarkedIds.addAll(list.map((e) => e.toString()));
+      }
+    } catch (_) {}
+
     _allRemedies = await _remedyRepository.getAllRemedies();
     _filteredRemedies = _allRemedies;
     _categories = await _remedyRepository.getCategories();
@@ -55,6 +66,13 @@ class RemediesViewModel extends ChangeNotifier {
       _bookmarkedIds.add(remedyId);
     }
     notifyListeners();
+
+    try {
+      DatabaseHelper.instance.setSetting(
+        'bookmarked_remedies',
+        jsonEncode(_bookmarkedIds.toList()),
+      );
+    } catch (_) {}
   }
 
   bool isBookmarked(String remedyId) => _bookmarkedIds.contains(remedyId);

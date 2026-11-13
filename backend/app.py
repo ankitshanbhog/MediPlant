@@ -229,22 +229,39 @@ def compute_entropy (probs :np .ndarray )->float :
     clipped =np .clip (probs ,1e-9 ,1.0 )
     return float (-np .sum (clipped *np .log (clipped )))
 
-def evaluate_ood_signals (probs :np .ndarray ,entropy_threshold :float =1.95 ,top1_threshold :float =0.55 ,min_top3_gap :float =0.20 ):
+def evaluate_ood_signals (
+    logits :np .ndarray ,
+    probs :np .ndarray ,
+    entropy_threshold :float =1.45 ,
+    top1_threshold :float =0.65 ,
+    min_margin :float =1.45 ,
+    min_max_logit :float =2.85 ,
+):
     """
     Evaluates whether a predicted sample is likely out-of-distribution (OOD)
-    or an unsupported plant species.
+    or an unsupported plant species using 4 complementary signals:
+      1. Maximum Logit Score (MLS): checks if feature activation reaches known plant levels
+      2. Logit Margin (1st - 2nd): checks if winner is strongly separated from runner-up
+      3. Top-1 Softmax Confidence: must be at least 65%
+      4. Shannon Entropy: must be lower than 1.45 (lower = certain, higher = confused)
     """
+    s_logits =np .sort (logits )[::-1 ]
+    max_logit =float (s_logits [0 ])
+    logit_margin =float (max_logit -s_logits [1 ])if len (s_logits )>=2 else max_logit 
+
     top1_conf =float (np .max (probs ))
     entropy =compute_entropy (probs )
     sorted_probs =np .sort (probs )[::-1 ]
     top3_gap =float (sorted_probs [0 ]-sorted_probs [2 ])if len (sorted_probs )>=3 else float (sorted_probs [0 ])
 
+    if max_logit <min_max_logit :
+        return True ,f"low_logit_activation (max_logit={max_logit:.2f} < {min_max_logit})",entropy ,top3_gap 
+    if logit_margin <min_margin :
+        return True ,f"ambiguous_margin (margin={logit_margin:.2f} < {min_margin})",entropy ,top3_gap 
     if top1_conf <top1_threshold :
-        return True ,"low_confidence",entropy ,top3_gap 
+        return True ,f"low_confidence (confidence={top1_conf*100:.1f}% < {top1_threshold*100:.0f}%)",entropy ,top3_gap 
     if entropy >entropy_threshold :
-        return True ,"high_entropy",entropy ,top3_gap 
-    if top3_gap <min_top3_gap :
-        return True ,"ambiguous_spread",entropy ,top3_gap 
+        return True ,f"high_entropy (entropy={entropy:.2f} > {entropy_threshold})",entropy ,top3_gap 
 
     return False ,None ,entropy ,top3_gap 
 
@@ -428,7 +445,8 @@ async def predict (file :UploadFile =File (...)):
 
         id_inputs ={classifier_session .get_inputs ()[0 ].name :tensor }
         id_outputs =classifier_session .run (None ,id_inputs )
-        initial_probs =softmax (id_outputs [0 ])[0 ]
+        initial_logits =id_outputs [0 ][0 ]
+        initial_probs =softmax (initial_logits )
 
         class_slugs =classifier_metadata .get ("class_names",list (SPECIES_CATALOG .keys ()))
         top_idx =int (np .argmax (initial_probs ))
@@ -437,21 +455,26 @@ async def predict (file :UploadFile =File (...)):
         tta_applied =False 
         tta_agreement =1.0 
         final_probs =initial_probs 
+        final_logits =initial_logits 
 
-        if 0.40 <=initial_top_conf <0.80 :
+        if initial_top_conf <0.95 :
             try :
                 tta_tensors =generate_tta_tensors (contents ,size =224 )
                 tta_probs_list =[]
+                tta_logits_list =[]
                 tta_top_indices =[]
                 input_name =classifier_session .get_inputs ()[0 ].name 
 
                 for t_aug in tta_tensors :
                     out =classifier_session .run (None ,{input_name :t_aug })
-                    p =softmax (out [0 ])[0 ]
+                    l_out =out [0 ][0 ]
+                    p =softmax (l_out )
+                    tta_logits_list .append (l_out )
                     tta_probs_list .append (p )
                     tta_top_indices .append (int (np .argmax (p )))
 
                 final_probs =np .mean (tta_probs_list ,axis =0 )
+                final_logits =np .mean (tta_logits_list ,axis =0 )
                 tta_applied =True 
 
                 matching_passes =sum (1 for idx in tta_top_indices if idx ==top_idx )
@@ -466,6 +489,7 @@ async def predict (file :UploadFile =File (...)):
             except Exception as tta_err :
                 logger .warning ("TTA pass encountered an error, falling back to initial: %s",tta_err )
                 final_probs =initial_probs 
+                final_logits =initial_logits 
 
         probs =final_probs 
         top_idx =int (np .argmax (probs ))
@@ -486,11 +510,14 @@ async def predict (file :UploadFile =File (...)):
             "confidence":round (float (probs [idx ])*100 ,2 ),
             })
 
-        is_ood ,ood_reason ,entropy_val ,top3_gap =evaluate_ood_signals (probs )
+        is_ood ,ood_reason ,entropy_val ,top3_gap =evaluate_ood_signals (final_logits ,probs )
 
-        if tta_applied and tta_agreement <0.60 :
+        if initial_top_conf <0.65 :
             is_ood =True 
-            ood_reason ="tta_low_consensus"
+            ood_reason =f"low_initial_confidence ({initial_top_conf*100:.1f}% < 65%)"
+        elif tta_applied and tta_agreement <0.80 :
+            is_ood =True 
+            ood_reason =f"tta_low_consensus (agreement={tta_agreement*100:.0f}% < 80%)"
         if is_ood :
             supported_names =", ".join ([v .get ("common_name",k )for k ,v in SPECIES_CATALOG .items ()])
             logger .warning (

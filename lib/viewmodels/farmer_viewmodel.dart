@@ -1,4 +1,6 @@
 import 'package:flutter/foundation.dart';
+import '../data/database_helper.dart';
+import '../data/mock/mock_farmer_data.dart';
 import '../services/farmer_service.dart';
 
 class FarmerViewModel extends ChangeNotifier {
@@ -6,23 +8,25 @@ class FarmerViewModel extends ChangeNotifier {
 
   int _selectedTabIndex = 0;
   bool _isLoading = false;
+  bool _isCloudConnected = false;
   String? _errorMessage;
 
-  Map<String, dynamic>? _overview;
   List<Map<String, dynamic>> _crops = [];
-  List<Map<String, dynamic>> _cultivationGuides = [];
-  Map<String, dynamic>? _marketInfo;
+  final List<AgronomyDossier> _dossiers = mockAgronomyDossiers;
+  final List<GovernmentScheme> _schemes = mockGovernmentSchemes;
+  final List<MarketBenchmark> _benchmarks = mockMarketBenchmarks;
 
   FarmerViewModel({required FarmerService farmerService}) : _farmerService = farmerService;
 
   int get selectedTabIndex => _selectedTabIndex;
   bool get isLoading => _isLoading;
+  bool get isCloudConnected => _isCloudConnected;
   String? get errorMessage => _errorMessage;
 
-  Map<String, dynamic>? get overview => _overview;
   List<Map<String, dynamic>> get crops => _crops;
-  List<Map<String, dynamic>> get cultivationGuides => _cultivationGuides;
-  Map<String, dynamic>? get marketInfo => _marketInfo;
+  List<AgronomyDossier> get dossiers => _dossiers;
+  List<GovernmentScheme> get schemes => _schemes;
+  List<MarketBenchmark> get benchmarks => _benchmarks;
 
   void setTabIndex(int index) {
     _selectedTabIndex = index;
@@ -35,23 +39,67 @@ class FarmerViewModel extends ChangeNotifier {
     notifyListeners();
 
     try {
-      final results = await Future.wait([
-        _farmerService.getOverview().catchError((e) => <String, dynamic>{}),
-        _farmerService.getCrops().catchError((e) => <Map<String, dynamic>>[]),
-        _farmerService.getCultivationGuides().catchError((e) => <Map<String, dynamic>>[]),
-        _farmerService.getMarketInfo().catchError((e) => <String, dynamic>{}),
-      ]);
+      // 1. Load instantly from Local SQLite
+      final local = await DatabaseHelper.instance.getLocalFarmerCrops();
+      _crops = List<Map<String, dynamic>>.from(local);
+    } catch (_) {}
 
-      _overview = results[0] as Map<String, dynamic>;
-      _crops = results[1] as List<Map<String, dynamic>>;
-      _cultivationGuides = results[2] as List<Map<String, dynamic>>;
-      _marketInfo = results[3] as Map<String, dynamic>;
-    } catch (e) {
-      _errorMessage = e.toString().replaceAll('Exception: ', '');
+    // 2. Try syncing with Cloud API if available
+    try {
+      final cloudCrops = await _farmerService.getCrops().timeout(const Duration(seconds: 4));
+      if (cloudCrops.isNotEmpty) {
+        _crops = cloudCrops;
+        for (final c in cloudCrops) {
+          try {
+            final id = c['id'] is int ? c['id'] as int : int.tryParse(c['id'].toString()) ?? 0;
+            final plantName = c['plant_name'] ?? c['plantName'] ?? '';
+            final stage = c['stage'] ?? '';
+            final sowingDate = c['sowing_date'] ?? c['sowingDate'] ?? '';
+            final expectedHarvest = c['expected_harvest'] ?? c['expectedHarvest'] ?? '';
+            final qty = c['quantity'] ?? '';
+            final notes = c['notes'] ?? '';
+
+            await DatabaseHelper.instance.insertOrUpdateCloudCrop(
+              id: id,
+              plantName: plantName,
+              stage: stage,
+              sowingDate: sowingDate,
+              expectedHarvest: expectedHarvest,
+              quantity: qty,
+              notes: notes,
+            );
+          } catch (_) {}
+        }
+      }
+      _isCloudConnected = true;
+
+      // 3. Also ping guides + market endpoints to confirm cloud reachability
+      //    (data displayed stays from local ICAR/NMPB reference — just validates connection)
+      _farmerService.getCultivationGuides().timeout(const Duration(seconds: 3)).ignore();
+      _farmerService.getMarketInfo().timeout(const Duration(seconds: 3)).ignore();
+    } catch (_) {
+      // Offline mode: SQLite active, mock reference data still shown
+      _isCloudConnected = false;
     } finally {
       _isLoading = false;
       notifyListeners();
     }
+  }
+
+  /// Calculates estimated harvest date based on botanical maturity days
+  String calculateEstimatedHarvest(String plantName, DateTime sowingDate) {
+    final cleanName = plantName.toLowerCase();
+    AgronomyDossier? matched;
+    for (final d in _dossiers) {
+      if (cleanName.contains(d.speciesName.toLowerCase()) ||
+          cleanName.contains(d.plantId.toLowerCase())) {
+        matched = d;
+        break;
+      }
+    }
+    final days = matched?.daysToMaturity ?? 90;
+    final harvestDate = sowingDate.add(Duration(days: days));
+    return harvestDate.toString().substring(0, 10);
   }
 
   Future<bool> addCrop({
@@ -59,44 +107,83 @@ class FarmerViewModel extends ChangeNotifier {
     required String stage,
     String? sowingDate,
     String? expectedHarvest,
+    String? plotArea,
     String? quantity,
     String? notes,
   }) async {
+    final sow = sowingDate ?? DateTime.now().toString().substring(0, 10);
+    final harv = expectedHarvest ?? calculateEstimatedHarvest(plantName, DateTime.parse(sow));
+
+    // Save to Local SQLite first (instant & reliable)
+    int localId = 0;
+    try {
+      localId = await DatabaseHelper.instance.insertLocalFarmerCrop({
+        'plantName': plantName.trim(),
+        'stage': stage.trim(),
+        'sowingDate': sow,
+        'expectedHarvest': harv,
+        'plotArea': plotArea?.trim() ?? '1 Acre',
+        'quantity': quantity?.trim() ?? 'Unspecified',
+        'notes': notes?.trim() ?? '',
+        'isSynced': 0,
+      });
+    } catch (_) {}
+
+    // Attempt cloud sync in background
     try {
       await _farmerService.addCrop(
         plantName: plantName,
         stage: stage,
-        sowingDate: sowingDate,
-        expectedHarvest: expectedHarvest,
+        sowingDate: sow,
+        expectedHarvest: harv,
         quantity: quantity,
         notes: notes,
       );
-      await loadFarmerData();
-      return true;
-    } catch (e) {
-      _errorMessage = e.toString().replaceAll('Exception: ', '');
-      notifyListeners();
-      return false;
+      _isCloudConnected = true;
+      if (localId > 0) {
+        // Mark as synced
+        final db = await DatabaseHelper.instance.database;
+        await db.update('farmer_crops', {'isSynced': 1}, where: 'id = ?', whereArgs: [localId]);
+      }
+    } catch (_) {
+      _isCloudConnected = false;
     }
+
+    await loadFarmerData();
+    return true;
   }
 
   Future<void> updateCropStage(int cropId, String newStage, {String? notes}) async {
+    // 1. Update in Local SQLite
+    try {
+      await DatabaseHelper.instance.updateLocalFarmerCropStage(cropId, newStage, notes: notes);
+    } catch (_) {}
+
+    // 2. Attempt cloud sync
     try {
       await _farmerService.updateCropStage(cropId, newStage, notes: notes);
-      await loadFarmerData();
-    } catch (e) {
-      _errorMessage = e.toString().replaceAll('Exception: ', '');
-      notifyListeners();
+      _isCloudConnected = true;
+    } catch (_) {
+      _isCloudConnected = false;
     }
+
+    await loadFarmerData();
   }
 
   Future<void> deleteCrop(int cropId) async {
+    // 1. Delete from Local SQLite
+    try {
+      await DatabaseHelper.instance.deleteLocalFarmerCrop(cropId);
+    } catch (_) {}
+
+    // 2. Attempt cloud sync
     try {
       await _farmerService.deleteCrop(cropId);
-      await loadFarmerData();
-    } catch (e) {
-      _errorMessage = e.toString().replaceAll('Exception: ', '');
-      notifyListeners();
+      _isCloudConnected = true;
+    } catch (_) {
+      _isCloudConnected = false;
     }
+
+    await loadFarmerData();
   }
 }

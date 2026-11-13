@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../data/models/plant_model.dart';
 import '../../data/models/recognition_result_model.dart';
 import '../../viewmodels/remedies_viewmodel.dart';
 import '../../viewmodels/voice_viewmodel.dart';
@@ -285,6 +286,11 @@ class _ResultScreenState extends State<ResultScreen> {
                     const SizedBox(height: 24),
                   ],
 
+                  if (plant.lookAlikeNames.isNotEmpty) ...[
+                    _buildLookAlikesCard(isDark, plant),
+                    const SizedBox(height: 24),
+                  ],
+
                   Row(
                     children: [
                       Expanded(
@@ -368,7 +374,8 @@ class _ResultScreenState extends State<ResultScreen> {
     required bool isDark,
   }) {
     final isHigh = confidenceValue >= 0.80;
-    final isMedium = confidenceValue >= 0.60 && confidenceValue < 0.80;
+    final isMedium = confidenceValue >= 0.65 && confidenceValue < 0.80;
+    final isLow = confidenceValue < 0.65;
 
     final badgeColor = isHigh
         ? const Color(0xFF2E7D32)
@@ -380,7 +387,10 @@ class _ResultScreenState extends State<ResultScreen> {
         color: isDark ? AppColors.surfaceDark : Colors.white,
         borderRadius: BorderRadius.circular(18),
         border: Border.all(
-          color: isDark ? AppColors.borderDark : AppColors.borderLight,
+          color: isLow
+              ? const Color(0xFFC62828).withOpacity(0.5)
+              : (isDark ? AppColors.borderDark : AppColors.borderLight),
+          width: isLow ? 1.5 : 1.0,
         ),
         boxShadow: [
           BoxShadow(
@@ -390,69 +400,203 @@ class _ResultScreenState extends State<ResultScreen> {
           ),
         ],
       ),
-      child: Row(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            width: 52,
-            height: 52,
-            decoration: BoxDecoration(
-              color: badgeColor.withOpacity(0.12),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(
-              isHigh ? Icons.verified_rounded : Icons.info_outline_rounded,
-              color: badgeColor,
-              size: 30,
-            ),
-          ),
-          const SizedBox(width: 14),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
+          Row(
+            children: [
+              Container(
+                width: 52,
+                height: 52,
+                decoration: BoxDecoration(
+                  color: badgeColor.withOpacity(0.12),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  isHigh ? Icons.verified_rounded : (isMedium ? Icons.info_outline_rounded : Icons.warning_amber_rounded),
+                  color: badgeColor,
+                  size: 30,
+                ),
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      '$confidencePercent% Confidence',
-                      style: TextStyle(
-                        fontSize: 17,
-                        fontWeight: FontWeight.w900,
-                        color: badgeColor,
-                      ),
-                    ),
-                    if (isVerified) ...[
-                      const SizedBox(width: 6),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF1565C0),
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                        child: const Text(
-                          'API VERIFIED',
+                    Row(
+                      children: [
+                        Text(
+                          '$confidencePercent% Confidence',
                           style: TextStyle(
-                            fontSize: 9,
-                            fontWeight: FontWeight.w800,
-                            color: Colors.white,
+                            fontSize: 17,
+                            fontWeight: FontWeight.w900,
+                            color: badgeColor,
                           ),
                         ),
+                        if (isVerified) ...[
+                          const SizedBox(width: 6),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF1565C0),
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            child: const Text(
+                              'API VERIFIED',
+                              style: TextStyle(
+                                fontSize: 9,
+                                fontWeight: FontWeight.w800,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      isHigh
+                          ? 'High certainty botanical identification matched against 10-class ML catalog.'
+                          : (isMedium
+                              ? 'Moderate confidence. Cross-check botanical leaf characteristics below.'
+                              : 'Low confidence identification. Image may have glare, blur, or obstruction.'),
+                      style: TextStyle(
+                        fontSize: 13,
+                        color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight,
                       ),
-                    ],
+                    ),
                   ],
                 ),
-                const SizedBox(height: 2),
-                Text(
-                  isHigh
-                      ? 'High certainty botanical identification matched against 10-class ML catalog.'
-                      : 'Moderate confidence. Cross-check botanical leaf characteristics below.',
-                  style: TextStyle(
-                    fontSize: 13,
-                    color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight,
-                  ),
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
+          if (isLow) ...[
+            const SizedBox(height: 14),
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: const Color(0xFFC62828).withOpacity(0.07),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: const Color(0xFFC62828).withOpacity(0.2)),
+              ),
+              child: Row(
+                children: [
+                  const Icon(Icons.photo_camera_rounded, size: 20, color: Color(0xFFC62828)),
+                  const SizedBox(width: 10),
+                  const Expanded(
+                    child: Text(
+                      'Uncertain match. Retake a closer, well-lit photo of the leaf or flower for safer verification.',
+                      style: TextStyle(fontSize: 12.5, fontWeight: FontWeight.w600, height: 1.35),
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    style: TextButton.styleFrom(
+                      foregroundColor: const Color(0xFFC62828),
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                      visualDensity: VisualDensity.compact,
+                    ),
+                    child: const Text('Retake', style: TextStyle(fontWeight: FontWeight.w800)),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLookAlikesCard(bool isDark, Plant plant) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: isDark ? AppColors.surfaceDark : Colors.white,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: isDark ? AppColors.borderDark : AppColors.borderLight),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.03),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFE65100).withOpacity(0.12),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: const Icon(Icons.compare_rounded, color: Color(0xFFE65100), size: 20),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Common Look-Alike Species',
+                      style: TextStyle(fontSize: 15.5, fontWeight: FontWeight.w800),
+                    ),
+                    Text(
+                      'Morphologically similar species to distinguish before harvesting',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: isDark ? AppColors.textSecondaryDark : AppColors.textMutedLight,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 14),
+          ...plant.lookAlikeNames.map((lookAlike) {
+            final isToxicWarning = lookAlike.toUpperCase().contains('TOXIC');
+            return Container(
+              margin: const EdgeInsets.only(bottom: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+              decoration: BoxDecoration(
+                color: isToxicWarning
+                    ? const Color(0xFFC62828).withOpacity(0.08)
+                    : (isDark ? AppColors.surfaceSubtleDark : const Color(0xFFFFF8E1)),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: isToxicWarning
+                      ? const Color(0xFFC62828).withOpacity(0.4)
+                      : (isDark ? AppColors.borderDark : const Color(0xFFFFE082)),
+                ),
+              ),
+              child: Row(
+                children: [
+                  Icon(
+                    isToxicWarning ? Icons.dangerous_rounded : Icons.nature_rounded,
+                    size: 18,
+                    color: isToxicWarning ? const Color(0xFFC62828) : const Color(0xFFE65100),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      lookAlike,
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: isToxicWarning ? FontWeight.w800 : FontWeight.w600,
+                        color: isToxicWarning
+                            ? const Color(0xFFC62828)
+                            : (isDark ? AppColors.textPrimaryDark : const Color(0xFF4E342E)),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }),
         ],
       ),
     );

@@ -1,6 +1,6 @@
 """
 Test Inference CLI for MediPlant.
-Runs inference on a single image file using the exported ONNX model or PyTorch checkpoint.
+Runs inference on a single image file using the exported ONNX model.
 
 Usage:
   python test_inference.py --image path/to/leaf.jpg
